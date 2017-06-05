@@ -17,7 +17,7 @@
     {% if pub.accepted == true %}
       {% if pub[include.variable] == include.value %}
         <li>
-          {% include author_list.html  object=pub bold=true %}
+          {% include author_list.html object=pub bold=true %}
           ({{ pub.year }}).
           <a href="{{ pub.url }}">"{{ pub.title }}."</a>
           <i>{{ pub.venue }}</i>{% if pub.volume %}, vol. {{ pub.volume }}{% endif %}{% if pub.issue %}({{ pub.issue }}){% endif %}{% if pub.pages %}, pp. {{ pub.pages }}{% endif %}.
