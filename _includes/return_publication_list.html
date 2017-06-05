@@ -1,0 +1,28 @@
+<ol>
+  <!-- Print the unaccepted manuscripts -->
+  {% for pub in site.posts %}
+    {% if pub.accepted == false %}
+      {% if pub[include.variable] == include.value %}
+        <li>
+          {% include author_list.html object=pub bold=true %}
+          <a href="{{ pub.url }}">"{{ pub.title }}."</a>
+          <i>Submitted to {{ pub.venue }}.</i>
+        </li>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+
+  <!-- Print the accepted manuscripts -->
+  {% for pub in site.posts %}
+    {% if pub.accepted == true %}
+      {% if pub[include.variable] == include.value %}
+        <li>
+          {% include author_list.html  object=pub bold=true %}
+          ({{ pub.year }}).
+          <a href="{{ pub.url }}">"{{ pub.title }}."</a>
+          <i>{{ pub.venue }}</i>{% if pub.volume %}, vol. {{ pub.volume }}{% endif %}{% if pub.issue %}({{ pub.issue }}){% endif %}{% if pub.pages %}, pp. {{ pub.pages }}{% endif %}.
+        </li>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+</ol>

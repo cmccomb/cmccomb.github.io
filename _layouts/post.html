@@ -1,0 +1,42 @@
+---
+layout: default
+---
+
+<div class="post">
+    {% include back.html name="Publications" location="/publications/" %}
+    <h1 class="post-title">{{ page.title}}</h1>
+    <h2 style="font-weight: normal; font-style: italic;">{% include author_list.html object=page bold=false%}</h2>
+    <p style="font-weight: normal;">{% if page.accepted == true %}{{page.year}}, {% endif %}<i>{% if page.accepted == false %}Submitted to {% endif %}{{page.venue}}</i>{% if page.volume %}, vol. {{ page.volume }}{% endif %}{% if page.issue %}({{ page.issue }}){% endif %}{% if page.pages %}, pp. {{ page.pages }}{% endif %} </p>
+    {% if page.accepted %}
+      <p>{{ content }}</p>
+    {% endif %}
+    {% if page.doi %}
+      <a href="http://dx.doi.org/{{page.doi}}"><img  class="pub-link" id="doi" src="/images/publications/doi.png"></a>
+    {% endif %}
+    {% if page.researchgate %}
+      <a href="https://www.researchgate.net/publication/{{page.researchgate}}_{{ page.title}}"><img class="pub-link" id="reg" src="/images/publications/rg.png"></a>
+    {% endif %}
+    {% if page.googlescholar %}
+      <a href="https://scholar.google.com/citations?view_op=view_citation&citation_for_view={{ page.googlescholar }}"><img class="pub-link" id="gsk" src="/images/publications/gs.png"></a>
+    {% endif %}
+  </div>
+
+
+  <div class="related">
+    <h2>Related Publications</h2>
+    <ol>
+      {% for pub in site.related_posts limit:3 %}
+        <li>
+          {% include author_list.html object=pub bold=true %}
+          {% if pub.accepted %}
+            ({{ pub.year }}).
+          {% endif %}
+          <a href="{{ pub.url }}">"{{ pub.title }}."</a>
+          {% if pub.accepted %}
+            <i>{{ pub.venue }}</i>{% if pub.volume %}, vol. {{ pub.volume }}{% endif %}{% if pub.issue %}({{ pub.issue }}){% endif %}{% if pub.pages %}, pp. {{ pub.pages }}{% endif %}.
+          {% else %}
+            <i>Submitted to {{ pub.venue }}</i>
+          {% endif %}
+        </li>
+      {% endfor %}
+  </div>

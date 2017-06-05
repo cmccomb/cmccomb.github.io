@@ -1,0 +1,25 @@
+# Permalinks
+permalink:        pretty
+
+# Setup
+title:		  Chris McComb
+raised:     Chris M<span style="vertical-align:18%">c</span>Comb
+tagline:          ''
+description1:   Postdoc at <a href="http://www.cmu.edu/me/idig/">IDIG</a>
+description2:   Instructor at <a href="https://www.cmu.edu/integrated-innovation/">The Institute</a>
+url:              http://www.cmccomb.com
+baseurl:          /
+
+author:
+  name:           'Chris McComb'
+  url:            http://www.cmccomb.com
+
+gems: [classifier-reborn]
+lsi: true
+
+permalink: /publications/:year/:title/
+
+collections:
+  news:
+    output: true
+    permalink: /news/:year/:month/:day/:title/
