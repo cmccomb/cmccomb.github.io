@@ -15,7 +15,7 @@ author:
   url:            http://www.cmccomb.com
 
 gems: [classifier-reborn]
-lsi: false
+lsi: true
 
 
 permalink: /publications/:year/:title/
