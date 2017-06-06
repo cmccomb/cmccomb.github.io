@@ -12,6 +12,7 @@ cd ..
 echo "Copying static files"
 mv ~/GitHub/Websites/cmccomb.github.io-source/_site/* ~/GitHub/Websites/cmccomb.github.io/
 rm -rf ~/GitHub/Websites/cmccomb.github.io-source/_site/
+rm ~/GitHub/Websites/cmccomb.github.io/update_site.sh
 
 # Touch nojekyll
 touch ~/Github/Websites/cmccomb.github.io/.nojekyll
