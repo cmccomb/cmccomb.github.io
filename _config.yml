@@ -17,7 +17,6 @@ author:
 gems: [classifier-reborn]
 lsi: true
 
-
 permalink: /publications/:year/:title/
 
 collections:

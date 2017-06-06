@@ -9,3 +9,6 @@ order: 3
 
 <h2>Conference Papers</h2>
 {% include return_publication_list.html variable="type" value="conference"%}
+
+<h2>Other</h2>
+{% include return_publication_list.html variable="type" value="other"%}
