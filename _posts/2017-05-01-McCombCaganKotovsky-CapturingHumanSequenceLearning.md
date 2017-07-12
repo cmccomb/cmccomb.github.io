@@ -5,8 +5,11 @@ authors: ["McComb, C.", "Cagan, J.", "Kotovsky, K."]
 title: Capturing Human Sequence-Learning Abilities in Configuration Design Tasks through Markov Chains
 venue: Journal of Mechanical Design
 year: 2017
+volume: 139
+issue: 9
+pages: 1-12
 accepted: true
-googlescholar: 0P9w_S0AAAAJ:QIV2ME_5wuYC
+googlescholar: "0P9w_S0AAAAJ:QIV2ME_5wuYC"
 doi: 10.1115/1.4037185
 researchgate: 318117023
 ---
