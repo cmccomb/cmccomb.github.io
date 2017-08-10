@@ -5,8 +5,8 @@ permalink:        pretty
 title:		  Chris McComb
 raised:     Chris M<span style="vertical-align:18%">c</span>Comb
 tagline:          ''
-description1:   Postdoc at <a href="http://www.cmu.edu/me/idig/">IDIG</a>
-description2:   Instructor at <a href="https://www.cmu.edu/integrated-innovation/">The Institute</a>
+description1:   Assistant Professor
+description2:   <a href="">SEDTAPP</a> @ <a href="">PSU</a>
 url:              http://www.cmccomb.com
 baseurl:          /
 
@@ -15,7 +15,7 @@ author:
   url:            http://www.cmccomb.com
 
 gems: [classifier-reborn]
-lsi: true
+lsi: false
 
 permalink: /publications/:year/:title/
 
