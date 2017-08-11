@@ -6,7 +6,7 @@ title:		  Chris McComb
 raised:     Chris M<span style="vertical-align:18%">c</span>Comb
 tagline:          ''
 description1:   Assistant Professor
-description2:   <a href="">SEDTAPP</a> @ <a href="">PSU</a>
+description2:   <a href="http://sedtapp.psu.edu">SEDTAPP</a> @ <a href="http://www.psu.edu">PSU</a>
 url:              http://www.cmccomb.com
 baseurl:          /
 
@@ -15,7 +15,7 @@ author:
   url:            http://www.cmccomb.com
 
 gems: [classifier-reborn]
-lsi: false
+lsi: true
 
 permalink: /publications/:year/:title/
 
