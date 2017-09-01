@@ -6,6 +6,7 @@ year: 2017
 title: Impossible by Design? Fairness, Strategy, and Arrow's Impossibility Theorem
 venue: Design Science
 volume: 3
+issue: 2
 doi: 10.1017/dsj.2017.1
 researchgate: 313108947
 googlescholar: "0P9w_S0AAAAJ:Wp0gIr-vW9MC"
