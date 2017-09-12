@@ -5,6 +5,8 @@ authors: ["McComb, C.", "Cagan, J.", "Kotovsky, K."]
 title:  Data on the Configuration Design of Internet-Connected Home Cooling Systems by Engineering Students
 venue: Data in Brief
 year: 2017
+volume: 14
+pages: 773-776
 accepted: True
 googlescholar: "0P9w_S0AAAAJ:L8Ckcad2t8MC"
 doi: 10.1016/j.dib.2017.08.050
