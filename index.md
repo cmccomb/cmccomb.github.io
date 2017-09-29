@@ -4,6 +4,6 @@ title: About
 permalink: /
 order: 1
 ---
-Hi! I'm an Assistant Professor of Engineering Design and Mechanical Engineering at Penn State.  My research draws on perspectives from engineering, design, and psychology to study how humans act while solving problems, and how that activity changes in teams. I perform these investigations through cognitive experiments with real design teams as well as computational experiments with simulated design teams. In addition to design methodology, I'm interested in machine learning, STEM education, optimization, and design for the developing world.
+Hi! I'm an Assistant Professor of Engineering Design and Mechanical Engineering at Penn State, and the director of the <a href="http://sites.psu.edu/hsdl">Human Systems Design Lab</a>.  In my research I draw on perspectives from engineering, design, and psychology to study how humans act while solving problems. Within this regime, I explore the spectrum between human teams and computational agent teams, creating advanced design algorithms and cognitive support tools. In addition to design research, I'm interested in machine learning, STEM education, optimization, and design for the developing world.
 
 I received my graduate degrees in mechanical engineering from Carnegie Mellon (PhD '16, MS '14), and a dual undergraduate degree in civil and mechanical engineering from Fresno State (BS '12).
