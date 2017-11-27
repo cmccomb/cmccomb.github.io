@@ -22,7 +22,7 @@ order: 4
     </td>
     <td style="vertical-align: top;  white-space: nowrap;">
         Language: <code>{{ repository.language }}</code><br/>
-        License: <code>{{ repository.license.name }}</code><br/>
+        License: <code>{{ repository.license | jsonify }}</code><br/>
         Last updated on {{ repository.pushed_at | date_to_string }}
     </td>
     <td style="vertical-align: top;">
