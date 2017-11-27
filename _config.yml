@@ -9,6 +9,7 @@ description1:   Assistant Professor
 description2:   <a href="http://sedtapp.psu.edu">SEDTAPP</a> @ <a href="http://www.psu.edu">PSU</a>
 url:              http://www.cmccomb.com
 baseurl:          /
+repository: cmccomb/cmccomb.github.io-source
 
 author:
   name:           'Chris McComb'
@@ -18,7 +19,7 @@ plugins:
     - classifier-reborn
     - jekyll-github-metadata
 
-lsi: true
+lsi: false
 
 permalink: /publications/:year/:title/
 
