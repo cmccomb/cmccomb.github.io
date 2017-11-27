@@ -1,11 +1,16 @@
 ---
 layout: page
 title: Software
-permalink: /cv/
-order: 3
+permalink: /software/
+order: 4
 ---
 
-<table style="border:none ;">
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Info</th>
+    <th>Description</th>
+  </tr>
 {% for repository in site.github.public_repositories %}
   <tr>
     <td style="vertical-align: middle; border: none;">

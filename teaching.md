@@ -2,7 +2,7 @@
 layout: page
 title: Teaching
 permalink: /teaching/
-order: 4
+order: 5
 ---
 <h2>My Approach</h2>
 In collegiate engineering education, the emphasis often falls on simply delivering information to students. While this is certainly necessary, I also want to ensure that my students store course concepts in long-term memory and that they are able to apply those concepts to real-world design problems – ultimately preparing them to become successful practitioners of engineering and design. In every course that I teach I adopt three core instructional strategies to operationalize my goals: inviting student attention through current examples; assisting memory formation by providing knowledge structures; and providing opportunities to practice recall through design-based activities.
