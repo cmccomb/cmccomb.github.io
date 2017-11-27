@@ -2,7 +2,7 @@
 layout: page
 title: Contact
 permalink: /contact/
-order: 5
+order: 6
 ---
 ### Office
 213U Hammond Building
