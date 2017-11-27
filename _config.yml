@@ -14,9 +14,10 @@ author:
   name:           'Chris McComb'
   url:            http://www.cmccomb.com
 
-gems:
-    - "classifier-reborn"
-    - "jekyll-github-metadata"
+plugins:
+    - classifier-reborn
+    - jekyll-github-metadata
+
 lsi: true
 
 permalink: /publications/:year/:title/
