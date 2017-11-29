@@ -19,11 +19,10 @@ plugins:
     - classifier-reborn
     - jekyll-github-metadata
 
-lsi: true
+lsi: false
 
 permalink: /publications/:year/:title/
 
 collections:
-  news:
-    output: true
-    permalink: /news/:year/:month/:day/:title/
+  cv:
+    output: false

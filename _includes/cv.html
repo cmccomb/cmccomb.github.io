@@ -1,0 +1,11 @@
+### Education
+<ul>
+{% for item in site.cv reversed %}
+{% if item.layout == "cv_education" %}
+{{ item.output }}
+{% endif %}
+{% endfor %}
+</ul>
+
+### Publications
+See [publications](/publications/).
