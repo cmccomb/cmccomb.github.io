@@ -1,0 +1,16 @@
+### {{ include.section | capitalize}}
+{% if include.ordered %}
+<ol>
+{% else %}
+<ul>
+{% endif %}
+{% for item in site.cv reversed %}
+{% if item.layout == include.section %}
+{{ item.output }}
+{% endif %}
+{% endfor %}
+{% if include.ordered %}
+</ol>
+{% else %}
+</ul>
+{% endif %}

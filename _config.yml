@@ -26,3 +26,6 @@ permalink: /publications/:year/:title/
 collections:
   cv:
     output: false
+
+office: 213U Hammond Building
+address: University Park, PA 16802

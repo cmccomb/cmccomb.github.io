@@ -1,11 +1,32 @@
-### Education
-<ul>
+<div style="text-align: center">
+<h1>{{ site.raised }}</h1>
+{% assign first = true %}
 {% for item in site.cv reversed %}
-{% if item.layout == "cv_education" %}
-{{ item.output }}
+{% if first %}
+{% if item.layout == "experience" %}
+{{ item.position }} <br/>
+{{ item.department }} <br/>
+{{ item.institution }}
+{% assign first = false %}
+{% endif %}
 {% endif %}
 {% endfor %}
-</ul>
+
+</div>
+{% include return_section_list.html ordered=false section="education"%}
+{% include return_section_list.html ordered=false section="experience"%}
 
 ### Publications
+{% if page.layout == "plain" %}
+#### Journal Articles
+{% include return_publication_list.html variable="type" value="journal"%}
+
+#### Conference Papers
+{% include return_publication_list.html variable="type" value="conference"%}
+
+#### Other
+{% include return_publication_list.html variable="type" value="other"%}
+
+{% else %}
 See [publications](/publications/).
+{% endif %}

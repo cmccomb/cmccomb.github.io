@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
  <title>Chris McComb</title>
- <link href="http://localhost:4000/atom.xml" rel="self"/>
- <link href="http://localhost:4000/"/>
- <updated>2017-11-29T17:34:38-05:00</updated>
- <id>http://localhost:4000</id>
+ <link href="http://www.cmccomb.com/atom.xml" rel="self"/>
+ <link href="http://www.cmccomb.com/"/>
+ <updated>2017-11-29T20:25:54-05:00</updated>
+ <id>http://www.cmccomb.com</id>
  <author>
    <name>Chris McComb</name>
    <email></email>
@@ -14,243 +14,243 @@
  
  <entry>
    <title>Application of Project-based Learning within the Context of Sustainable Development in Education of International Engineer Citizens</title>
-   <link href="http://localhost:4000/publications/2017/TehraniMcCombPapavasiliou-ApplicationOfProjectBased/"/>
+   <link href="http://www.cmccomb.com/publications/2017/TehraniMcCombPapavasiliou-ApplicationOfProjectBased/"/>
    <updated>2017-11-01T00:00:00-04:00</updated>
-   <id>http://localhost:4000/publications/2017/TehraniMcCombPapavasiliou-ApplicationOfProjectBased</id>
+   <id>http://www.cmccomb.com/publications/2017/TehraniMcCombPapavasiliou-ApplicationOfProjectBased</id>
    <content type="html">&lt;p&gt;This paper outlines a project-based learning approach to engineering education. This approach directly employs sustainable development as a vehicle to prepare students for global engineering challenges. The theoretical concept of the presented work utilizes the extended situational teaching model. This model explains the role of the teacher-leader in engineering classroom to help students with gaining essential elements of engineering education, including superior knowledge, reliable skills, and professional attitude. Case studies and examples of experiential learning projects demonstrate the development of links between classroom teaching, research advising, laboratory works, and field projects, including both domestic and international projects.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Data on the Configuration Design of Internet-Connected Home Cooling Systems by Engineering Students</title>
-   <link href="http://localhost:4000/publications/2017/McCombCaganKotovsky-DataOnTheConfiguration/"/>
+   <link href="http://www.cmccomb.com/publications/2017/McCombCaganKotovsky-DataOnTheConfiguration/"/>
    <updated>2017-09-04T00:00:00-04:00</updated>
-   <id>http://localhost:4000/publications/2017/McCombCaganKotovsky-DataOnTheConfiguration</id>
+   <id>http://www.cmccomb.com/publications/2017/McCombCaganKotovsky-DataOnTheConfiguration</id>
    <content type="html">&lt;p&gt;This experiment was carried out to record the step-by-step actions that humans take in solving a configuration design problem, either in small teams or individually. Specifically, study participants were tasked with configuring an internet-connected system of products to maintain temperature within a home, subject to cost constraints. Every participant was given access to a computer-based design interface that allowed them to construct and assess solutions. The interface was also used to record the data that is presented here. In total, data was collected for 68 participants, and each participant was allowed to perform 50 design actions in solving the configuration design problem. Major results based on the data presented here have been reported separately, including initial behavioral analysis and design pattern assessments via Markovian modeling.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Validating a Tool for Predicting Problem-Specific Optimized Team Characteristics</title>
-   <link href="http://localhost:4000/publications/2017/McCombCaganKotovsky-ValidatingAToolFor/"/>
+   <link href="http://www.cmccomb.com/publications/2017/McCombCaganKotovsky-ValidatingAToolFor/"/>
    <updated>2017-08-09T00:00:00-04:00</updated>
-   <id>http://localhost:4000/publications/2017/McCombCaganKotovsky-ValidatingAToolFor</id>
+   <id>http://www.cmccomb.com/publications/2017/McCombCaganKotovsky-ValidatingAToolFor</id>
    <content type="html">&lt;p&gt;The performance of a team is highly dependent on how the team is structured, how individuals in the team communicate with one another, and the properties exhibited by the problem being solved. It is generally assumed that teams are a superior approach in problem-solving and design. However, this work shows that for a configuration design problem of moderate size, the optimal approach for a homogenous team is in fact for members of the team to work independently, with the best solution from the individuals chosen at the end. Moreover, this work demonstrates that this surprising strategy can be predicted from knowledge of the problem’s properties through a computationally-derived set of response surfaces. First, a novel design problem is defined that requires solvers to create a system of internet-connected products to maintain the temperature within a home. Next, the characteristics of this new design problem are measured, and a computationally-derived response surface yields the untraditional prediction that teams should not interact while solving the problem. Finally, this prediction is tested and shown correct through a cognitive study. This work makes two contributions to the state of the art. First, it provides verification of a methodology that allows optimal team characteristics to be predicted based on knowledge of a design problem. Second, it demonstrates an additional problem instance for which interacting teams are inferior to nominal teams (adding to a growing literature to that effect).&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Ethical Design of Gendered Products</title>
-   <link href="http://localhost:4000/publications/2017/RoyMcComb-EthicalDesignOfGendered/"/>
+   <link href="http://www.cmccomb.com/publications/2017/RoyMcComb-EthicalDesignOfGendered/"/>
    <updated>2017-07-01T00:00:00-04:00</updated>
-   <id>http://localhost:4000/publications/2017/RoyMcComb-EthicalDesignOfGendered</id>
+   <id>http://www.cmccomb.com/publications/2017/RoyMcComb-EthicalDesignOfGendered</id>
    <content type="html">&lt;p&gt;Engineers and marketers often design products for specific genders in order to segment the market. Sometimes ergonomics and function determine the perceived gender of a product, but often it is arbitrary. Research in gender studies shows us that these arbitrarily gendered products force consumers into gender roles and support stereotypes of femininity and masculinity. Within this context, the workshop will ask conference attendees to consider the following questions: Who is ethically responsible for the creation and consumption of products? How can engineers and designers create more inclusive designs? The goal of this workshop is to provide a forum for discussing the cultural and ethical implications of gendered products and to provide participants with an opportunity to engage firsthand in the process of designing ethically gendered products. The workshop will be delivered in a way that is accessible for both technical and non-technical conference attendees.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Eliciting Configuration Design Heuristics with Hidden Markov Models</title>
-   <link href="http://localhost:4000/publications/2017/McCombCaganKotovsky-ElicitingConfigurationDesignHeuristics/"/>
+   <link href="http://www.cmccomb.com/publications/2017/McCombCaganKotovsky-ElicitingConfigurationDesignHeuristics/"/>
    <updated>2017-07-01T00:00:00-04:00</updated>
-   <id>http://localhost:4000/publications/2017/McCombCaganKotovsky-ElicitingConfigurationDesignHeuristics</id>
+   <id>http://www.cmccomb.com/publications/2017/McCombCaganKotovsky-ElicitingConfigurationDesignHeuristics</id>
    <content type="html">&lt;p&gt;Configuration design problems, characterized by the selection and assembly of components into a final desired solution, are common in engineering design. Although a variety of theoretical approaches to solving configuration design problems have been developed, little research has been conducted to observe how humans naturally attempt to solve such problems. This work mines the data from a cognitive study of configuration design to extract helpful design heuristics. The extraction of these heuristics is automated through the application of hidden Markov models. Results show that, for a truss configuration problem, designers proceed through four procedural states in solving configuration design problems, transitioning from topology design to shape and parameter design. High-performing designers are distinguished by their opportunistic tuning of parameters early in the process, enabling a heuristic search process similar to the A* search algorithm.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Mining Process Heuristics from Designer Action Data via Hidden Markov Models</title>
-   <link href="http://localhost:4000/publications/2017/McCombCaganKotovsky-MiningProcessHeuristics/"/>
+   <link href="http://www.cmccomb.com/publications/2017/McCombCaganKotovsky-MiningProcessHeuristics/"/>
    <updated>2017-05-01T00:00:00-04:00</updated>
-   <id>http://localhost:4000/publications/2017/McCombCaganKotovsky-MiningProcessHeuristics</id>
+   <id>http://www.cmccomb.com/publications/2017/McCombCaganKotovsky-MiningProcessHeuristics</id>
    <content type="html">&lt;p&gt;Configuration design problems, characterized by the assembly of components into a final desired solution, are common in engineering design. Various theoretical approaches have been offered for solving configuration type problems, but few studies have examined the approach that humans naturally use to solve such problems. This work applies data-mining techniques to quantitatively study the processes that designers use to solve configuration design problems. The guiding goal is to extract beneficial design process heuristics that are generalizable to the entire class of problems. The extraction of these human problem-solving heuristics is automated through the application of hidden Markov models to the data from two behavioral studies. Results show that designers proceed through four procedural states in solving configuration design problems, roughly transitioning from topology design to shape and parameter design. High-performing designers are distinguished by their opportunistic tuning of parameters early in the process, enabling a more effective and nuanced search for solutions.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Capturing Human Sequence-Learning Abilities in Configuration Design Tasks through Markov Chains</title>
-   <link href="http://localhost:4000/publications/2017/McCombCaganKotovsky-CapturingHumanSequenceLearning/"/>
+   <link href="http://www.cmccomb.com/publications/2017/McCombCaganKotovsky-CapturingHumanSequenceLearning/"/>
    <updated>2017-05-01T00:00:00-04:00</updated>
-   <id>http://localhost:4000/publications/2017/McCombCaganKotovsky-CapturingHumanSequenceLearning</id>
+   <id>http://www.cmccomb.com/publications/2017/McCombCaganKotovsky-CapturingHumanSequenceLearning</id>
    <content type="html">&lt;p&gt;Designers often search for new solutions by iteratively adapting a current design. By engaging in this search, designers not only improve solution quality but also begin to learn what operational patterns might improve the solution in future iterations. Previous work in psychology has demonstrated that humans can fluently and adeptly learn short operational sequences that aid problem-solving. This paper explores how designers learn and employ sequences within the realm of engineering design. Specifically, this work analyzes behavioral patterns in two human studies in which participants solved configuration design problems. Behavioral data from the two studies is first analyzed using Markov chains to determine how much representation complexity is necessary to quantify the sequential patterns that designers employ during solving. It is discovered that first-order Markov chains are capable of accurately representing designers’ sequences. Next, the ability to learn first-order sequences is implemented in an agent-based modeling framework to assess the performance implications of sequence-learning abilities. These computational studies confirm the assumption that the ability to learn sequences is beneficial to designers.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Impossible by Design? Fairness, Strategy, and Arrow's Impossibility Theorem</title>
-   <link href="http://localhost:4000/publications/2017/McCombGoucherLamberCagan-ImpossibleByDesign/"/>
+   <link href="http://www.cmccomb.com/publications/2017/McCombGoucherLamberCagan-ImpossibleByDesign/"/>
    <updated>2017-02-01T00:00:00-05:00</updated>
-   <id>http://localhost:4000/publications/2017/McCombGoucherLamberCagan-ImpossibleByDesign</id>
+   <id>http://www.cmccomb.com/publications/2017/McCombGoucherLamberCagan-ImpossibleByDesign</id>
    <content type="html">&lt;p&gt;The design process often requires work by teams, rather than individuals. During team based design it is likely that situations will arise in which individual members of the team have different opinions, yet a group decision must still be made. Unfortunately, Arrow’s impossibility theorem indicates that there is no method for aggregating group preferences that will always satisfy a small number of ‘fair’ conditions. This work seeks to identify methods of combining individual preferences that can come close to satisfying Arrow’s conditions, enabling decisions that are fairer in practice. First, experiential conjoint analysis was used to obtain individual empirical utility functions for drinking mug designs. Each empirical utility function represented individual members who were part of a design team. Then, a number of functions for constructing group preference were analysed using both randomly generated preferences and empirical preferences derived from the experiential conjoint survey. The analysis involved checking each of Arrow’s conditions, as well as assessing the potential impact of strategic voting. Based on the results, methods that should be used to aggregate group preference within a design team in practice were identified and recommended.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Optimizing Design Teams Based on Problem Properties: Computational Team Simulations and an Applied Empirical Test</title>
-   <link href="http://localhost:4000/publications/2017/McCombCaganKotovsky-OptimizingDesignTeams/"/>
+   <link href="http://www.cmccomb.com/publications/2017/McCombCaganKotovsky-OptimizingDesignTeams/"/>
    <updated>2017-02-01T00:00:00-05:00</updated>
-   <id>http://localhost:4000/publications/2017/McCombCaganKotovsky-OptimizingDesignTeams</id>
+   <id>http://www.cmccomb.com/publications/2017/McCombCaganKotovsky-OptimizingDesignTeams</id>
    <content type="html">&lt;p&gt;The performance of a team with the right characteristics can exceed the mere sum of the constituent members’ individual efforts. However, a team having the wrong characteristics may perform more poorly than the sum of its individuals. Therefore, it is vital that teams are assembled and managed properly in order to maximize performance. This work examines how the properties of configuration design problems can be leveraged to select the best values for team characteristics (specifically team size and interaction frequency). A computational model of design teams which has been shown to effectively emulate human team behavior is employed to pinpoint optimized team characteristics for solving a variety of configuration design problems. These configuration design problems are characterized with respect to the local and global structure of the design space, the alignment between objectives, and the resources allotted for solving the problem. Regression analysis is then used to create equations for predicting optimized values for team characteristics based on problem properties. These equations achieve moderate to high accuracy, making it possible to design teams based on those problem properties. Further analysis reveals hypotheses about how the problem properties can influence a team’s search for solutions. This work also conducts a cognitive study on a different problem to test the predictive equations. For a configuration problem of moderate size, the model predicts that zero interaction between team members should lead to the best outcome. A cognitive study of human teams verifies this surprising prediction, offering partial validation of the predictive theory.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>A quantitative approach to evaluate the effectiveness of the extended situational teaching model in engineering education</title>
-   <link href="http://localhost:4000/publications/2017/TehraniMcCombScott-AQuantitativeApproach/"/>
+   <link href="http://www.cmccomb.com/publications/2017/TehraniMcCombScott-AQuantitativeApproach/"/>
    <updated>2017-01-01T00:00:00-05:00</updated>
-   <id>http://localhost:4000/publications/2017/TehraniMcCombScott-AQuantitativeApproach</id>
+   <id>http://www.cmccomb.com/publications/2017/TehraniMcCombScott-AQuantitativeApproach</id>
    <content type="html">&lt;p&gt;The extended situational teaching model is a variation of situational teaching, which itself has roots in situational leadership. Application of situational leadership in education requires the teacher to lead students through various stages of the learning process. This paper presents the relationship between performance measures of extended situational teaching and common pedagogical tools in engineering classrooms. The results of a quantitative survey are presented to support the existence of such a relationship and to demonstrate the effectiveness of the extended situational teaching model. The survey covered 476 engineering students enrolled in nine different courses over a four-year period. Conclusions discuss statistical characteristics of the results and correlations between selected pedagogical tools and performance measures.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Multi-Objective Optimization and Scenario-based Robustness Analysis of the Moneymaker Hip Pump</title>
-   <link href="http://localhost:4000/publications/2017/McCombetal-MultiObjectiveOptimization/"/>
+   <link href="http://www.cmccomb.com/publications/2017/McCombetal-MultiObjectiveOptimization/"/>
    <updated>2017-01-01T00:00:00-05:00</updated>
-   <id>http://localhost:4000/publications/2017/McCombetal-MultiObjectiveOptimization</id>
+   <id>http://www.cmccomb.com/publications/2017/McCombetal-MultiObjectiveOptimization</id>
    <content type="html">&lt;p&gt;Water-lifting technologies for irrigation have significant potential to increase agricultural yields and stimulate economic growth in rural areas of the developing world. Human-powered water pumps have been used with great success in this rapidly developing market. KickStart’s MoneyMaker Hip Pump is a human-powered water pump with additional design features that make it lightweight and portable for use in remote fields in several countries throughout Africa. This work applied numerical optimization techniques to the design of the MoneyMaker Hip Pump and offers further improvements to its design. Deterministic multi-objective optimization methods were employed to maximize the flow rate of the pump, maximize the pumping height of water, and minimize cost. Following optimization, the robustness of the optimized pump design was analyzed under several modified scenarios, including fouling of the hoses and a decrease in operator power due to fatigue or aging. The set of cost-optimized pump designs was then compared to a second set of optimal designs that was found using material volume as a simplified proxy for the cost objective function. Findings indicate that several technical improvements can be made to the current MoneyMaker Hip Pump design to reduce cost by up to 37% or increase flow rate by up to 88%.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Scenario-Based Robustness Analysis of Optimized I.D.E.-Style Treadle Pump Designs</title>
-   <link href="http://localhost:4000/publications/2016/McCombJohnsonGorman-ScenarioBasedRobustnessAnalysis/"/>
+   <link href="http://www.cmccomb.com/publications/2016/McCombJohnsonGorman-ScenarioBasedRobustnessAnalysis/"/>
    <updated>2016-01-01T00:00:00-05:00</updated>
-   <id>http://localhost:4000/publications/2016/McCombJohnsonGorman-ScenarioBasedRobustnessAnalysis</id>
+   <id>http://www.cmccomb.com/publications/2016/McCombJohnsonGorman-ScenarioBasedRobustnessAnalysis</id>
    <content type="html">&lt;p&gt;Poverty affects hundreds of millions of people globally. Market-based strategies can help alleviate poverty in developing countries by encouraging entrepreneurial activity and have the potential to be more effective than traditional approaches, such as development aid from countries or non-governmental organizations. Development organizations often target the agricultural sector because of the prevalence of subsistence and small-scale farming, particularly in rural regions of developing countries. Improving the reliability of irrigation techniques can help farmers expand out of primarily subsistence farming and begin to sell a portion of their crop, thus achieving the objectives of market-based poverty alleviation. Human-powered pumps are a popular tool used in irrigation because they require low capital cost and negligible operating cost. Previous work provided a model for finding Pareto-optimal IDE-style treadle pump designs. This work utilizes that model to produce a dense set of Pareto-optimal designs, and then investigates the robustness of the designs by simulating their performance in a variety of modified use scenarios. Our results show that pumps optimized for low flow rates (less than 3.0 L/s) are highly robust, particularly with respect to age-related changes in the operator’s stature or mobility. In addition, these pumps can operate with near-optimal efficiency across a variety of target flow rates and well depths. These pumps are ideal for single family use or for shared use amongst multiple families in a village. Pumps optimized for flow rates greater than 3.0 L/s are less robust with respect to changes of operator stature (experiencing decreases in flow rate of up to 60%) but may be suitable for use on farms or by service providers.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Utilizing Markov Chains to Understand Operation Sequencing in Design Tasks</title>
-   <link href="http://localhost:4000/publications/2016/McCombCaganKotovsky-UtilizingMarkovChains/"/>
+   <link href="http://www.cmccomb.com/publications/2016/McCombCaganKotovsky-UtilizingMarkovChains/"/>
    <updated>2016-01-01T00:00:00-05:00</updated>
-   <id>http://localhost:4000/publications/2016/McCombCaganKotovsky-UtilizingMarkovChains</id>
+   <id>http://www.cmccomb.com/publications/2016/McCombCaganKotovsky-UtilizingMarkovChains</id>
    <content type="html">&lt;p&gt;Design often involves searching for a final design solution by iteratively modifying and adjusting a current design. Through this process designers are able to improve the quality of the current design and also learn what patterns of operations are most likely to lead to the quickest future improvements. Prior work in psychology has shown that humans can be adept at learning how to apply short sequences of operations for maximum effect while solving a problem. This work explores the sequencing of operations specifically within the domain of engineering design by examining the results of a human study in which participants designed trusses. A statistical analysis of the data from that study uses Markov Chains to show with high confidence that meaningful operation sequences exist. This work also uses an agent-based modeling framework in conjunction with Markov Chain concepts to simulate the performance of teams with and without the ability to learn sequences. These computational studies offer confirmation for the conclusion that sequence-learning abilities are helpful during design.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Linking Properties of Design Problems to Optimal Team Characteristics</title>
-   <link href="http://localhost:4000/publications/2016/McCombCaganKotovsky-LinkingPropertiesOfDesign/"/>
+   <link href="http://www.cmccomb.com/publications/2016/McCombCaganKotovsky-LinkingPropertiesOfDesign/"/>
    <updated>2016-01-01T00:00:00-05:00</updated>
-   <id>http://localhost:4000/publications/2016/McCombCaganKotovsky-LinkingPropertiesOfDesign</id>
+   <id>http://www.cmccomb.com/publications/2016/McCombCaganKotovsky-LinkingPropertiesOfDesign</id>
    <content type="html">&lt;p&gt;A team with the right characteristics can exceed the sum of their individual efforts. However, a team having the wrong characteristics may perform more poorly than the sum of its individuals. Therefore, it is crucial that teams are assembled and managed properly in order to maximize performance. This work examines how the properties of a design problem can be used to select the best values for team characteristics. Two characteristics are considered: team size and interaction frequency. A computational model of design teams that has been shown to effectively emulate human team behavior is leveraged to pinpoint optimized team characteristics for solving a variety of fluid and structural design problems. The nature of each design problem is characterized with respect to local and global behavior of the design space, alignment between objective functions, and the resources allotted for solving the problem. Regression analysis is used to create equations for predicting optimized team characteristics based on problem properties. These equations, which enable the informed design of design teams based on those characteristics, describe statistically significant relationships and are found to have useful levels of accuracy. Further analysis reveals insights about how the properties of a design problem can influence a team’s search for solutions.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Drawing Inspiration From Human Design Teams for Better Search and Optimization: The Heterogeneous Simulated Annealing Teams Algorithm</title>
-   <link href="http://localhost:4000/publications/2016/McCombCaganKotovsky-DrawingInspirationFromHuman/"/>
+   <link href="http://www.cmccomb.com/publications/2016/McCombCaganKotovsky-DrawingInspirationFromHuman/"/>
    <updated>2016-01-01T00:00:00-05:00</updated>
-   <id>http://localhost:4000/publications/2016/McCombCaganKotovsky-DrawingInspirationFromHuman</id>
+   <id>http://www.cmccomb.com/publications/2016/McCombCaganKotovsky-DrawingInspirationFromHuman</id>
    <content type="html">&lt;p&gt;Insights uncovered by research in design cognition are often utilized to develop methods used by human designers; in this work, such insights are used to inform and improve computational methodologies. This paper introduces the heterogeneous simulated annealing team (HSAT) algorithm, a multiagent simulated annealing (MSA) algorithm. HSAT is based on a validated computational model of human-based engineering design and retains characteristics of the model that structure interaction between team members and allow for heterogeneous search strategies to be employed within a team. The performance of this new algorithm is compared to several other simulated annealing (SA) based algorithms on three carefully selected benchmarking functions. The HSAT algorithm provides terminal solutions that are better on average than other algorithms explored in this work.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Fairness and Manipulation: An Empirical Study of Arrow’s Impossibility Theorem International Conference on Engineering Design</title>
-   <link href="http://localhost:4000/publications/2015/McCombGoucherLambertCagan-FairnessAndManipulation/"/>
+   <link href="http://www.cmccomb.com/publications/2015/McCombGoucherLambertCagan-FairnessAndManipulation/"/>
    <updated>2015-07-01T00:00:00-04:00</updated>
-   <id>http://localhost:4000/publications/2015/McCombGoucherLambertCagan-FairnessAndManipulation</id>
+   <id>http://www.cmccomb.com/publications/2015/McCombGoucherLambertCagan-FairnessAndManipulation</id>
    <content type="html">&lt;p&gt;The design process often requires work by teams, rather than individuals. During these times it is likely that situations will arise in which members of a team have different opinions, yet a group decision must still be made. Unfortunately, Arrow’s Impossibility Theorem indicates that there is no method for aggregating group preferences that will always satisfy a small number of “fair” conditions. This work seeks to identify methods of combining individual preferences that can come close to satisfying Arrow’s conditions. Experiential conjoint analysis was used to obtain empirical utility functions for drinking mug designs. A number of functions for constructing group preference were then analysed using both empirical conjoint preferences and randomly generated preferences. This analysis involved checking each of Arrow’s conditions, as well as computing the likelihood that a method will be susceptible to manipulation by a dishonest individual. Based on the results, methods that should be used to aggregate group preference in practice are recommended.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Heterogeneous Simulated Annealing Teams: An Optimizing Search Algorithm Inspired by Engineering Design Teams</title>
-   <link href="http://localhost:4000/publications/2015/McCombCaganKotovsky-HeterogeneousSimulatedAnnealingTeams/"/>
+   <link href="http://www.cmccomb.com/publications/2015/McCombCaganKotovsky-HeterogeneousSimulatedAnnealingTeams/"/>
    <updated>2015-07-01T00:00:00-04:00</updated>
-   <id>http://localhost:4000/publications/2015/McCombCaganKotovsky-HeterogeneousSimulatedAnnealingTeams</id>
+   <id>http://www.cmccomb.com/publications/2015/McCombCaganKotovsky-HeterogeneousSimulatedAnnealingTeams</id>
    <content type="html">&lt;p&gt;Although insights uncovered by design cognition are often utilized to develop the methods used by human designers, using such insights to inform computational methodologies also has the potential to improve the performance of design algorithms. This paper uses insights from research on design cognition and design teams to inform a better simulated annealing search algorithm. Simulated annealing has already been established as a model of individual problem solving. This paper introduces the Heterogeneous Simulated Annealing Team (HSAT) algorithm, a multi-agent simulated annealing algorithm. Each agent controls an adaptive annealing schedule, allowing the team develop heterogeneous search strategies. Such diversity is a natural part of engineering design, and boosts performance in other multi-agent algorithms. Further, interaction between agents in HSAT is structured to mimic interaction between members of a design team. Performance is compared to several other simulated annealing algorithms, a random search algorithm, and a gradient-based algorithm. Compared to other algorithms, the team-based HSAT algorithm returns better average results with lower variance.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>The Cyborg Designer</title>
-   <link href="http://localhost:4000/publications/2015/McComb-TheCyborgDesigner/"/>
+   <link href="http://www.cmccomb.com/publications/2015/McComb-TheCyborgDesigner/"/>
    <updated>2015-07-01T00:00:00-04:00</updated>
-   <id>http://localhost:4000/publications/2015/McComb-TheCyborgDesigner</id>
+   <id>http://www.cmccomb.com/publications/2015/McComb-TheCyborgDesigner</id>
    <content type="html">&lt;p&gt;Designers perform phenomenally well in tasks that involve creativity and insight - tasks that are typically unfeasible for design algorithms. However, design algorithms excel at tasks that are tedious and time-consuming for human designers, such as searching graphs, accessing and parsing large amounts of information, and optimizing mathematical functions. This complementary relationship is typically exploited by providing designers with computational tools that can be accessed at will. However, designers tend to become “set in their ways”, relying heavily on previous solutions and well-known methods. This is especially true of expert designers and can hinder the adoption of new computational tools, leading to potentially non-optimal solutions. I will outline my vision for a future in which human designers are seamlessly connected with computational design agents, thus becoming part of a cyborg design system. My current research creates multi-agent design algorithms that may eventually form the backbone of such a system. In much the same way that robots resemble humans to operate efficiently in human-centric environments, computational design agents must be capable of interfacing with the design ecosystem as human designers do. As agents parse emails and design specifications, listen to conversations, and make sense of photographs and sketches they will not only be learning about the current design project, but learning the preferences of the designers that they work with. Based on this data agents can perform a host of support tasks, such as providing relevant analogies for consideration, recommending technical modifications to designs, and suggesting aesthetic design improvements that are aligned with a designer’s personal style. Although computational design agents will exist as cloud computing artifacts, they will monitor and interface with designers through a variety of wearable, mobile, and desktop products. In short, my vision for the creation of a cyborg design system will remove self-imposed informational constraints, allowing human designers to efficiently focus on what they’re best at: creating the world around us.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Identifying Technical and Economic Improvements to the MoneyMaker Hip Pump through Multi-Objective Optimization</title>
-   <link href="http://localhost:4000/publications/2015/McCombetal-IdentifyingTechnicalAndEconomic/"/>
+   <link href="http://www.cmccomb.com/publications/2015/McCombetal-IdentifyingTechnicalAndEconomic/"/>
    <updated>2015-01-01T00:00:00-05:00</updated>
-   <id>http://localhost:4000/publications/2015/McCombetal-IdentifyingTechnicalAndEconomic</id>
+   <id>http://www.cmccomb.com/publications/2015/McCombetal-IdentifyingTechnicalAndEconomic</id>
    <content type="html">&lt;p&gt;Water-lifting technologies in rural areas of the developing world have enormous potential to stimulate agricultural production and economic growth. The MoneyMaker Hip pump designed by Kickstart is a human-powered low cost pump, which can help subsistence farmers increase financial returns. This work optimizes the design of the MoneyMaker Hip pump, which is the cheapest and lightest portable water pump from Kickstart. A mathematical model of the working fluid and MoneyMaker Hip pump structure is developed. Deterministic optimization methods are then employed to maximize the flow rate of the groundwater pumped, maximize the lift height, and minimize the volume of material used for manufacturing. Design variables for the optimization included the dimensions of the pump, well depth, and speed of various parts of the system. The solutions are subject to constraints on the geometry of the system, the bending stress in the handle and cylinder, and ergonomic factors. Findings indicate that several technical improvements can be made on the current MoneyMaker Hip pump design to reduce the cost and human workload.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Enhancing Shear Transfer in Composite Decks</title>
-   <link href="http://localhost:4000/publications/2015/McCombTehrani-EnhancementofShearTransfer/"/>
+   <link href="http://www.cmccomb.com/publications/2015/McCombTehrani-EnhancementofShearTransfer/"/>
    <updated>2015-01-01T00:00:00-05:00</updated>
-   <id>http://localhost:4000/publications/2015/McCombTehrani-EnhancementofShearTransfer</id>
+   <id>http://www.cmccomb.com/publications/2015/McCombTehrani-EnhancementofShearTransfer</id>
    <content type="html">&lt;p&gt;Reinforced concrete construction and steel construction are two of the most common contemporary construction methods. Both methods make use of composite decks as floor systems and diaphragms. During the design of composite decks, the interaction between the steel deck and concrete slab is typically disregarded when calculating the strength of the composite diaphragm due to lack of complete shear transfer, as existing practices such as stamping are not effective to provide substantial composite action. This conservative assumption essentially results in non-efficient use of material. This paper presents a method for ensuring shear transfer through the use of conventional sheet metal screws, driven through the corrugated steel deck and embedded in the fresh concrete. This method is proposed for use in the field between formed steel beams. Both experimental and analytical studies support an increase in strength with the addition of embedded fasteners. Further, experimental results indicate an additional increase in strength with the addition of synthetic reinforcing fibers. The increase in strength with the addition of the fasteners is on the order of 100%. When fasteners are already in use, the addition of synthetic reinforcing fibers can increase strength on the order of 10%. The ultimate deflection of enhanced deck is comparable to deck tested without fasteners, but the initial stiffness of enhanced deck is much higher.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Studying Human Design Teams through Computational Teams of Simulated Annealing Agents</title>
-   <link href="http://localhost:4000/publications/2015/McCombCaganKotovsky-StudyingHumanDesignTeams/"/>
+   <link href="http://www.cmccomb.com/publications/2015/McCombCaganKotovsky-StudyingHumanDesignTeams/"/>
    <updated>2015-01-01T00:00:00-05:00</updated>
-   <id>http://localhost:4000/publications/2015/McCombCaganKotovsky-StudyingHumanDesignTeams</id>
+   <id>http://www.cmccomb.com/publications/2015/McCombCaganKotovsky-StudyingHumanDesignTeams</id>
    <content type="html">&lt;p&gt;Novel design methodologies are often evaluated through empirical studies involving human designers. However, such empirical studies can incur a high personnel cost. Further, it can be difficult to isolate the effects of specific team or individual characteristics. These limitations could be bypassed by employing a computational model of design teams. This work introduces the Cognitively-Inspired Simulated Annealing Teams (CISAT) modeling framework, an agent-based platform that provides a means for efficiently simulating human design teams. A number of empirically demonstrated cognitive phenomena are modeled within the platform, striking a balance between model simplicity and direct applicability to engineering design problems. This paper discusses the composition of the CISAT modeling framework and demonstrates how it can be used to simulate the performance of human design teams in a cognitive study. Results simulated with CISAT are compared directly to the results derived from human designers. Finally, the CISAT model is also used to investigate the characteristics that were most and least helpful to teams during the cognitive study.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Rolling with the Punches: An Examination of Team Performance in a Design Task Subject to Drastic Changes</title>
-   <link href="http://localhost:4000/publications/2015/McCombCaganKotovsky-RollingWithThePunches/"/>
+   <link href="http://www.cmccomb.com/publications/2015/McCombCaganKotovsky-RollingWithThePunches/"/>
    <updated>2015-01-01T00:00:00-05:00</updated>
-   <id>http://localhost:4000/publications/2015/McCombCaganKotovsky-RollingWithThePunches</id>
+   <id>http://www.cmccomb.com/publications/2015/McCombCaganKotovsky-RollingWithThePunches</id>
    <content type="html">&lt;p&gt;Designers must often create solutions to problems that exhibit dynamic characteristics. For instance, a client might modify specifications after design has commenced, or a competitor may introduce a new technology or feature. This paper presents a cognitive study that was conducted to explore the manner in which design teams respond to such situations. In the study, teams of undergraduate engineering students sought to solve a design task that was subject to two large, unexpected changes in problem formulation that were introduced during solving. High- and low-performing teams demonstrated very different approaches to solving the problem and overcoming the changes. The results indicate that there may exist a relationship between problem characteristics and fruitful solution strategies.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Lifting the Veil: Drawing insights about design teams from a cognitively-inspired computational model</title>
-   <link href="http://localhost:4000/publications/2015/McCombCaganKotovsky-LiftingTheVeil/"/>
+   <link href="http://www.cmccomb.com/publications/2015/McCombCaganKotovsky-LiftingTheVeil/"/>
    <updated>2015-01-01T00:00:00-05:00</updated>
-   <id>http://localhost:4000/publications/2015/McCombCaganKotovsky-LiftingTheVeil</id>
+   <id>http://www.cmccomb.com/publications/2015/McCombCaganKotovsky-LiftingTheVeil</id>
    <content type="html">&lt;p&gt;Novel design methodologies are often evaluated through studies involving human designers, but such studies can incur a high personnel cost. It can also be difficult to isolate the effects of specific team or individual characteristics. This work introduces the Cognitively-Inspired Simulated Annealing Teams (CISAT) modeling framework, a platform for efficiently simulating and analyzing human design teams. The framework models a number of empirically demonstrated cognitive phenomena, thus balancing simplicity and direct applicability. This paper discusses the model’s composition, and demonstrates its utility through simulating human design teams in a cognitive study. Simulation results are compared directly to the results from human designers. The CISAT model is also used to identify the most beneficial characteristics in the cognitive study.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Improving Irrigation in Remote Areas: Multi-objective Optimization of a Treadle Pump</title>
-   <link href="http://localhost:4000/publications/2014/SantaeufemiaJohnsonMcCombShimada-ImprovingIrrigationInRemote/"/>
+   <link href="http://www.cmccomb.com/publications/2014/SantaeufemiaJohnsonMcCombShimada-ImprovingIrrigationInRemote/"/>
    <updated>2014-10-01T00:00:00-04:00</updated>
-   <id>http://localhost:4000/publications/2014/SantaeufemiaJohnsonMcCombShimada-ImprovingIrrigationInRemote</id>
+   <id>http://www.cmccomb.com/publications/2014/SantaeufemiaJohnsonMcCombShimada-ImprovingIrrigationInRemote</id>
    <content type="html">&lt;p&gt;Water-lifting technologies in rural areas of the developing world have enormous potential to stimulate agricultural and economic growth. The treadle pump, a human-powered low-cost pump designed for irrigation in developing countries, can help farmers maximize financial return on small plots of land by ending their dependency on rain-fed irrigation systems. The treadle pump uses a suction piston to draw groundwater to the surface by way of a foot-powered treadle attached to each suction piston. Current treadle pump designs lift water from depths up to 7 meters at a flow-rate of 1–5 liters per second. This work seeks to optimize the design of the Dekhi style treadle pump, which has gained significant popularity due to its simplicity. A mathematical model of the working fluid and treadle pump structure has been developed in this study. Deterministic optimization methods are then employed to maximize the flow rate of the groundwater pumped, maximize the lift height, and minimize the volume of material used for manufacturing. Design variables for the optimization included the dimensions of the pump, well depth, and speed of various parts of the system. The solutions are subject to constraints on the geometry of the system, the bending stress in the treadles, and ergonomic factors. Findings indicate that significant technical improvements can be made on the standard Dekhi design, such as increasing the size of the pump cylinders and hose, while maintaining a standard total treadle length. These improvements could allow the Dekhi pump to be implemented in new regions and benefit additional rural farmers in the developing world.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Quantitative Comparison of High- and Low-Performing Teams in a Design Task Subject to Drastic Changes</title>
-   <link href="http://localhost:4000/publications/2014/McCombCaganKotovsky-QuantitativeComparisonOfHigh/"/>
+   <link href="http://www.cmccomb.com/publications/2014/McCombCaganKotovsky-QuantitativeComparisonOfHigh/"/>
    <updated>2014-08-01T00:00:00-04:00</updated>
-   <id>http://localhost:4000/publications/2014/McCombCaganKotovsky-QuantitativeComparisonOfHigh</id>
+   <id>http://www.cmccomb.com/publications/2014/McCombCaganKotovsky-QuantitativeComparisonOfHigh</id>
    <content type="html">&lt;p&gt;Many design tasks are subject to changes in goals or constraints. For instance, a client might modify specifications after design has commenced, or a competitor may introduce a new technology or feature. A design team often cannot anticipate such changes, yet they pose a considerable challenge. This paper presents a study where engineering teams sought to solve a design task that was subject to two large, unexpected changes in problem formulation that occurred during problem solving. Continuous design data was collected to observe how the designers responded to the changes. We show that high- and low-performing teams demonstrated very different approaches to solving the problem and overcoming the changes. In particular, high-performing teams achieved simple designs and extensively explored small portions of the design space; low-performing teams explored complex designs with little exploration around a target area of the design space. These strategic differences are interpreted with respect to cognitive load theory and goal theory. The results raise questions as to the relationship between characteristics of design problems and solution strategies. In addition, an attempt at increasing the teams’ resilience in the face of unexpected changes is introduced by encouraging early divergent search.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Research and Practice Group Methodology: A Case Study in Student Success.</title>
-   <link href="http://localhost:4000/publications/2014/McCombTehrani-ResearchAndPracticeGroup/"/>
+   <link href="http://www.cmccomb.com/publications/2014/McCombTehrani-ResearchAndPracticeGroup/"/>
    <updated>2014-04-01T00:00:00-04:00</updated>
-   <id>http://localhost:4000/publications/2014/McCombTehrani-ResearchAndPracticeGroup</id>
+   <id>http://www.cmccomb.com/publications/2014/McCombTehrani-ResearchAndPracticeGroup</id>
    <content type="html">&lt;p&gt;Experiential learning is a key component in engineering education. In civil engineering, this component is typically delivered through multiple projects. These projects may include term projects for individual courses, senior design projects, theses, or independent studies. The focus of these experiences may gradually shift from practice-oriented projects in undergraduate studies to research-oriented projects in graduate studies. Thus, learning objectives should always address both areas with a strong emphasis on common fields, such as applied research. Experiential learning has the capacity to include various program-level outcomes, such as technical knowledge, communication and teamwork. Development of a research and practice group facilitates these outcomes by creating an environment to share the learning experience. Such a group should replicate the working environment of civil engineers by incorporating multidisciplinary projects and diverse individuals, including cross-generational members. As a case study, this work examines a Research and Practice Group at California State University Fresno. This group consists of junior and senior undergraduates, graduate students, and former members who are participating as alumni. The major focus of research within the group is resilient and sustainable structural mechanics and design. This paper outlines the methodology that has been employed to ensure academic and professional success for members of the group. This methodology incorporates a recruitment process, meetings, consultation, mentorship, networking, and support. The level of student success achieved by the group is presented in terms of the achievements of the group’s members. This includes a discussion of completed projects, research funding, and group presentations. To further demonstrate the efficacy of the methodology, students in the research group are compared to the general body of engineering students at CSU Fresno though the results of a survey. This survey is analyzed using traditional methods, as well as Latent Semantic Analysis. Our results indicate that group members are better at embodying and communicating outcomes than the rest of the student body, and that the research and practice group provides an experience that allows students to internalize and take responsibility for their own goals.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
    <title>Development and Verification of a Wave Energy Converter Simulation Tool</title>
-   <link href="http://localhost:4000/publications/2013/McCombLawsonYu-DevelopmentAndVerification/"/>
+   <link href="http://www.cmccomb.com/publications/2013/McCombLawsonYu-DevelopmentAndVerification/"/>
    <updated>2013-04-01T00:00:00-04:00</updated>
-   <id>http://localhost:4000/publications/2013/McCombLawsonYu-DevelopmentAndVerification</id>
+   <id>http://www.cmccomb.com/publications/2013/McCombLawsonYu-DevelopmentAndVerification</id>
    <content type="html">&lt;p&gt;Numerical simulations to predict the dynamics and performance of wave energy converters (WECs) are challenging, requiring the simulation of complex fluid-structure interactions between a WEC device and the wave environment. Full Navier-Stokes computational fluid dynamics (CFD) simulations coupled with a multi-body dynamics solver are an effective simulation tool for this purpose because the governing physics are modeled from first physical principles. Unfortunately, the computational resources required to perform these types of high-fidelity simulations are significant, precluding the use of CFD simulations for design optimization. One method for reducing the numerical complexity of WEC simulations is to model the hydrodynamics using a heuristic approach that uses hydrodynamic coefficients derived from frequency-domain simulations to model the relevant hydrodynamics, while simulating the motion of the WEC device in the time-domain. The primary objective of the work presented herein is to develop such a numerical tool using the multi-body 6-degree-of-freedom (6DOF) solver SimMechanics and the frequency-domain hydrodynamics code WAMIT. The numerical tool was developed so that WEC devices comprised of arbitrarily connected multiple bodies and various power-take-off (PTO) systems could be readily modeled in operational sea states. In addition, the tool was developed to allow non-linear PTO control strategies to be considered. Using the simulation tool described above, the effect of fluid memory on predicted power output is then investigated. This is accomplished through comparison of numerical results with and without fluid memory.&lt;/p&gt;
 </content>
  </entry>
