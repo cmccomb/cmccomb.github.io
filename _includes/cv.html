@@ -20,6 +20,18 @@
 {% endfor %}
 </ul>
 
+### Grands and Funding
+<ul>
+{% for grant in site.data.grants %}
+<li>{{ grant.agency }}, "{{ grant.title }}," PI: {{ grant.PI }},
+{% if grant.CoPI %}
+Co-PI: {{ grant.CoPI }},
+{% endif %}
+{{ grant.amount }}.
+</li>
+{% endfor %}
+</ul>
+
 ### Publications
 {% if page.layout == "plain" %}
 #### Journal Articles

@@ -1,0 +1,13 @@
+- agency: Defense Advanced Research Projects Agency (DARPA)
+  type: Cooperative Agreement
+  title: A Hybrid Computer Platform to Design, Guide and Partner with Humans in the Team Problem-solving Process
+  PI: Jonathan Cagan
+  CoPI: Christopher McComb
+  amount: "$2,799,211"
+
+- agency: NVIDIA Corporation
+  type: Grand-in-kind
+  title: Rapid Evaluation and Synthesis of Engineering Systems
+  PI: Christopher McComb
+  CoPI: false
+  amount: NVIDIA Quadro P5000 GPU
