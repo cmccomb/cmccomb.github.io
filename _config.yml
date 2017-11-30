@@ -19,7 +19,7 @@ plugins:
     - classifier-reborn
     - jekyll-github-metadata
 
-lsi: false
+lsi: true
 
 permalink: /publications/:year/:title/
 
@@ -29,3 +29,5 @@ collections:
 
 office: 213U Hammond Building
 address: University Park, PA 16802
+phone: "+1 (814) 863-4426"
+email: "uum209@psu.edu"
