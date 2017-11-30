@@ -1,20 +1,24 @@
 <div style="text-align: center">
 <h1>{{ site.raised }}</h1>
-{% assign first = true %}
-{% for item in site.cv reversed %}
-{% if first %}
-{% if item.layout == "experience" %}
-{{ item.position }} <br/>
-{{ item.department }} <br/>
-{{ item.institution }}
-{% assign first = false %}
-{% endif %}
-{% endif %}
-{% endfor %}
+{{ site.data.experience.last.position }} <br/>
+{{ site.data.experience.last.department }} <br/>
+{{ site.data.experience.last.institution }}
 
 </div>
-{% include return_section_list.html ordered=false section="education"%}
-{% include return_section_list.html ordered=false section="experience"%}
+
+### Education
+<ul>
+{% for degree in site.data.education reversed %}
+<li>{{ degree.institution }}, {{ degree.department}}, {{ degree.degree }}, {{ degree.year }}</li>
+{% endfor %}
+</ul>
+
+### Experience
+<ul>
+{% for position in site.data.experience reversed %}
+<li>{{ position.position }}, {{ position.institution }}, {{ position.department}}, {{ position.start_date }} - {{ position.end_date }}</li>
+{% endfor %}
+</ul>
 
 ### Publications
 {% if page.layout == "plain" %}
