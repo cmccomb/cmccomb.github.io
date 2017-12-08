@@ -16,7 +16,7 @@
 ### Experience
 <ul>
 {% for position in site.data.experience reversed %}
-<li>{{ position.position }}, {{ position.institution }}, {{ position.department}}, {{ position.start_date }} - {{ position.end_date }}</li>
+<li>{{ position.position }}, {{ position.department}}, {{ position.institution }}, {{ position.start_date }} - {{ position.end_date }}{% if position.note %} {{ position.note }} {% endif %}</li>
 {% endfor %}
 </ul>
 
