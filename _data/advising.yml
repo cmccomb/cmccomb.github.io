@@ -1,0 +1,54 @@
+- name: Lucas Puentes
+  level: PhD
+  coadvisor: Jonathan Cagan
+  start_date: August 2017
+  end_date: Present
+
+- name: Ayush Raina
+  level: PhD
+  coadvisor: Jonathan Cagan
+  start_date: August 2017
+  end_date: Present
+
+- name: Emmeline Evans
+  level: undergraduate
+  start_date: August 2017
+  end_date: Present
+
+- name: Raiid Ahmed
+  level: undergraduate
+  start_date: August 2017
+  end_date: Present
+
+- name: Olivia Roy
+  level: undergraduate
+  title: The Intersection of Gender and Emotion in Product Design
+  start_date: October 2016
+  end_date: May 2017
+
+- name: Sydney Howard
+  level: undergraduate
+  title: Machine Learning Applications to Engineering Design
+  start_date: October 2016
+  end_date: May 2017
+
+- name: Frank Bello
+  level: undergraduate
+  coadvisor: Shraddha Joshi
+  title: Designing the Internet of Things with Varying Complexity
+  start_date: August 2016
+  end_date: May 2017
+
+- name: June Williams
+  level: undergraduate
+  coadvisor: Shraddha Joshi
+  title: Investigating Human-Device Interaction in Connected Environments
+  start_date: August 2016
+  end_date: May 2017
+
+- name: Guochen Shen
+  level: undergraduate
+  coadvisor: Shraddha Joshi
+  title: "Internet of Things Devices: Usage inHVAC Systems and Optimization"
+  start_date: August 2015
+  end_date: May 2016

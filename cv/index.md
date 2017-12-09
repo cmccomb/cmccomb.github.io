@@ -4,6 +4,8 @@ title: Curriculum Vitae
 permalink: /cv/
 order: 3
 ---
+<link rel="stylesheet" href="{{ site.baseurl }}public/css/cv.css">
+
 <div style="text-align: center">
 Access a printer-friendly version <a href="/cv/printer_friendly/">here</a>.
 </div>

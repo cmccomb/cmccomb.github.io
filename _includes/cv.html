@@ -7,23 +7,28 @@
 </div>
 
 ### Education
-<ul>
+<table class="cv">
 {% for degree in site.data.education reversed %}
-<li>{{ degree.institution }}, {{ degree.department}}, {{ degree.degree }}, {{ degree.year }}</li>
+<tr>
+<td>{{ degree.institution }}</td>
+<td>{{ degree.department}}</td>
+<td>{{ degree.degree }}</td>
+<td>{{ degree.year }}</td>
+</tr>
 {% endfor %}
-</ul>
+</table>
 
 ### Experience
 <ul>
 {% for position in site.data.experience reversed %}
-<li>{{ position.position }}, {{ position.department}}, {{ position.institution }}, {{ position.start_date }} - {{ position.end_date }}{% if position.note %} {{ position.note }} {% endif %}</li>
+<li><b>{{ position.position }}</b>, {{ position.department}}, {{ position.institution }}, {{ position.start_date }} - {{ position.end_date }}{% if position.note %} {{ position.note }} {% endif %}</li>
 {% endfor %}
 </ul>
 
 ### Grands and Funding
 <ul>
 {% for grant in site.data.grants %}
-<li>{{ grant.agency }}, "{{ grant.title }}," PI: {{ grant.PI }},
+<li><b>{{ grant.agency }}</b>, "{{ grant.title }}," PI: {{ grant.PI }},
 {% if grant.CoPI %}
 Co-PI: {{ grant.CoPI }},
 {% endif %}
@@ -46,3 +51,35 @@ Co-PI: {{ grant.CoPI }},
 {% else %}
 See [publications](/publications/).
 {% endif %}
+
+### Advising
+#### PhD Students
+<ul>
+{% for student in site.data.advising %}
+{% if student.level == "PhD" %}
+<li><b>{{ student.name }}</b>,
+{% if student.coadvisor %}
+(Co-advised with {{student.coadvisor}}),
+{% endif %}
+{{ student.start_date }} - {{ student.end_date }}
+</li>
+{% endif %}
+{% endfor %}
+</ul>
+
+#### Undergraduate Students
+<ul>
+{% for student in site.data.advising %}
+{% if student.level == "undergraduate" %}
+<li><b>{{ student.name }}</b>,
+{% if student.coadvisor %}
+(Co-advised with {{student.coadvisor}}),
+{% endif %}
+{% if student.title %}
+<i>{{ student.title }}</i>,
+{% endif %}
+{{ student.start_date }} - {{ student.end_date }}
+</li>
+{% endif %}
+{% endfor %}
+</ul>

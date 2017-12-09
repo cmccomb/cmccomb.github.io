@@ -1,0 +1,27 @@
+table, td {
+    border: 0;
+    width: auto;
+}
+
+table {
+    margin-left: 30px
+}
+
+td {
+    padding-top: 0;
+    padding-bottom: 4px;
+    padding-left: 0;
+}
+
+tbody tr:nth-child(odd) td,
+tbody tr:nth-child(odd) th {
+  background-color: #fff;
+}
+
+ul {
+    list-style: none;
+    margin-left: 30px;
+    padding-left: 30px;
+    text-indent: -30px;
+    padding-bottom: 4px;
+}
