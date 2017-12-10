@@ -4,7 +4,7 @@ table, td {
 }
 
 table {
-    margin-left: 30px
+    margin-left: 30px;
 }
 
 td {
@@ -24,4 +24,16 @@ ul {
     padding-left: 30px;
     text-indent: -30px;
     padding-bottom: 4px;
+}
+
+h4 {
+    margin-left: 15px;
+}
+
+.contact {
+    width: 100%;
+    margin-left: 0;
+}
+.contact td:last-child {
+    text-align: right;
 }
