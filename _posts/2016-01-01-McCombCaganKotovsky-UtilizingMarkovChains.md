@@ -4,7 +4,7 @@ layout: post
 title: Utilizing Markov Chains to Understand Operation Sequencing in Design Tasks
 authors: ["McComb, C.", "Cagan, J.", "Kotovsky, K."]
 venue: Design Computing and Cognition '16
-doi: "#"
+doi: 10.1007/978-3-319-44989-0_22
 year: 2016
 researchgate: 299514710
 googlescholar: "0P9w_S0AAAAJ:_kc_bZDykSQC"
