@@ -5,7 +5,7 @@ authors: ["McComb, C.", "Goucher-Lambert, K.", "Cagan, J."]
 year: 2015
 title: "Fairness and Manipulation: An Empirical Study of Arrow’s Impossibility Theorem International Conference on Engineering Design"
 venue: International Conference on Engineering Design
-doi: 10.13140/RG.2.1.2876.3920
+doi: 10.17605/OSF.IO/FYR6S
 researchgate: 275522533
 googlescholar: "0P9w_S0AAAAJ:_FxGoFyzp5QC"
 accepted: true
