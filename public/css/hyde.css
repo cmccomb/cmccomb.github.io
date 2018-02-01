@@ -349,6 +349,10 @@ a.sidebar-nav-item:focus {
   border-bottom-color: #F1B74B;
 }
 
+#eng {
+  border-bottom-color: #404040;
+}
+
 @media (min-width: 48em) {
   .pub-link {
     height: 50px;

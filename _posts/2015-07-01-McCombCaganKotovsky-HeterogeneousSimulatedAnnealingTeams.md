@@ -5,7 +5,7 @@ authors: ["McComb, C.", "Cagan, J.", "Kotovsky, K."]
 year: 2015
 title: "Heterogeneous Simulated Annealing Teams: An Optimizing Search Algorithm Inspired by Engineering Design Teams"
 venue: International Conference on Engineering Design
-doi: 10.17605/OSF.IO/8K2CR
+engrxiv: 10.17605/OSF.IO/8K2CR
 researchgate: 275522620
 googlescholar: "0P9w_S0AAAAJ:LkGwnXOMwfcC"
 accepted: true

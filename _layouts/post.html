@@ -19,6 +19,9 @@ layout: default
     {% if page.googlescholar %}
       <a href="https://scholar.google.com/citations?view_op=view_citation&citation_for_view={{ page.googlescholar }}"><img class="pub-link" id="gsk" src="/images/publications/gs.png"></a>
     {% endif %}
+    {% if page.engrxiv %}
+      <a href="http://dx.doi.org/{{page.engrxiv}}"><img  class="pub-link" id="eng" src="/images/publications/eng.png"></a>
+    {% endif %}
   </div>
 
 
