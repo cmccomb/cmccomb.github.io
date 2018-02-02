@@ -5,7 +5,7 @@ authors: ["McComb, C.", "Cagan, J.", "Kotovsky, K."]
 year: 2014
 title: Quantitative Comparison of High- and Low-Performing Teams in a Design Task Subject to Drastic Changes
 venue: ASME IDETC - Design Theory and Methodology Conference
-doi: 10.1115/DETC2014-34653
+asme: 10.1115/DETC2014-34653
 researchgate: 275522409
 googlescholar: "0P9w_S0AAAAJ:W7OEmFMy1HYC"
 accepted: true

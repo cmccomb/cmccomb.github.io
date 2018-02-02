@@ -5,7 +5,7 @@ authors: ["Santaeufemia, P.S.", "Johnson, N.G.", "McComb, C.", "Shimada, K."]
 year: 2014
 title: "Improving Irrigation in Remote Areas: Multi-objective Optimization of a Treadle Pump"
 venue: ASME IDETC - Design Automation Conference
-doi: 10.1115/DETC2014-35463
+asme: 10.1115/DETC2014-35463
 researchgate: 275522521
 googlescholar: "0P9w_S0AAAAJ:YsMSGLbcyi4C"
 accepted: true

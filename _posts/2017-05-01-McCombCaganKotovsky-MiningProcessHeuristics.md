@@ -6,7 +6,7 @@ title: Mining Process Heuristics from Designer Action Data via Hidden Markov Mod
 venue: Journal of Mechanical Design
 year: 2017
 accepted: true
-doi: 10.1115/1.4037308
+asme: 10.1115/1.4037308
 googlescholar: 0P9w_S0AAAAJ:dhFuZR0502QC
 researchgate: 318325268
 ---

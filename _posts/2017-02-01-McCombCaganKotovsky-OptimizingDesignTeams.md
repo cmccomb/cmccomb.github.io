@@ -8,7 +8,7 @@ venue: Journal of Mechanical Design
 volume: 139
 issue: 4
 pages: 1-12
-doi: 10.1115/1.4035793
+asme: 10.1115/1.4035793
 researchgate: 312154496
 googlescholar: "0P9w_S0AAAAJ:4DMP91E08xMC"
 accepted: true

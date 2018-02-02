@@ -4,7 +4,7 @@ layout: post
 title: Linking Properties of Design Problems to Optimal Team Characteristics
 authors: ["McComb, C.", "Cagan, J.", "Kotovsky, K."]
 venue: ASME IDETC - Design Theory and Methodology Conference
-doi: 10.1115/DETC2016-59333
+asme: 10.1115/DETC2016-59333
 year: 2016
 researchgate: 300026394
 googlescholar: "0P9w_S0AAAAJ:M3ejUd6NZC8C"

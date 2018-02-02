@@ -357,6 +357,10 @@ a.sidebar-nav-item:focus {
   border-bottom-color: #4E5D6D;
 }
 
+#asme {
+  border-bottom-color: #004E9A;
+}
+
 @media (min-width: 48em) {
   .pub-link {
     height: 50px;

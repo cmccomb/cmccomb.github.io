@@ -4,7 +4,7 @@ layout: post
 title: Studying Human Design Teams through Computational Teams of Simulated Annealing Agents
 authors: ["McComb, C.", "Cagan, J.", "Kotovsky, K."]
 venue: ASME IDETC - Design Theory and Methodology Conference
-doi: 10.1115/DETC2015-46545
+asme: 10.1115/DETC2015-46545
 researchgate: 275522540
 googlescholar: "0P9w_S0AAAAJ:roLk4NBRz8UC"
 year: 2015

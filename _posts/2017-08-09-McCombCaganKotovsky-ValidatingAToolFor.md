@@ -5,7 +5,7 @@ title: Validating a Tool for Predicting Problem-Specific Optimized Team Characte
 authors: ["McComb, C.", "Cagan, J.", "Kotovsky, K."]
 venue: ASME IDETC - Design Theory and Methodology Conference
 year: 2017
-doi: 10.1115/DETC2017-67430
+asme: 10.1115/DETC2017-67430
 googlescholar: "0P9w_S0AAAAJ:9ZlFYXVOiuMC"
 researchgate: 316277836
 accepted: true
