@@ -353,6 +353,10 @@ a.sidebar-nav-item:focus {
   border-bottom-color: #404040;
 }
 
+#figs {
+  border-bottom-color: #4E5D6D;
+}
+
 @media (min-width: 48em) {
   .pub-link {
     height: 50px;
