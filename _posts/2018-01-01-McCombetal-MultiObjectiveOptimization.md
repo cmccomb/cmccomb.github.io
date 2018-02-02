@@ -6,7 +6,7 @@ title: Multi-Objective Optimization and Scenario-based Robustness Analysis of th
 year: 2018
 venue: Journal of Development Engineering
 accepted: true
-doi: 10.1016/j.deveng.2018.01.001
+elsevier: 10.1016/j.deveng.2018.01.001
 googlescholar: "0P9w_S0AAAAJ:qUcmZB5y_30C"
 engrxiv: 10.17605/OSF.IO/VFWME
 researchgate: 322505518

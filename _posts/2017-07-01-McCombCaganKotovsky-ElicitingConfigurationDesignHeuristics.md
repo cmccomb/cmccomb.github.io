@@ -5,6 +5,7 @@ authors: ["McComb, C.", "Cagan, J.", "Kotovsky, K."]
 year: 2017
 title: Eliciting Configuration Design Heuristics with Hidden Markov Models
 researchgate: 315799760
+designsociety: 39559
 googlescholar: "0P9w_S0AAAAJ:mVmsd5A6BfQC"
 venue: International Conference on Engineering Design
 engrxiv: 10.17605/OSF.IO/ZUDHE

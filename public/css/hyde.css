@@ -361,6 +361,27 @@ a.sidebar-nav-item:focus {
   border-bottom-color: #004E9A;
 }
 
+#cambridge {
+  border-bottom-color: #C80A22;
+}
+
+#designsociety {
+  border-bottom-color: #343679;
+}
+
+#elsevier {
+  border-bottom-color: #FF8300;
+}
+
+#ieeexplore {
+  border-bottom-color: #0372A7;
+}
+
+#springer {
+  border-bottom-color: #0A2850;
+}
+
+
 @media (min-width: 48em) {
   .pub-link {
     height: 50px;

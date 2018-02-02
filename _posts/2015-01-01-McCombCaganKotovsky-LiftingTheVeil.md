@@ -8,7 +8,7 @@ venue: Design Studies
 volume: 40
 issue: C
 pages: 119-142
-doi: 10.1016/j.destud.2015.06.005
+elsevier: 10.1016/j.destud.2015.06.005
 researchgate: 276275437
 googlescholar: "0P9w_S0AAAAJ:Se3iqnhoufwC"
 accepted: true

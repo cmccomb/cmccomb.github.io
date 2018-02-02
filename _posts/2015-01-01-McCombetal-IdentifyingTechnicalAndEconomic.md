@@ -5,7 +5,7 @@ authors: ["McComb, C.", "Johnson, N.G.", "Santaeufemia, P.S.", "Shimada, K."]
 year: 2014
 title: Identifying Technical and Economic Improvements to the MoneyMaker Hip Pump through Multi-Objective Optimization
 venue: IEEE - Global Humanitarian Technology Conference
-doi: 10.1109/GHTC.2014.6970302
+ieeexplore: 10.1109/GHTC.2014.6970302
 researchgate: 275522465
 googlescholar: "0P9w_S0AAAAJ:eQOLeE2rZwMC"
 accepted: true

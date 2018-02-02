@@ -7,7 +7,7 @@ title: Enhancing Shear Transfer in Composite Decks
 venue: Engineering Structures
 volume: 88
 pages: 251-261
-doi: 10.1016/j.engstruct.2015.01.046
+elsevier: 10.1016/j.engstruct.2015.01.046
 researchgate: 272568322
 googlescholar: "0P9w_S0AAAAJ:ufrVoPGSRksC"
 accepted: true

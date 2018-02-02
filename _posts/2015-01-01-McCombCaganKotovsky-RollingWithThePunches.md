@@ -7,7 +7,7 @@ title: "Rolling with the Punches: An Examination of Team Performance in a Design
 venue: Design Studies
 volume: 36
 pages: 99-121
-doi: 10.1016/j.destud.2014.10.001
+elsevier: 10.1016/j.destud.2014.10.001
 researchgate: 269724743
 googlescholar: "0P9w_S0AAAAJ:WF5omc3nYNoC"
 accepted: true

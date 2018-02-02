@@ -13,12 +13,6 @@ layout: default
     {% if page.doi %}
       <a href="http://dx.doi.org/{{page.doi}}"><img  class="pub-link" id="doi" src="/images/publications/doi.png"></a>
     {% endif %}
-    {% if page.researchgate %}
-      <a href="https://www.researchgate.net/publication/{{page.researchgate}}_{{ page.title}}"><img class="pub-link" id="reg" src="/images/publications/rg.png"></a>
-    {% endif %}
-    {% if page.googlescholar %}
-      <a href="https://scholar.google.com/citations?view_op=view_citation&citation_for_view={{ page.googlescholar }}"><img class="pub-link" id="gsk" src="/images/publications/gs.png"></a>
-    {% endif %}
     {% if page.engrxiv %}
       <a href="http://dx.doi.org/{{page.engrxiv}}"><img  class="pub-link" id="eng" src="/images/publications/eng.png"></a>
     {% endif %}
@@ -28,6 +22,28 @@ layout: default
     {% if page.asme %}
       <a href="http://dx.doi.org/{{page.asme}}"><img  class="pub-link" id="asme" src="/images/publications/asme.png"></a>
     {% endif %}
+    {% if page.researchgate %}
+      <a href="https://www.researchgate.net/publication/{{page.researchgate}}_{{ page.title}}"><img class="pub-link" id="reg" src="/images/publications/rg.png"></a>
+    {% endif %}
+    {% if page.googlescholar %}
+      <a href="https://scholar.google.com/citations?view_op=view_citation&citation_for_view={{ page.googlescholar }}"><img class="pub-link" id="gsk" src="/images/publications/gs.png"></a>
+    {% endif %}
+    {% if page.cambridge%}
+      <a href="http://dx.doi.org/{{page.cambridge}}"><img  class="pub-link" id="cambridge" src="/images/publications/cambridge.png"></a>
+    {% endif %}
+    {% if page.designsociety %}
+      <a href="https://www.designsociety.org/publication/{{ page.designsociety }}/"><img class="pub-link" id="designsociety" src="/images/publications/designsociety.png"></a>
+    {% endif %}
+    {% if page.elsevier%}
+      <a href="http://dx.doi.org/{{page.elsevier}}"><img  class="pub-link" id="elsevier" src="/images/publications/elsevier.png"></a>
+    {% endif %}
+    {% if page.ieeexplore%}
+      <a href="http://dx.doi.org/{{page.ieeexplore}}"><img  class="pub-link" id="ieeexplore" src="/images/publications/ieee.png"></a>
+    {% endif %}
+    {% if page.springer%}
+      <a href="http://dx.doi.org/{{page.springer}}"><img  class="pub-link" id="springer" src="/images/publications/springer.png"></a>
+    {% endif %}
+
   </div>
 
 

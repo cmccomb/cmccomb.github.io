@@ -5,7 +5,6 @@ authors: ["McComb, C.", "Tehrani, F.M."]
 year: 2014
 title: "Research and Practice Group Methodology: A Case Study in Student Success."
 venue: ASEE Pacific-Southwest Conference
-doi: 10.13140/RG.2.1.3555.1846
 researchgate: 275522401
 googlescholar: "0P9w_S0AAAAJ:Y0pCki6q_DkC"
 accepted: true

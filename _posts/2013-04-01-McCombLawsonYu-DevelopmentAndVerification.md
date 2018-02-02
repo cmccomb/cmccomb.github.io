@@ -5,7 +5,7 @@ authors: ["McComb, C.", "Lawson, M.", "Yu, Y-H."]
 year: 2013
 title: Development and Verification of a Wave Energy Converter Simulation Tool
 venue: Marine Energy Technology Symposium
-doi: 10.13140/RG.2.1.3817.3285
+engrxiv: 10.17605/OSF.IO/JBW3Z
 researchgate: 275522396
 googlescholar: "0P9w_S0AAAAJ:u5HHmVD_uO8C"
 accepted: true
