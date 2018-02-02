@@ -1,7 +1,7 @@
 ---
 type: thesis
 layout: post
-authors: [McComb, C."]
+authors: ["McComb, C."]
 year: 2012
 title: Enhancement of Concrete Composite Decks
 venue: B.S., Department of Civil and Environmental Engineering, California State University Fresno
