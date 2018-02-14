@@ -357,6 +357,10 @@ a.sidebar-nav-item:focus {
   border-bottom-color: #336699;
 }
 
+#email {
+  border-bottom-color: #7EC6D9;
+}
+
 #orcid {
   border-bottom-color: #A6CE39;
 }

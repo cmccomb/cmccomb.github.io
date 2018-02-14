@@ -4,12 +4,7 @@ title: Contact
 permalink: /contact/
 order: 6
 ---
-### Office
-213U Hammond Building
-
-### E-mail
-[uum209@psu.edu](mailto:uum209@psu.edu)
-
+<a href="mailto:uum209@psu.edu"><img  class="pub-link" id="email" src="/images/profiles/email.png"></a>
 <a href="http://github.com/cmccomb"><img  class="pub-link" id="github" src="/images/profiles/github.png"></a>
 <a href="http://twitter.com/ccmccomb"><img  class="pub-link" id="twitter" src="/images/profiles/twitter.png"></a>
 <a href="https://orcid.org/0000-0002-5024-7701"><img  class="pub-link" id="orcid" src="/images/profiles/orcid.png"></a>
