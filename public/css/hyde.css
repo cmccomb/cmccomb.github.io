@@ -353,6 +353,22 @@ a.sidebar-nav-item:focus {
   border-bottom-color: #404040;
 }
 
+#publons {
+  border-bottom-color: #336699;
+}
+
+#orcid {
+  border-bottom-color: #A6CE39;
+}
+
+#twitter {
+  border-bottom-color: #4DA0EC;
+}
+
+#github {
+    border-bottom-color: #24292E;
+}
+
 #figs {
   border-bottom-color: #4E5D6D;
 }
