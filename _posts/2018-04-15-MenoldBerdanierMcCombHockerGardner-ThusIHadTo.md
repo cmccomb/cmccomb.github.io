@@ -1,8 +1,9 @@
 ---
 type: conference
 layout: post
-title: "Thus, I had to go with what I had": A Multiple Methods Exploration of Novice Designers' Articulation of Prototyping Decisions"
-authors: ["Menold, J.", "Berdanier, C." "McComb, C.", "Hocker, E.", "Gardner, L."]
+title: >
+    "Thus, I had to go with what I had": A Multiple Methods Exploration of Novice Designers Articulation of Prototyping Decisions
+authors: ["Menold, J.", "Berdanier, C.", "McComb, C.", "Hocker, E.", "Gardner, L."]
 venue: ASME IDETC - Design Theory and Methodology
 year: 2018
 accepted: true

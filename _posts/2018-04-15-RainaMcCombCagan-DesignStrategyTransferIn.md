@@ -2,7 +2,7 @@
 type: conference
 layout: post
 title: Design Strategy Transfer in Cognitively-Inspired Agents
-authors: ["Puentes, L.", "McComb, C.", "Cagan, J."]
+authors: ["Raina, A.", "McComb, C.", "Cagan, J."]
 venue: ASME IDETC - Design Automation Conference
 year: 2018
 accepted: true
