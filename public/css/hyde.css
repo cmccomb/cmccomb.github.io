@@ -405,6 +405,10 @@ a.sidebar-nav-item:focus {
   border-bottom-color: #821F1E;
 }
 
+#osf {
+  border-bottom-color: #56B8EC;
+}
+
 
 @media (min-width: 48em) {
   .pub-link {
