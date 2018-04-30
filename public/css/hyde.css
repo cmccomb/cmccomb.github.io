@@ -401,6 +401,10 @@ a.sidebar-nav-item:focus {
   border-bottom-color: #0A2850;
 }
 
+#thesiscommons {
+  border-bottom-color: #821F1E;
+}
+
 
 @media (min-width: 48em) {
   .pub-link {
