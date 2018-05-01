@@ -11,6 +11,7 @@ pages: 1-6
 asme: 10.1115/1.4032810
 researchgate: 293175573
 googlescholar: "0P9w_S0AAAAJ:YOwf2qJgpHMC"
+engrxiv: 10.17605/OSF.IO/PMBFH
 accepted: true
 ---
 Insights uncovered by research in design cognition are often utilized to develop methods used by human designers; in this work, such insights are used to inform and improve computational methodologies. This paper introduces the heterogeneous simulated annealing team (HSAT) algorithm, a multiagent simulated annealing (MSA) algorithm. HSAT is based on a validated computational model of human-based engineering design and retains characteristics of the model that structure interaction between team members and allow for heterogeneous search strategies to be employed within a team. The performance of this new algorithm is compared to several other simulated annealing (SA) based algorithms on three carefully selected benchmarking functions. The HSAT algorithm provides terminal solutions that are better on average than other algorithms explored in this work.
