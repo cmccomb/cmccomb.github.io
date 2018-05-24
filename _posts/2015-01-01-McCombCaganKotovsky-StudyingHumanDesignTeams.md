@@ -7,6 +7,7 @@ venue: ASME IDETC - Design Theory and Methodology Conference
 asme: 10.1115/DETC2015-46545
 researchgate: 275522540
 googlescholar: "0P9w_S0AAAAJ:roLk4NBRz8UC"
+engrxiv: 10.17605/OSF.IO/ZQCF3
 year: 2015
 accepted: true
 ---
