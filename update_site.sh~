@@ -1,5 +1,5 @@
 # Build the site
-# jekyll build
+jekyll build
 
 # Clean the directory
 echo "Cleaning directory..."
