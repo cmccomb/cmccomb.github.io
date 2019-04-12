@@ -1,5 +1,5 @@
 ---
-layout: pub
+layout: post
 type: conference
 title: Decision-Making In The Prescription Of Orthotics And Prosthetics For Partial-Foot Amputees
 authors: ["P. Saravanan", "C. Hipple", "J. Wang", "C. McComb", "J. Menold"]

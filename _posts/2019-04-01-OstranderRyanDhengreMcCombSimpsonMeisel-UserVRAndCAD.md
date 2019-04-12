@@ -1,5 +1,5 @@
 ---
-layout: pub
+layout: post
 type: conference
 title: A Comparative Study Of Virtual Reality And Computer-Aided Design To Evaluate Parts For Additive Manufacturing
 authors: ["J. Ostrander", "L. Ryan", "S. Dhengre", "C. McComb", "T. Simpson", "N. Meisel"]

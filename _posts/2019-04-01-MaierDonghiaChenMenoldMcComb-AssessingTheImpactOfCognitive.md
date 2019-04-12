@@ -1,5 +1,5 @@
 ---
-layout: pub
+layout: post
 type: conference
 title: Assessing The Impact Of Cognitive Assistants On Mental Workload In Simple Tasks
 authors: ["T. Maier", "V. Donghia", "C. Chen", "J. Menold", "C. McComb"]

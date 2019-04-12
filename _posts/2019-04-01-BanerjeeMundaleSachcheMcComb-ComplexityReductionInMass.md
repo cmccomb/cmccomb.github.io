@@ -1,5 +1,5 @@
 ---
-layout: pub
+layout: post
 type: conference
 title: Complexity Reduction in Mass Customization To Facilitate Better Decision Support
 authors: ["J. Banerjee", "M. Mundale", "A. Sachche", "C. McComb"]

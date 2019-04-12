@@ -1,5 +1,5 @@
 ---
-layout: pub
+layout: post
 type: conference
 title: On The Analysis Of A Compromised Additive Manufacturing System Using Spatio-Temporal Decomposition
 authors: ["S. Prakash", "T. Mahan", "G. Williams", "C. McComb", "J. Menold", "C. Tucker"]

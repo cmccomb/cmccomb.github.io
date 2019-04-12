@@ -1,5 +1,5 @@
 ---
-layout: pub
+layout: post
 type: conference
 title: Evaluating Idea Quantity And Variety When Using Digital Collaboration Tools To Support Brainstorming In Non-Collocated Teams 
 authors: ["D. Kaweesa", "C. McComb", "J. Menold", "S. Ritter", "N. Meisel"]

@@ -1,7 +1,7 @@
 ---
-layout: pub
+layout: post
 type: conference
-title: Critical Thinking In The Design Classroom: An Analysis Of Student Design Reflections
+title: "Critical Thinking In The Design Classroom: An Analysis Of Student Design Reflections"
 authors: ["E. Evans", "J. Menold", "C. McComb"]
 venue: ASME 2019 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference
 year: 2019

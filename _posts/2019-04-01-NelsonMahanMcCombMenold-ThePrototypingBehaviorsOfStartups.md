@@ -1,7 +1,7 @@
 ---
-layout: pub
+layout: post
 type: conference
-title: The Prototyping Behaviors Of Startups: Exploring The Relationship Between Prototyping Behavior And The Financial Success Of Startups
+title: "The Prototyping Behaviors Of Startups: Exploring The Relationship Between Prototyping Behavior And The Financial Success Of Startups"
 authors: ["J. Nelson", "T. Mahan", "C. McComb", "J. Menold"]
 venue: ASME 2019 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference
 year: 2019

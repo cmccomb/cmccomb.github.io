@@ -1,7 +1,7 @@
 ---
-layout: pub
+layout: post
 type: conference
-title: Learning To Design From Humans: Imitating Human Designers Through Deep Learning
+title: "Learning To Design From Humans: Imitating Human Designers Through Deep Learning"
 authors: ["A. Raina", "C. McComb", "J. Cagan"]
 venue: ASME 2019 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference
 year: 2019

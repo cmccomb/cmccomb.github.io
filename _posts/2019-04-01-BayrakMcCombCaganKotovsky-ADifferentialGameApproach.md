@@ -1,5 +1,5 @@
 ---
-layout: pub
+layout: post
 type: conference
 title: A Differential Game Approach to Dynamic Competitive Decisions Toward Human-Computer Collaboration
 authors: ["A. Bayrak", "C. McComb", "J. Cagan", "K. Kotovsky"]

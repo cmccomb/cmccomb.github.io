@@ -1,7 +1,7 @@
 ---
-layout: pub
+layout: post
 type: conference
-title: Collaborating with Style: Using an Agent-Based Model to Simulate Cognitive Style Diversity in Problem Solving Teams
+title: "Collaborating with Style: Using an Agent-Based Model to Simulate Cognitive Style Diversity in Problem Solving Teams"
 authors: ["S. Lapp", "K. Jablokow", "C. McComb"]
 venue: ASME 2019 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference
 year: 2019
