@@ -17,7 +17,7 @@ author:
 
 plugins:
     - classifier-reborn
-    - jekyll-github-metadata
+#    - jekyll-github-metadata
 
 lsi: true
 

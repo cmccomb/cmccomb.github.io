@@ -1,0 +1,35 @@
+# Permalinks
+permalink:        pretty
+
+# Setup
+title:		  Chris McComb
+raised:     Chris M<span style="vertical-align:18%">c</span>Comb
+tagline:          ''
+description1:   Assistant Professor
+description2:   <a href="http://sedtapp.psu.edu">SEDTAPP</a> @ <a href="http://www.psu.edu">PSU</a>
+url:              http://www.cmccomb.com
+baseurl:          /
+repository: cmccomb/cmccomb.github.io-source
+
+author:
+  name:           'Chris McComb'
+  url:            http://www.cmccomb.com
+
+plugins:
+    - classifier-reborn
+    - jekyll-github-metadata
+
+lsi: true
+
+permalink: /publications/:year/:title/
+
+collections:
+  cv:
+    output: false
+
+office: 213U Hammond Building
+address: University Park, PA 16802
+phone: "+1 (814) 863-4426"
+email: "mccomb@psu.edu"
+website: "hsdl.psu.edu"
+cell: "+1 (559) 859-8459"
