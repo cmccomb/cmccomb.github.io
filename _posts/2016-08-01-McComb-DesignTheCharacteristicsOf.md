@@ -1,7 +1,7 @@
 ---
 type: thesis
 layout: post
-authors: ["McComb, C."]
+authors: ["C. McComb"]
 year: 2016
 title: Designing the Characteristics of Design Teams via Cognitively Inspired Computational Modeling
 venue: Ph.D., Department of Mechanical Engineering, Carnegie Mellon University

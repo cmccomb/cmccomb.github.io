@@ -1,7 +1,7 @@
 ---
 type: conference
 layout: post
-authors: ["McComb, C.", "Johnson, N.G.", "Santaeufemia, P.S.", "Shimada, K."]
+authors: ["C. McComb", "N.G. Johnson", "P.S. Santaeufemia", "K. Shimada"]
 year: 2014
 title: Identifying Technical and Economic Improvements to the MoneyMaker Hip Pump through Multi-Objective Optimization
 venue: IEEE - Global Humanitarian Technology Conference

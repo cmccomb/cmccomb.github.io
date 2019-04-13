@@ -1,10 +1,10 @@
 ---
 type: conference
 layout: post
-authors: ["Santaeufemia, P.S.", "Johnson, N.G.", "McComb, C.", "Shimada, K."]
+authors: ["P.S. Santaeufemia", "N.G. Johnson", "C. McComb", "K. Shimada"]
 year: 2014
 title: "Improving Irrigation in Remote Areas: Multi-objective Optimization of a Treadle Pump"
-venue: ASME IDETC - Design Automation Conference
+venue: ASME 2014 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference.
 asme: 10.1115/DETC2014-35463
 researchgate: 275522521
 googlescholar: "0P9w_S0AAAAJ:YsMSGLbcyi4C"

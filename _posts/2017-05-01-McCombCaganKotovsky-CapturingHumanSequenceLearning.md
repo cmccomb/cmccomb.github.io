@@ -1,7 +1,7 @@
 ---
 type: journal
 layout: post
-authors: ["McComb, C.", "Cagan, J.", "Kotovsky, K."]
+authors: ["C. McComb", "J. Cagan", "K. Kotovsky"]
 title: Capturing Human Sequence-Learning Abilities in Configuration Design Tasks through Markov Chains
 venue: Journal of Mechanical Design
 year: 2017

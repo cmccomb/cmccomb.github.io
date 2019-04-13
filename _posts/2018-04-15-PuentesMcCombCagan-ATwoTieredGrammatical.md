@@ -2,8 +2,8 @@
 type: conference
 layout: post
 title: A Two-Tiered Grammatical Approach For Agent-Based Computational Design
-authors: ["Puentes, L.", "McComb, C.", "Cagan, J."]
-venue: ASME IDETC - Design Automation Conference
+authors: ["L. Puentes", "C. McComb", "J. Cagan"]
+venue: ASME 2018 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference.
 year: 2018
 accepted: true
 googlescholar: "0P9w_S0AAAAJ:hFOr9nPyWt4C"

@@ -1,7 +1,7 @@
 ---
 type: journal
 layout: post
-authors: ["McComb, C.", "Cagan, J.", "Kotovsky, K."]
+authors: ["C. McComb", "J. Cagan", "K. Kotovsky"]
 title:  Data on the Configuration Design of Internet-Connected Home Cooling Systems by Engineering Students
 venue: Data in Brief
 year: 2017

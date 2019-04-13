@@ -1,7 +1,7 @@
 ---
 type: conference
 layout: post
-authors: ["McComb, C.", "Cagan, J.", "Kotovsky, K."]
+authors: ["C. McComb", "J. Cagan", "K. Kotovsky"]
 year: 2017
 title: Eliciting Configuration Design Heuristics with Hidden Markov Models
 researchgate: 315799760

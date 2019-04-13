@@ -2,8 +2,8 @@
 type: conference
 layout: post
 title: Validating a Tool for Predicting Problem-Specific Optimized Team Characteristics
-authors: ["McComb, C.", "Cagan, J.", "Kotovsky, K."]
-venue: ASME IDETC - Design Theory and Methodology Conference
+authors: ["C. McComb", "J. Cagan", "K. Kotovsky"]
+venue: ASME 2017 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference
 year: 2017
 asme: 10.1115/DETC2017-67430
 googlescholar: "0P9w_S0AAAAJ:9ZlFYXVOiuMC"

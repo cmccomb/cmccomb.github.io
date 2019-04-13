@@ -2,7 +2,7 @@
 type: conference
 layout: post
 title: Design Practica as Authentic Assessments in First-year Engineering Design Courses
-authors: ["McComb, C.", "Berdanier, C.", "Menold, J."]
+authors: ["C. McComb", "C. Berdanier", "J. Menold"]
 venue: ASEE First-Year Engineering Education Conference
 year: 2018
 engrxiv: 10.31224/osf.io/9gkxe

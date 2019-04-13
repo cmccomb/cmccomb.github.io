@@ -1,7 +1,7 @@
 ---
 type: conference
 layout: post
-authors: ["McComb, C.", "Lawson, M.", "Yu, Y-H."]
+authors: ["C. McComb", "M. Lawson, M.", "Y-H. Yu"]
 year: 2013
 title: Development and Verification of a Wave Energy Converter Simulation Tool
 venue: Marine Energy Technology Symposium

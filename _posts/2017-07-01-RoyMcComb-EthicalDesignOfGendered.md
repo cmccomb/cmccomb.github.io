@@ -2,7 +2,7 @@
 type: other
 style: Workshop
 layout: post
-authors: ["Roy, O.", "McComb, C."]
+authors: ["O. Roy", "C. McComb"]
 year: 2018
 title: Ethical Design of Gendered Products
 venue: Engineering, Social Justice and Peace Conference

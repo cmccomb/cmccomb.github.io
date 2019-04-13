@@ -1,7 +1,7 @@
 ---
 type: journal
 layout: post
-authors: ["McComb, C.", "Cagan, J.", "Kotovsky, K."]
+authors: ["C. McComb", "J. Cagan", "K. Kotovsky"]
 year: 2015
 title: "Lifting the Veil: Drawing insights about design teams from a cognitively-inspired computational model"
 venue: Design Studies

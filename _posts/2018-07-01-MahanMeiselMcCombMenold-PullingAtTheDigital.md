@@ -2,7 +2,7 @@
 type: journal
 layout: post
 title: "Pulling at the Digital Thread: Exploring the Tolerance Stack Up Between Automatic Procedures and Expert Strategies in Scan To Print Processes"
-authors: ["Mahan, T.", "Meisel, N.", "McComb, C.", "Menold, J."]
+authors: ["T. Mahan", "N. Meisel", "C. McComb", "J. Menold"]
 venue: Journal of Mechanical Design
 year: 2018
 accepted: true

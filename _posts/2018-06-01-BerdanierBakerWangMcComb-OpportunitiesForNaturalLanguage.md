@@ -2,7 +2,7 @@
 type: conference
 layout: post
 title: "Opportunities for Natural Language Processing in Qualitative Engineering Education Research: Two Examples"
-authors: ["Berdanier, C.", "Baker, E.", "Wang, W.", "McComb, C."]
+authors: ["C. Berdanier", "E. Baker", "W. Wang", "C. McComb"]
 venue: 2018 IEEE Frontiers in Education Conference
 year: 2018
 accepted: true

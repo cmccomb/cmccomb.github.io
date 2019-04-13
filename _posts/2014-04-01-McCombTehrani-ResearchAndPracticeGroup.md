@@ -1,7 +1,7 @@
 ---
 type: conference
 layout: post
-authors: ["McComb, C.", "Tehrani, F.M."]
+authors: ["C. McComb", "F.M. Tehrani"]
 year: 2014
 title: "Research and Practice Group Methodology: A Case Study in Student Success."
 venue: ASEE Pacific-Southwest Conference

@@ -1,7 +1,7 @@
 ---
 type: journal
 layout: post
-authors: ["McComb, C.", "Cagan, J.", "Kotovsky, K."]
+authors: ["C. McComb", "J. Cagan", "K. Kotovsky"]
 year: 2015
 title: "Rolling with the Punches: An Examination of Team Performance in a Design Task Subject to Drastic Changes"
 venue: Design Studies

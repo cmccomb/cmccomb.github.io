@@ -2,8 +2,8 @@
 type: conference
 layout: post
 title: Designing Improved Teams for Crowdsourced Competitions
-authors: ["Maier, T.", "McComb, C."]
-venue: ASME IDETC - Design Theory and Methodology Conference
+authors: ["T. Maier", "C. McComb"]
+venue: ASME 2018 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference
 year: 2018
 accepted: true
 engrxiv: 10.17605/OSF.IO/KPX6N

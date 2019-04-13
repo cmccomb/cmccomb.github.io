@@ -1,7 +1,7 @@
 ---
 type: journal
 layout: post
-authors: ["McComb, C.", "Johnson, N.G.", "Santaeufemia, P.S.", "Gorman, B.T.", "Kolste, B.", "Mobley, A.", "Shimada, K."]
+authors: ["C. McComb", "N.G. Johnson", "P.S. Santaeufemia", "B.T. Gorman", "B. Kolste", "A. Mobley", "K. Shimada"]
 title: Multi-Objective Optimization and Scenario-based Robustness Analysis of the Moneymaker Hip Pump
 year: 2018
 venue: Journal of Development Engineering

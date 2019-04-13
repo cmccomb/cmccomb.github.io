@@ -1,7 +1,7 @@
 ---
 type: journal
 layout: post
-authors: ["McComb, C.", "Cagan, J.", "Kotovsky, K."]
+authors: ["C. McComb", "J. Cagan", "K. Kotovsky"]
 title: Mining Process Heuristics from Designer Action Data via Hidden Markov Models
 venue: Journal of Mechanical Design
 year: 2017

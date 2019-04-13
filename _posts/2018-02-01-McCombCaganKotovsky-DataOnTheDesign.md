@@ -1,7 +1,7 @@
 ---
 type: journal
 layout: post
-authors: ["McComb, C.", "Cagan, J.", "Kotovsky, K."]
+authors: ["C. McComb", "J. Cagan", "K. Kotovsky"]
 title:  Data on the Design of Truss Structures by Teams of Engineering Students
 venue: Data in Brief
 year: 2018

@@ -1,7 +1,7 @@
 ---
 type: conference
 layout: post
-authors: ["Tehrani, F.", "McComb, C.", "Papavasiliou, N."]
+authors: ["F.M. Tehrani", "C. McComb", "N. Papavasiliou"]
 year: 2017
 title: Application of Project-based Learning within the Context of Sustainable Development in Education of International Engineer Citizens
 venue: Iran International Conference on Engineering Education

@@ -2,8 +2,8 @@
 type: conference
 layout: post
 title: Design Strategy Transfer in Cognitively-Inspired Agents
-authors: ["Raina, A.", "McComb, C.", "Cagan, J."]
-venue: ASME IDETC - Design Automation Conference
+authors: ["A. Raina", "C. McComb", "J. Cagan"]
+venue: ASME 2018 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference
 year: 2018
 accepted: true
 engrxiv: 10.17605/OSF.IO/JBW7Y

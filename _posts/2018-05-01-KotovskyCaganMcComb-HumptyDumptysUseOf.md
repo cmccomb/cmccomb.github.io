@@ -2,8 +2,8 @@
 type: other
 style: "Technical Presentation"
 layout: post
-title: "Are Teams Teams? And Other Musings on Humpty Dumpty&quot;s Use of Language In The Design World"
-authors: ["Cagan, J.", "Kotovsky, K.", "McComb, C."]
+title: "Are Teams Teams? And Other Musings on Humpty Dumpty&rsquo;s Use of Language In The Design World"
+authors: ["J. Cagan", "K. Kotovsky", "C. McComb"]
 venue: ASME IDETC - Design Automation Conference
 year: 2018
 accepted: true

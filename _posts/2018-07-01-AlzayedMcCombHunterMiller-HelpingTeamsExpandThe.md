@@ -2,7 +2,7 @@
 type: journal
 layout: post
 title: "Expanding the Solution Space in Engineering Design Education: A Simulation-Based Investigation of Product Dissection"
-authors: ["Alzayed, M.", "McComb, C.", "Hunter, S.", "Miller, S."]
+authors: ["M. Alzayed", "C. McComb", "S. Hunter", "S. Miller"]
 venue: Journal of Mechanical Design
 year: 2019
 accepted: true

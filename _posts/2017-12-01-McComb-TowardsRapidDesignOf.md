@@ -2,7 +2,7 @@
 type: conference
 layout: post
 title: Towards the Rapid Design of Engineered Systems Through Deep Neural Networks
-authors: ["McComb, C."]
+authors: ["C. McComb"]
 venue: Design Computing and Cognition '18
 year: 2018
 accepted: true

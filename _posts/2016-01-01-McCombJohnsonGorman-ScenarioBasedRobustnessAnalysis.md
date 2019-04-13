@@ -2,8 +2,8 @@
 type: conference
 layout: post
 title: Scenario-Based Robustness Analysis of Optimized I.D.E.-Style Treadle Pump Designs
-authors: ["McComb, C.", "Johnson, N.G.", "Gorman, B.T."]
-venue: ASME IDETC - Design for Manufacturing and the Life Cycle Conference
+authors: ["C. McComb", "N.G. Johnson", "B.T. Gorman"]
+venue: ASME 2016 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference
 asme: 10.1115/DETC2016-60127
 researchgate: 301884820
 googlescholar: "0P9w_S0AAAAJ:4TOpqqG69KYC"

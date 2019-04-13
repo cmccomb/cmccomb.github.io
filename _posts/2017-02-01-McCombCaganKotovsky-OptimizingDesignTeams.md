@@ -1,7 +1,7 @@
 ---
 type: journal
 layout: post
-authors: ["McComb, C.", "Cagan, J.", "Kotovsky, K."]
+authors: ["C. McComb", "J. Cagan", "K. Kotovsky"]
 year: 2017
 title: "Optimizing Design Teams Based on Problem Properties: Computational Team Simulations and an Applied Empirical Test"
 venue: Journal of Mechanical Design

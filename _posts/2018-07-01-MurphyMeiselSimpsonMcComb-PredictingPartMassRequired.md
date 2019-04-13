@@ -2,7 +2,7 @@
 type: conference
 layout: post
 title: Predicting Part Mass, Required Support Material, and Build Time via Autoencoded Voxel Patterns
-authors: ["Murphy, C.", "Meisel, N.", "Simpson, T.W.", "McComb, C."]
+authors: ["C. Murphy", "N. Meisel", "T.W. Simpson", "C. McComb"]
 venue: 29th Annual International Solid Freeform Fabrication Symposium
 year: 2018
 engrxiv: 10.31224/osf.io/8kne7

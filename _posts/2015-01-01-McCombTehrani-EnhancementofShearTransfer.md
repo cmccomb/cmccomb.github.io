@@ -1,7 +1,7 @@
 ---
 type: journal
 layout: post
-authors: ["McComb, C.", "Tehrani, F.M."]
+authors: ["C. McComb", "F.M. Tehrani"]
 year: 2015
 title: Enhancing Shear Transfer in Composite Decks
 venue: Engineering Structures

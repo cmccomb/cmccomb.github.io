@@ -1,7 +1,7 @@
 ---
 type: journal
 layout: post
-authors: ["McComb, C.", "Goucher-Lamber, K.", "Cagan, J."]
+authors: ["C. McComb", "K. Goucher-Lambert", "J. Cagan"]
 year: 2017
 title: Impossible by Design? Fairness, Strategy, and Arrow's Impossibility Theorem
 venue: Design Science

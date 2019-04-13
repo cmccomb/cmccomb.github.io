@@ -4,7 +4,7 @@
  <title>Chris McComb</title>
  <link href="http://www.cmccomb.com/atom.xml" rel="self"/>
  <link href="http://www.cmccomb.com/"/>
- <updated>2019-04-12T07:46:52-04:00</updated>
+ <updated>2019-04-13T16:34:04-04:00</updated>
  <id>http://www.cmccomb.com</id>
  <author>
    <name>Chris McComb</name>
@@ -94,6 +94,15 @@
  </entry>
  
  <entry>
+   <title>Engineering Futures:  Updating a Successful Professional Development Program  to Address New Challenges</title>
+   <link href="http://www.cmccomb.com/publications/2019/ColbryMcCombRojewskiBriliyantiColbry-EngineeringFuturesUpdatingASuccessful/"/>
+   <updated>2019-04-01T00:00:00-04:00</updated>
+   <id>http://www.cmccomb.com/publications/2019/ColbryMcCombRojewskiBriliyantiColbry-EngineeringFuturesUpdatingASuccessful</id>
+   <content type="html">&lt;p&gt;Engineering Futures (EF) is a professional development program developed by Tau Beta Pi, the Engineering Honor Society, in the 1980s to provide undergraduate engineering students with the “soft skills” necessary for professional success. Originally, the EF program included a series of day-long, interactive workshops led by volunteer facilitators and hosted on-site at college campuses. The original sessions included People Skills (interpersonal problem communication and resolution); Team Chartering (understanding team dynamics); Group Process (tools for effective meetings); and Analytical Problem Solving (brainstorming, list reduction and evaluation criteria). Over the decades, the EF program adapted to meet the changing needs of undergraduate students, with options for shorter sessions and the addition of a module on Effective Presentation Skills in the early 2000s. In the 2010s, the EF program directors began to explore opportunities to expand the curriculum to address new challenges. A new partnership in 2015 led to the addition of two new modules: Equity, Inclusion &amp;amp; Engineering Ethics; and Research Mentoring. In 2017, Tau Beta Pi partnered with several other organizations in a successful proposal to the National Science Foundation to develop updated training materials focusing on communications, teamwork and leadership skills. These materials are being designed in a modular fashion that allows them to be adjusted for different audiences (undergraduates, graduate students, professionals) and the project includes funding for a “train the trainers” program that will enable the EF materials to be deployed nationally at little or no cost to hosting organizations. This paper provides a historical context for the EF program, describes the recent efforts to update and expand the curriculum, and provides insights from several years of participation and program evaluation data.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
    <title>A Differential Game Approach to Dynamic Competitive Decisions Toward Human-Computer Collaboration</title>
    <link href="http://www.cmccomb.com/publications/2019/BayrakMcCombCaganKotovsky-ADifferentialGameApproach/"/>
    <updated>2019-04-01T00:00:00-04:00</updated>
@@ -108,15 +117,6 @@
    <updated>2019-04-01T00:00:00-04:00</updated>
    <id>http://www.cmccomb.com/publications/2019/BanerjeeMundaleSachcheMcComb-ComplexityReductionInMass</id>
    <content type="html">&lt;p&gt;Mass customization provides a way to satisfy an increasing number of customers by tailoring product details to their preferences. Moreover, there is a considerable amount of pressure on industries that embrace mass customization in their product portfolios to consistently produce innovative and market defining technology. To ease this pressure, this study offers organizations a perspective on what combination of attributes is most influential on choice when approaching decision support for the purchase of a Configure-to-Order product. Laptops are used here as a case study, but the approach is generalizable to any family of products. This approach first uses metrics gained from a modified conjoint analysis applied to data gathered from a student consumer base. Customer satisfaction is measured as a function of how many product offerings are provided, identifying and quantifying a trade-off between customizability and consumer satisfaction. This aims to cater to the requirements of the consumer base and key business advantages allowing for greater usability and maximum profits.&lt;/p&gt;
-</content>
- </entry>
- 
- <entry>
-   <title>Us Versus Me: An Analysis of Team Process and Performance in Distributed Data Science Challenges</title>
-   <link href="http://www.cmccomb.com/publications/2018/MaierDeFrancoMcComb-UsVersusMeAn/"/>
-   <updated>2018-09-01T00:00:00-04:00</updated>
-   <id>http://www.cmccomb.com/publications/2018/MaierDeFrancoMcComb-UsVersusMeAn</id>
-   <content type="html">&lt;p&gt;Crowdsourced competitions have seen increased used for software development and data science, and platforms often encourage teamwork between participants. This is unsurprising - teams are ubiquitous, woven into the fabric of engineering and design. Often, it is assumed that teams are better at solving problems than individuals working independently. However, recent work in engineering, design, and psychology has indicated that teams may not be the problem-solving panacea that they were once thought to be. This work undertakes an analysis of the performance of different team styles and sizes in crowdsourced data science competitions. This work demonstrates that groups of individuals working independently may outperform interacting teams on average, but that small interacting teams are more likely to win competitions. These results are discussed in the context of motivation for crowdsourcing participants, and semantic analysis of forum posts is presented to uncover the internal machinery of both and high- and low-performing teams.&lt;/p&gt;
 </content>
  </entry>
  
@@ -166,7 +166,7 @@
  </entry>
  
  <entry>
-   <title>Are Teams Teams? And Other Musings on Humpty Dumpty&quot;s Use of Language In The Design World</title>
+   <title>Are Teams Teams? And Other Musings on Humpty Dumpty&rsquo;s Use of Language In The Design World</title>
    <link href="http://www.cmccomb.com/publications/2018/KotovskyCaganMcComb-HumptyDumptysUseOf/"/>
    <updated>2018-05-01T00:00:00-04:00</updated>
    <id>http://www.cmccomb.com/publications/2018/KotovskyCaganMcComb-HumptyDumptysUseOf</id>

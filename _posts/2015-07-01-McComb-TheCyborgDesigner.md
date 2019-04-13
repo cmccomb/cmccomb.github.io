@@ -2,7 +2,7 @@
 type: other
 style: Lightning Talk
 layout: post
-authors: ["McComb, C."]
+authors: ["C. McComb"]
 year: 2015
 title: The Cyborg Designer
 venue: International Conference on Engineering Design

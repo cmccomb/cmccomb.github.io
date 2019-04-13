@@ -2,8 +2,8 @@
 type: conference
 layout: post
 title: "Helping Teams Expand the Breadth of Their Solution Space Through Product Dissection: A Simulation Based Investigation"
-authors: ["Alzayed, M.", "McComb, C.", "Hunter, S.", "Miller, S."]
-venue: ASME IDETC - Design Education Conference
+authors: ["M. Alzayed", "C. McComb", "S. Hunter", "S. Miller"]
+venue: ASME 2018 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference
 year: 2018
 accepted: true
 googlescholar: "0P9w_S0AAAAJ:hFOr9nPyWt4C"

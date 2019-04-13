@@ -1,7 +1,7 @@
 ---
 type: conference
 layout: post
-authors: ["McComb, C.", "Goucher-Lambert, K.", "Cagan, J."]
+authors: ["C. McComb", "K. Goucher-Lambert", "J. Cagan"]
 year: 2015
 title: "Fairness and Manipulation: An Empirical Study of Arrow’s Impossibility Theorem International Conference on Engineering Design"
 venue: International Conference on Engineering Design
