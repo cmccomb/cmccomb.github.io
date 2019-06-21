@@ -19,7 +19,7 @@ plugins:
     - classifier-reborn
 #    - jekyll-github-metadata
 
-lsi: true
+lsi: false
 
 permalink: /publications/:year/:title/
 
@@ -30,5 +30,4 @@ collections:
 office: 213U Hammond Building
 address: University Park, PA 16802
 email: "mccomb@psu.edu"
-website: "hsdl.psu.edu"
-cell: "+1 (559) 859-8459"
+website: "thred.psu.edu"
