@@ -54,20 +54,21 @@ layout: default
 
 
   <div class="related">
-    <h2>Related Publications</h2>
+    <h2>Explore</h2>
     <ol>
-      {% for pub in site.related_posts limit:3 %}
-        <li>
-          {% include author_list.html object=pub bold=true %}
-          {% if pub.accepted %}
-            ({{ pub.year }}).
-          {% endif %}
-          <a href="{{ pub.url }}">"{{ pub.title }}."</a>
-          {% if pub.accepted %}
-            <i>{{ pub.venue }}</i>{% if pub.volume %}, vol. {{ pub.volume }}{% endif %}{% if pub.issue %}({{ pub.issue }}){% endif %}{% if pub.pages %}, pp. {{ pub.pages }}{% endif %}.
-          {% else %}
-            <i>Submitted to {{ pub.venue }}</i>
-          {% endif %}
-        </li>
-      {% endfor %}
+    {% assign posts = site.posts | where_exp:"post", "post.url != page.url" | sample:4 %}
+    {% for pub in posts %}
+      <li>
+        {% include author_list.html object=pub bold=true %}
+        {% if pub.accepted %}
+          ({{ pub.year }}).
+        {% endif %}
+        <a href="{{ pub.url }}">"{{ pub.title }}."</a>
+        {% if pub.accepted %}
+          <i>{{ pub.venue }}</i>{% if pub.volume %}, vol. {{ pub.volume }}{% endif %}{% if pub.issue %}({{ pub.issue }}){% endif %}{% if pub.pages %}, pp. {{ pub.pages }}{% endif %}.
+        {% else %}
+          <i>Submitted to {{ pub.venue }}</i>
+        {% endif %}
+      </li>
+    {% endfor %}
   </div>

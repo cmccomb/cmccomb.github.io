@@ -19,7 +19,7 @@ plugins:
     - classifier-reborn
 #    - jekyll-github-metadata
 
-lsi: true
+lsi: false
 
 permalink: /publications/:year/:title/
 
