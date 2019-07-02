@@ -1,6 +1,6 @@
 ---
 layout: post
-type: conference
+type: journal
 title: "KABOOM: An Agent-Based Model for Simulating Cognitive Style in Team Problem Solving"
 authors: ["S. Lapp", "K. Jablokow", "C. McComb"]
 venue: Design Science

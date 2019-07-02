@@ -2,7 +2,7 @@
 layout: post
 type: conference
 title: "Engineering Futures:  Updating a Successful Professional Development Program  to Address New Challenges"
-authors: ["K. Colbry", "C. McComb", "j. Rojewski", "A. Briliyanti", "D. Colbry"]
+authors: ["K. Colbry", "C. McComb", "J. Rojewski", "A. Briliyanti", "D. Colbry"]
 venue: ASEE 2019 Annual Conference and Exhibition
 year: 2019
 accepted: true
