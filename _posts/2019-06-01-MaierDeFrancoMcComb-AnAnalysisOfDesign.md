@@ -7,6 +7,7 @@ venue: Team Performance Management
 year: 2019
 accepted: true
 engrxiv: 10.31224/osf.io/fwrqj
+doi: 10.1108/TPM-03-2019-0024
 ---
 
 Purpose – Often, it is assumed that teams are better at solving problems than individuals working independently. However, recent work in engineering, design, and psychology contradicts this assumption. This work examines the behavior of teams engaged in data science competitions. Crowdsourced competitions have seen increased used for software development and data science, and platforms often encourage teamwork between participants.
