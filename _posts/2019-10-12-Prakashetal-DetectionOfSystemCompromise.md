@@ -2,7 +2,7 @@
 layout: post
 type: journal
 title: "Detection Of System Compromise In Additive Manufacturing Using Video Motion Magnification"
-authors: ["S.K.A. Prakash", "T. Mahan", "G. Williams", "C. McComb", "J. Menold", "C. Tucker"]
+authors: ["S. Prakash", "T. Mahan", "G. Williams", "C. McComb", "J. Menold", "C. Tucker"]
 venue: Journal of Mechanical Design
 year: 2019
 accepted: true
