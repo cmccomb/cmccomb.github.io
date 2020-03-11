@@ -31,3 +31,5 @@ office: 213U Hammond Building
 address: University Park, PA 16802
 email: "mccomb@psu.edu"
 website: "thred.psu.edu"
+
+theme: jekyll-theme-cayman
