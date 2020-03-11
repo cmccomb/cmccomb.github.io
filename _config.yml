@@ -8,7 +8,7 @@ tagline:          ''
 description1:   Assistant Professor
 description2:   <a href="http://sedtapp.psu.edu">SEDTAPP</a> @ <a href="http://www.psu.edu">PSU</a>
 url:              http://www.cmccomb.com
-baseurl:          /
+baseurl:          http://www.cmccomb.com/
 repository: cmccomb/cmccomb.github.io-source
 
 author:
