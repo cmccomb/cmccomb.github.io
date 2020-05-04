@@ -1,0 +1,13 @@
+---
+type: conference
+layout: pub
+authors: ["C. McComb", "F.M. Tehrani"]
+year: 2014
+title: "Research and Practice Group Methodology: A Case Study in Student Success."
+venue: ASEE Pacific-Southwest Conference
+researchgate: 275522401
+googlescholar: "0P9w_S0AAAAJ:Y0pCki6q_DkC"
+engrxiv: 10.17605/OSF.IO/9NH7Q
+accepted: true
+---
+Experiential learning is a key component in engineering education. In civil engineering, this component is typically delivered through multiple projects. These projects may include term projects for individual courses, senior design projects, theses, or independent studies. The focus of these experiences may gradually shift from practice-oriented projects in undergraduate studies to research-oriented projects in graduate studies. Thus, learning objectives should always address both areas with a strong emphasis on common fields, such as applied research. Experiential learning has the capacity to include various program-level outcomes, such as technical knowledge, communication and teamwork. Development of a research and practice group facilitates these outcomes by creating an environment to share the learning experience. Such a group should replicate the working environment of civil engineers by incorporating multidisciplinary projects and diverse individuals, including cross-generational members. As a case study, this work examines a Research and Practice Group at California State University Fresno. This group consists of junior and senior undergraduates, graduate students, and former members who are participating as alumni. The major focus of research within the group is resilient and sustainable structural mechanics and design. This paper outlines the methodology that has been employed to ensure academic and professional success for members of the group. This methodology incorporates a recruitment process, meetings, consultation, mentorship, networking, and support. The level of student success achieved by the group is presented in terms of the achievements of the group’s members. This includes a discussion of completed projects, research funding, and group presentations. To further demonstrate the efficacy of the methodology, students in the research group are compared to the general body of engineering students at CSU Fresno though the results of a survey. This survey is analyzed using traditional methods, as well as Latent Semantic Analysis. Our results indicate that group members are better at embodying and communicating outcomes than the rest of the student body, and that the research and practice group provides an experience that allows students to internalize and take responsibility for their own goals.

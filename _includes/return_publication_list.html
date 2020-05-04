@@ -1,6 +1,7 @@
 <ol>
   <!-- Print the unaccepted manuscripts -->
-  {% for pub in site.posts %}
+  {% assign sorted_publications = site.publications | sort: 'year' | reverse %}
+  {% for pub in sorted_publications %}
     {% if pub.accepted == false %}
       {% if pub[include.variable] == include.value %}
         <li>
@@ -14,7 +15,7 @@
   {% endfor %}
 
   <!-- Print the accepted manuscripts -->
-  {% for pub in site.posts %}
+  {% for pub in sorted_publications  %}
     {% if pub.accepted == true %}
       {% if pub[include.variable] == include.value %}
         <li>

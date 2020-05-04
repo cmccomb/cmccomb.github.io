@@ -1,0 +1,10 @@
+---
+layout: pub
+type: conference
+title: Evaluating Idea Quantity And Variety When Using Digital Collaboration Tools To Support Brainstorming In Non-Collocated Teams 
+authors: ["D. Kaweesa", "C. McComb", "J. Menold", "S. Ritter", "N. Meisel"]
+venue: ASME 2019 International Design Engineering Technical Conferences and Computers and Information in Engineering Conference
+year: 2019
+accepted: true
+---
+The advent of modern digital communication technology has enabled engineers to effectively collaborate regardless of team members’ geographic locations. As such, introducing engineering students to virtual environments and collaborative tools is particularly important to prepare them for careers in increasingly digital environments. This study investigates how integrating online collaboration tools in students’ idea generation activities impacts the i) quantity and ii) variety of ideas generated after a peer-feedback session. Students from five sections of a first-year engineering design course were assigned to either a collocated design team or a non-collocated design team to participate in a collaborative design feedback activity. Students individually generated an idea set using brainstorming, received peer feedback via one of two delivery conditions (in-person or virtual), and revised their idea set based on the received feedback. Each final idea set was analyzed and compared to identify any differences in the final idea quantity and variety due to the assigned feedback delivery condition. Results revealed a statistically significant difference with minimal practical significance in the final quantity of ideas and no statistically significant difference in the final variety of ideas generated between collocated and non-collocated design teams after the peer-feedback session. This suggests that feedback provided through digital tools may be used to support idea generation in non-collocated teams without being detrimental to ideation outcomes. The implications of these findings are significant for faculty or students who may be involved in online learning activities centered on engineering design. 

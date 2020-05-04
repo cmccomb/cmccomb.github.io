@@ -50,7 +50,7 @@ layout: default
   <div class="related">
     <h2>Explore</h2>
     <ol>
-    {% assign posts = site.posts | where_exp:"post", "post.url != page.url" | sample:4 %}
+    {% assign posts = site.publications | where_exp:"post", "post.url != page.url" | sample:4 %}
     {% for pub in posts %}
       <li>
         {% include author_list.html object=pub bold=true %}
