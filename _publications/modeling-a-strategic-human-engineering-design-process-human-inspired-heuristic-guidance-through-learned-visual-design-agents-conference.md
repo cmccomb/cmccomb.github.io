@@ -2,7 +2,7 @@
 layout: pub
 type: conference
 title: "Modeling a Strategic Human Engineering Design Process: Human-Inspired Heuristic Guidance Through Learned Visual Design Agents"
-authors: ["H. Singh", "G. Cascini", "C. McComb"]
+authors: ["L. Puentes", "A. Raina", "J. Cagan", "C. McComb"]
 venue: International Design Conference
 year: 2020
 accepted: true
