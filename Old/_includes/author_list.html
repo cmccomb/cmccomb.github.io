@@ -1,3 +1,0 @@
-{% for author in include.object.authors %}
-  {% if forloop.last == true and forloop.length > 1 %} and {% endif %}{% if author == "C. McComb" and include.bold%}<b>{{ author }}</b>{% else %}{{ author }}{% endif %}{% if forloop.last == false %},{% endif %}
-{% endfor %}
