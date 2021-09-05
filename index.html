@@ -17,8 +17,12 @@
 
 </head>
 <body class="bg-dark d-flex flex-column h-100">
-<div class="row h-100 justify-content-center align-items-center">
+
+<div id="graph-container" class="container-fluid blur"></div>
+
+<div id="profile" class="row h-100 justify-content-center align-items-center">
     <div class="card px-0">
+        <button id="exit" type="button" class="btn-close" aria-label="Close"></button>
         <img src="assets/images/headshot_optimized_square.jpg" class="card-img-top" alt="A headshot of Christopher McComb"/>
         <div class="card-body">
             <h5 class="card-title">Chris McComb, Ph.D.</h5>
@@ -40,11 +44,13 @@
     </div>
 </div>
 
-<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"-->
-<!--        integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"-->
-<!--        crossorigin="anonymous"></script>-->
 
-<footer class="footer mt-auto py-3">
+<script src="assets/js/interface.js"></script>
+<script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/graph.js"></script>
+
+<footer class="footer mt-auto py-3" style="z-index:-100;">
     <div class="container text-center">
         <span class="text-muted">&copy; <script>document.write(new Date().getFullYear())</script> Chris McComb</span>
     </div>
