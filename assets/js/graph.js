@@ -10,17 +10,20 @@ var data = {
     nodes: nodes,
     edges: edges,
 };
-var options = {};
+
+var options = {
+    layout: {
+        randomSeed: 863946, //Math.floor(Math.random() * 1000000),
+    }
+}
+
+
 var network = new vis.Network(container, data, options);
+
 network.stopSimulation();
 network.stabilize(1);
 console.log(network.getSeed())
 
-// setTimeout(() => {network.fit({
-//     animation: {
-//         duration: 3000
-//     }
-// })}, 2000)
 
 network.on("doubleClick", function (params) {
     console.log(params)

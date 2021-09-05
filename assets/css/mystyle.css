@@ -73,7 +73,7 @@
     }
 }
 
-/*.vis-tooltip {*/
-/*    visibility: visible !important ;*/
-/*    width: 200px;*/
-/*}*/
+.vis-tooltip {
+    width: 300px;
+    white-space: normal !important ;
+}
