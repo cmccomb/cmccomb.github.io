@@ -29,8 +29,7 @@ network.on("doubleClick", function (params) {
     console.log(params)
     node_id = params.nodes[0];
     paper_name = nodes.get(node_id).title;
-    escaped_paper_name = encodeURIComponent(paper_name.replace("Double-click to open: ", ""));
-    // escaped_paper_name = "Rolling+with+the+punches+An+examination+of+team+performance+in+a+design+task+subject+to+drastic+changes"
+    escaped_paper_name = encodeURIComponent(paper_name.replace("Double-click to open ", ""));
     url = "https://scholar.google.com/scholar?hl=en&q=" + escaped_paper_name
     window.open(url, '_blank').focus();
 });
