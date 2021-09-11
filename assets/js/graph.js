@@ -1,7 +1,7 @@
 // create a network
 let container = document.getElementById("graph-container");
 
-nodes.push({id:1000, size: 0, shape: "dot"});
+nodes.push({id:1000, size: 0, shape: "box", color: "white", fixed: {x: true, y: true}});
 nodes.push({id:1001, color: "white", label: "People\nOn Their\nOwn", shape: "box"});
 nodes.push({id:1002, color: "white", size: 60, label: "People\nIn\nTeams", shape: "box"});
 nodes.push({id:1003, color: "white", size: 60, label: "People\nIn\nOrganizations", shape: "box"});
