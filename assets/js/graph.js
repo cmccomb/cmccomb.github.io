@@ -70,6 +70,24 @@ let network = new vis.Network(container, data, options);
 network.stopSimulation();
 network.stabilize(1);
 
+let width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+setTimeout(function() {
+if (width < 768) {
+    // these are all options in full.
+    let options = {
+        physics:{
+            enabled: false,
+        },
+        nodes:{
+            fixed: {
+                x: true,
+                y: true,
+            }
+        }
+    };
+    network.setOptions(options);
+}
+}, 5000)
 
 network.on("doubleClick", function (params) {
     let paper_name = data.nodes.get(params.nodes[0]).title;
