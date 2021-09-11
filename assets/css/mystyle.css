@@ -25,14 +25,14 @@ p {
     font-size: 0.9em;
 }
 
-
 #graph-container {
     position: absolute;
     top: 0;
     right: 0;
     width: 100%;
     height: 100%;
-    display: none;
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .blur {
@@ -47,28 +47,9 @@ p {
 
 @media (min-width: 768px) {
 
-    /*    #exit {*/
-    /*        display: block;*/
-    /*    }*/
     #graph-container {
-        display: block;
+        visibility: visible;
     }
-
-    /*    .card img {*/
-    /*        width: 50%;*/
-    /*        border-top-right-radius: 0;*/
-    /*        border-bottom-left-radius: calc(0.25rem - 1px);*/
-    /*    }*/
-    /*    .card {*/
-    /*        text-align: left;*/
-    /*        flex-direction: row;*/
-    /*        width: 70%;*/
-    /*        max-width: 500px;*/
-    /*    }*/
-    /*    .btn-group {*/
-    /*        margin: 0 auto;*/
-    /*    }*/
-
 }
 
 .vis-tooltip {
