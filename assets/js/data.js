@@ -1,1 +1,679 @@
-pubs = [[{"id": 0, "title": "Double-click to open \"Rolling with the punches: An examination of team performance in a design task subject to drastic changes\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 1, "title": "Double-click to open \"Enhancement of shear transfer in composite deck with mechanical fasteners\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 2, "title": "Double-click to open \"Lifting the Veil: Drawing insights about design teams from a cognitively-inspired computational model\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 3, "title": "Double-click to open \"Drawing Inspiration From Human Design Teams for Better Search and Optimization: The Heterogeneous Simulated Annealing Teams Algorithm\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 4, "title": "Double-click to open \"Optimizing Design Teams Based on Problem Properties: Computational Team Simulations and an Applied Empirical Test\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 5, "title": "Double-click to open \"Impossible by design? Fairness, strategy, and Arrow\u2019s impossibility theorem\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 6, "title": "Double-click to open \"Capturing Human Sequence-Learning Abilities in Configuration Design Tasks Through Markov Chains \"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 7, "title": "Double-click to open \"Mining Process Heuristics From Designer Action Data via Hidden Markov Models\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 8, "title": "Double-click to open \"Data on the configuration design of internet-connected home cooling systems by engineering students\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 9, "title": "Double-click to open \"Data on the design of truss structures by teams of engineering students\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 10, "title": "Double-click to open \"Multi-objective optimization and scenario-based robustness analysis of the MoneyMaker Hip Pump\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 11, "title": "Double-click to open \"Pulling at the Digital Thread: Exploring the Tolerance Stack Up Between Automatic Procedures and Expert Strategies in Scan to Print Processes\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 12, "title": "Double-click to open \"An analysis of design process and performance in distributed data science teams\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 13, "title": "Double-click to open \"Design Repository Effectiveness for 3D Convolutional Neural Networks: Application to Additive Manufacturing\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 14, "title": "Double-click to open \"Expanding the Solution Space in Engineering Design Education: A Simulation-Based Investigation of Product Dissection\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 15, "title": "Double-click to open \"Heuristic-Guided Solution Search Through a Two-Tiered Design Grammar\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 16, "title": "Double-click to open \"Image collection of 3D-printed prototypes and non-3D-printed prototypes\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 17, "title": "Double-click to open \"KABOOM: an agent-based model for simulating cognitive style in team problem solving\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 18, "title": "Double-click to open \"Learning to Design From Humans: Imitating Human Designers Through Deep Learning\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 19, "title": "Double-click to open \"Transferring Design Strategies From Human to Computer and Across Design Problems\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 20, "title": "Double-click to open \"The Prototyping Behaviors of Startups: Exploring the Relationship Between Prototyping Behaviors and Startup Strategies\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 21, "title": "Double-click to open \"Detection of System Compromise in Additive Manufacturing Using Video Motion Magnification\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 22, "title": "Double-click to open \"Predicting elastic strain fields in defective microstructures using image colorization algorithms\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 23, "title": "Double-click to open \"Data-Driven Heuristic Induction From Human Design Behavior\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 24, "title": "Double-click to open \"Are you feeling me? An exploration of empathy development in engineering design education\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 25, "title": "Double-click to open \"Assessing Engineering Design: A Comparison of the Effect of Exams and Design Practica on First-Year Students\u2019 Design Self-Efficacy\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 26, "title": "Double-click to open \"Mining Design Heuristics for Additive Manufacturing Via Eye-Tracking Methods and Hidden Markov Modeling\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 27, "title": "Double-click to open \"Image-based data on strain fields of microstructures with porosity defects\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 28, "title": "Double-click to open \"A strategic decision-making architecture toward hybrid teams for dynamic competitive problems\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 29, "title": "Double-click to open \"Lost in Translation: Examining the Complex Relationship Between Prototyping and Communication\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 30, "title": "Double-click to open \"A cautionary tale about the impact of AI on human design teams\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 31, "title": "Double-click to open \"Human versus Artificial Intelligence: A Data-Driven Approach to Real-Time Process Management During Complex Engineering Design\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 32, "title": "Double-click to open \"Empathic creativity: can trait empathy predict creative concept generation and selection?\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 33, "title": "Double-click to open \"Influencers in Design Teams: A Computational Framework to Study their Impact on Idea Generation\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 34, "title": "Double-click to open \"When faced with increasing complexity: The effectiveness of AI assistance for drone design\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 35, "title": "Double-click to open \"Part Filtering Methods for Additive Manufacturing: A Detailed Review and a Novel Process-Agnostic Method\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 36, "title": "Double-click to open \"Goal-Directed Design Agents: Integrating Visual Imitation with One-Step Lookahead Optimization for Generative Design\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 37, "title": "Double-click to open \"A Query Conundrum: The Mental Challenges of Using a Cognitive Assistant\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 38, "title": "Double-click to open \"Data on the design and operation of drones by both individuals and teams\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 39, "title": "Double-click to open \"An Adversarial Agent-Based Design Method Using Stochastic Stackelberg Game Conditions\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 40, "title": "Double-click to open \"A Quantitative Approach to Evaluate the Application of the Extended Situational Teaching Model in Engineering Education\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 41, "title": "Double-click to open \"The cognitive experience of engineering design: an examination of first-year student stress across principal activities of the engineering design process\"", "size": 40, "color": "#84ccdc", "shape": "dot"}, {"id": 42, "title": "Double-click to open \"Development and Verification of a Wave Energy Converter Simulation Tool\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 43, "title": "Double-click to open \"Identifying Technical and Economic Improvements to the MoneyMaker Hip Pump through Multi-Objective Optimization\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 44, "title": "Double-click to open \"Improving Irrigation in Remote Areas: Multi-objective Optimization of a Treadle Pump\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 45, "title": "Double-click to open \"Quantitative Comparison of High- and Low-Performing Teams in a Design Task Subject to Drastic Changes\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 46, "title": "Double-click to open \"Research and Practice Group Methodology: A Case Study in Student Success\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 47, "title": "Double-click to open \"Fairness and Manipulation: An Empirical Study of Arrow\u2019s Impossibility Theorem\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 48, "title": "Double-click to open \"Heterogeneous Simulated Annealing Teams: An Optimizing Search Algorithm Inspired by Engineering Design Teams\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 49, "title": "Double-click to open \"Studying Human Design Teams through Computational Teams of Simulated Annealing Agents\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 50, "title": "Double-click to open \"Linking Properties of Design Problems to Optimal Team Characteristics\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 51, "title": "Double-click to open \"Scenario-Based Robustness Analysis of Optimized I.D.E.-Style Treadle Pump Designs\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 52, "title": "Double-click to open \"Utilizing Markov Chains to Understand Operation Sequencing in Design Tasks\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 53, "title": "Double-click to open \"Application of Project-based Learning within the Context of Sustainable Development in Education of International Engineer Citizens\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 54, "title": "Double-click to open \"Eliciting Configuration Design Heuristics with Hidden Markov Models\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 55, "title": "Double-click to open \"Validating a Tool for Predicting Problem-Specific Optimized Team Characteristics\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 56, "title": "Double-click to open \"A Two-Tiered Grammatical Approach For Agent-Based Computational Design\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 57, "title": "Double-click to open \"Design Practica as Authentic Assessments in First-year Engineering Design Courses\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 58, "title": "Double-click to open \"Design Strategy Transfer in Cognitively-Inspired Agents\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 59, "title": "Double-click to open \"Designing Improved Teams for Crowdsourced Competitions\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 60, "title": "Double-click to open \"Helping Teams Expand the Breadth of Their Solution Space Through Product Dissection: A Simulation Based Investigation\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 61, "title": "Double-click to open \"Opportunities for Natural Language Processing in Qualitative Engineering Education Research: Two Examples\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 62, "title": "Double-click to open \"Predicting Part Mass, Required Support Material, and Build Time via Autoencoded Voxel Patterns\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 63, "title": "Double-click to open \"Thus, I had to go with what I had: A Multiple Methods Exploration of Novice Designers Articulation of Prototyping Decisions\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 64, "title": "Double-click to open \"Towards the Rapid Design of Engineered Systems Through Deep Neural Networks\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 65, "title": "Double-click to open \"A Comparative Study Of Virtual Reality And Computer-Aided Design To Evaluate Parts For Additive Manufacturing\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 66, "title": "Double-click to open \"A Differential Game Approach to Dynamic Competitive Decisions Toward Human-Computer Collaboration\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 67, "title": "Double-click to open \"A Standardized Framework for Communicating and Modelling Parametrically Defined Mesostructure Patterns\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 68, "title": "Double-click to open \"Assessing The Impact Of Cognitive Assistants On Mental Workload In Simple Tasks\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 69, "title": "Double-click to open \"Collaborating with Style: Using an Agent-Based Model to Simulate Cognitive Style Diversity in Problem Solving Teams\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 70, "title": "Double-click to open \"Complexity Reduction in Mass Customization To Facilitate Better Decision Support\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 71, "title": "Double-click to open \"Creation and Implementation of a Project Framework to Improve Cornerstone Engineering Design\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 72, "title": "Double-click to open \"Critical Thinking In The Design Classroom: An Analysis Of Student Design Reflections\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 73, "title": "Double-click to open \"Decision-Making In The Prescription Of Orthotics And Prosthetics For Partial-Foot Amputees\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 74, "title": "Double-click to open \"Engineering Futures: Updating a Successful Professional Development Program to Address New Challenges\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 75, "title": "Double-click to open \"Evaluating Idea Quantity And Variety When Using Digital Collaboration Tools To Support Brainstorming In Non-Collocated Teams\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 76, "title": "Double-click to open \"Learning To Design From Humans: Imitating Human Designers Through Deep Learning\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 77, "title": "Double-click to open \"On The Analysis Of A Compromised Additive Manufacturing System Using Spatio-Temporal Decomposition\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 78, "title": "Double-click to open \"The Prototyping Behaviors Of Startups: Exploring The Relationship Between Prototyping Behavior And The Financial Success Of Startups\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 79, "title": "Double-click to open \"Towards an Ontology of Cognitive Assistants\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 80, "title": "Double-click to open \"Using Hidden Markov Models to Uncover Underlying States in Neuroimaging Data for a Design Ideation Task\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 81, "title": "Double-click to open \"A Review of Part Filtering Methods for Additive Manufacturing\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 82, "title": "Double-click to open \"Analyzing the Characteristics of Cognitive-Assistant-Facilitated Ideation Groups\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 83, "title": "Double-click to open \"Analyzing the Effect of Self-Efficacy and Influencers on Design Teams\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 84, "title": "Double-click to open \"Automated Heuristic Induction from Human Design Data\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 85, "title": "Double-click to open \"Can Design Teams Be Empathically Creative? A Simulation-Based Investigation on the Role of Team Empathy on Concept Generation and Selection\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 86, "title": "Double-click to open \"Comparing Attribute- and Form-Based Machine Learning Techniques for Component Prediction\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 87, "title": "Double-click to open \"Comparing Student and Sponsor Perceptions of Interdisciplinary Teams' Capstone Performance\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 88, "title": "Double-click to open \"Comparison of Exams and Design Practica for Assessment in First Year Engineering Design Courses\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 89, "title": "Double-click to open \"Composing empathic design teams: a simulation-based investigation on the role of personality traits and risk-taking attitudes on team empathy\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 90, "title": "Double-click to open \"Deriving Metamodels to Relate Machine Learning Quality to Repository Characteristics in the Context of Additive Manufacturing\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 91, "title": "Double-click to open \"Does empathy beget creativity? Investigating the role of trait empathy on idea generation and selection\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 92, "title": "Double-click to open \"Emergence of Engineering Design Self-efficacy in Engineering Identity Development\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 93, "title": "Double-click to open \"Identifying Stress Signatures Across the Engineering Design Process: Perceived Stress During Concept Generation, Concept Selection, and Prototyping\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 94, "title": "Double-click to open \"Modeling a Strategic Human Engineering Design Process: Human-Inspired Heuristic Guidance Through Learned Visual Design Agents\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 95, "title": "Double-click to open \"Modelling the Dynamics of Influence on Individual Thinking during Idea Generation in Co-design Teams\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 96, "title": "Double-click to open \"Stochastic Stackelberg Games for Agent-Driven Robust Design\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 97, "title": "Double-click to open \"Topic Modeling and Sentiment Analysis of Social Media Data to Drive Experiential Redesign\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 98, "title": "Double-click to open \"Toward Hybrid Teams: A Platform To Understand Human-Computer Collaboration During the Design of Complex Engineered Systems\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 99, "title": "Double-click to open \"Towards an Understanding of Semantic Memory During Idea Generation\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 100, "title": "Double-click to open \"Using Deep Image Colorization to Predict Microstructure-Dependent Strain Fields\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 101, "title": "Double-click to open \"Pitch Imperfect: Designing 3D Printed Claves to Mimic the Sound of Their Wooden Counterparts\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 102, "title": "Double-click to open \"Multi-Objective Model-Based Optimization of Pilot Decision Making for Urban Air Mobility\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 103, "title": "Double-click to open \"Comparing design outcomes achieved by teams of expert and novice designers through agent-based simulation\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 104, "title": "Double-click to open \"Novice Designers' Use of Prototypes as Communication Tools\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 105, "title": "Double-click to open \"Communication in AI-assisted Teams During an Interdisciplinary Drone Design Problem\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 106, "title": "Double-click to open \"A Multi-Agent Reinforcement Learning Framework for Intelligent Manufacturing with Autonomous Mobile Robots\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 107, "title": "Double-click to open \"When the Going Gets Tough: Exploring Changes in the Startup Landscape Due to the Challenges of 2020\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 108, "title": "Double-click to open \"Addressing Challenges to Problem Complexity: Effectiveness of AI Assistance During the Design Process\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 109, "title": "Double-click to open \"Comparing Virtual and Face-to-Face Team Collaboration: Insights From an Agent-Based Simulation\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 110, "title": "Double-click to open \"Using Deep Learning to Simulate Multi-Disciplinary Design Teams\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 111, "title": "Double-click to open \"Stochastically-Trained Physics-Informed Neural Networks: Application to Thermal Analysis in Metal Laser Powder Bed Fusion\"", "size": 20, "color": "#247297", "shape": "dot"}, {"id": 112, "title": "Double-click to open \"Using Physics-Informed Generative Adversarial Networks to Perform Super-Resolution for Multiphase Fluid Simulations\"", "size": 20, "color": "#247297", "shape": "dot"}], [{"from": 0, "to": 9, "length": 16.66982542985979, "color": "#557f94"}, {"from": 1, "to": 81, "length": 8.167004881157613, "color": "#557f94"}, {"from": 2, "to": 48, "length": 10.664744697597367, "color": "#557f94"}, {"from": 3, "to": 0, "length": 22.348541450388375, "color": "#557f94"}, {"from": 3, "to": 2, "length": 22.049280828643024, "color": "#557f94"}, {"from": 3, "to": 9, "length": 14.79280890440604, "color": "#557f94"}, {"from": 4, "to": 50, "length": 44.94387107089709, "color": "#557f94"}, {"from": 5, "to": 3, "length": 40.245465176511466, "color": "#557f94"}, {"from": 5, "to": 47, "length": 30.863186221856488, "color": "#557f94"}, {"from": 6, "to": 66, "length": 12.910499855830405, "color": "#557f94"}, {"from": 7, "to": 6, "length": 17.556837896439216, "color": "#557f94"}, {"from": 7, "to": 54, "length": 14.593390042464147, "color": "#557f94"}, {"from": 8, "to": 3, "length": 18.58549198118473, "color": "#557f94"}, {"from": 8, "to": 68, "length": 12.773111508556047, "color": "#557f94"}, {"from": 9, "to": 2, "length": 13.236502710842588, "color": "#557f94"}, {"from": 9, "to": 8, "length": 21.301387984784657, "color": "#557f94"}, {"from": 10, "to": 44, "length": 9.87876834598713, "color": "#557f94"}, {"from": 11, "to": 34, "length": 14.409609173966786, "color": "#557f94"}, {"from": 11, "to": 108, "length": 14.409609173966786, "color": "#557f94"}, {"from": 12, "to": 103, "length": 38.45200528009456, "color": "#557f94"}, {"from": 13, "to": 90, "length": 8.611044595221625, "color": "#557f94"}, {"from": 14, "to": 12, "length": 67.00913890638012, "color": "#557f94"}, {"from": 14, "to": 60, "length": 30.642795104338024, "color": "#557f94"}, {"from": 15, "to": 56, "length": 16.19223812193734, "color": "#557f94"}, {"from": 16, "to": 62, "length": 8.721758683139184, "color": "#557f94"}, {"from": 17, "to": 45, "length": 21.142093661585687, "color": "#557f94"}, {"from": 18, "to": 76, "length": 4.507920479365946, "color": "#557f94"}, {"from": 19, "to": 7, "length": 42.88783663386348, "color": "#557f94"}, {"from": 19, "to": 18, "length": 42.52825240858903, "color": "#557f94"}, {"from": 19, "to": 58, "length": 5.1631674353542545, "color": "#557f94"}, {"from": 20, "to": 78, "length": 0.0, "color": "#557f94"}, {"from": 21, "to": 77, "length": 6.422558888884491, "color": "#557f94"}, {"from": 22, "to": 1, "length": 17.06117740024704, "color": "#557f94"}, {"from": 22, "to": 27, "length": 10.656392018274587, "color": "#557f94"}, {"from": 23, "to": 7, "length": 49.09066257086398, "color": "#557f94"}, {"from": 23, "to": 19, "length": 53.189976085071365, "color": "#557f94"}, {"from": 23, "to": 84, "length": 0.3815132841603531, "color": "#557f94"}, {"from": 24, "to": 32, "length": 71.29697670770452, "color": "#557f94"}, {"from": 25, "to": 88, "length": 0.9185903021313142, "color": "#557f94"}, {"from": 26, "to": 16, "length": 12.133112021508614, "color": "#557f94"}, {"from": 26, "to": 82, "length": 11.904190508243197, "color": "#557f94"}, {"from": 27, "to": 64, "length": 4.861454005365858, "color": "#557f94"}, {"from": 28, "to": 2, "length": 23.852854315170386, "color": "#557f94"}, {"from": 28, "to": 3, "length": 24.936343630804064, "color": "#557f94"}, {"from": 28, "to": 9, "length": 18.015654731835575, "color": "#557f94"}, {"from": 29, "to": 99, "length": 15.876271341494705, "color": "#557f94"}, {"from": 30, "to": 0, "length": 21.642479351569, "color": "#557f94"}, {"from": 30, "to": 2, "length": 18.219257681964528, "color": "#557f94"}, {"from": 30, "to": 9, "length": 22.68197844748322, "color": "#557f94"}, {"from": 30, "to": 45, "length": 11.649099072982585, "color": "#557f94"}, {"from": 31, "to": 103, "length": 22.54445918076829, "color": "#557f94"}, {"from": 32, "to": 91, "length": 19.11385702601803, "color": "#557f94"}, {"from": 33, "to": 2, "length": 32.821866428867764, "color": "#557f94"}, {"from": 33, "to": 30, "length": 21.814472151477133, "color": "#557f94"}, {"from": 34, "to": 15, "length": 39.30425889272105, "color": "#557f94"}, {"from": 34, "to": 108, "length": 0.0, "color": "#557f94"}, {"from": 35, "to": 1, "length": 19.871911838411897, "color": "#557f94"}, {"from": 35, "to": 81, "length": 16.657535896184765, "color": "#557f94"}, {"from": 36, "to": 6, "length": 42.215869889262116, "color": "#557f94"}, {"from": 36, "to": 7, "length": 36.901827484336145, "color": "#557f94"}, {"from": 36, "to": 19, "length": 16.84359138788077, "color": "#557f94"}, {"from": 36, "to": 58, "length": 12.949281212830124, "color": "#557f94"}, {"from": 37, "to": 26, "length": 13.806028763404306, "color": "#557f94"}, {"from": 37, "to": 68, "length": 7.152193453187234, "color": "#557f94"}, {"from": 38, "to": 12, "length": 39.79272103415401, "color": "#557f94"}, {"from": 38, "to": 31, "length": 28.08560509107774, "color": "#557f94"}, {"from": 38, "to": 55, "length": 19.96429510461663, "color": "#557f94"}, {"from": 39, "to": 79, "length": 10.305534265202251, "color": "#557f94"}, {"from": 40, "to": 74, "length": 21.036191636491438, "color": "#557f94"}, {"from": 41, "to": 29, "length": 41.05387066369616, "color": "#557f94"}, {"from": 41, "to": 53, "length": 38.165643450560715, "color": "#557f94"}, {"from": 42, "to": 1, "length": 12.682211293481798, "color": "#557f94"}, {"from": 42, "to": 27, "length": 17.648604895312207, "color": "#557f94"}, {"from": 42, "to": 97, "length": 9.37442947830556, "color": "#557f94"}, {"from": 43, "to": 10, "length": 22.698738176951952, "color": "#557f94"}, {"from": 43, "to": 22, "length": 19.988065435989327, "color": "#557f94"}, {"from": 43, "to": 51, "length": 14.563864324564388, "color": "#557f94"}, {"from": 44, "to": 22, "length": 36.15728230280821, "color": "#557f94"}, {"from": 44, "to": 35, "length": 33.57770099270811, "color": "#557f94"}, {"from": 44, "to": 43, "length": 18.354583438278148, "color": "#557f94"}, {"from": 45, "to": 0, "length": 20.223025014412404, "color": "#557f94"}, {"from": 45, "to": 2, "length": 15.122664107670744, "color": "#557f94"}, {"from": 45, "to": 9, "length": 19.902506040135936, "color": "#557f94"}, {"from": 46, "to": 40, "length": 62.35869510748642, "color": "#557f94"}, {"from": 46, "to": 41, "length": 61.837868544090526, "color": "#557f94"}, {"from": 47, "to": 20, "length": 32.24808262609224, "color": "#557f94"}, {"from": 47, "to": 107, "length": 27.698560109120997, "color": "#557f94"}, {"from": 48, "to": 0, "length": 22.87006931662365, "color": "#557f94"}, {"from": 48, "to": 3, "length": 17.222586224987616, "color": "#557f94"}, {"from": 48, "to": 9, "length": 13.632681173932868, "color": "#557f94"}, {"from": 48, "to": 28, "length": 21.778682215848526, "color": "#557f94"}, {"from": 48, "to": 45, "length": 15.621985269122213, "color": "#557f94"}, {"from": 49, "to": 2, "length": 24.161614857586862, "color": "#557f94"}, {"from": 49, "to": 17, "length": 21.236131149554378, "color": "#557f94"}, {"from": 49, "to": 45, "length": 24.10005485005721, "color": "#557f94"}, {"from": 49, "to": 48, "length": 27.712275945853744, "color": "#557f94"}, {"from": 49, "to": 105, "length": 17.545299864175977, "color": "#557f94"}, {"from": 50, "to": 31, "length": 40.425994542535065, "color": "#557f94"}, {"from": 50, "to": 38, "length": 23.011547651217533, "color": "#557f94"}, {"from": 50, "to": 55, "length": 12.10182027796705, "color": "#557f94"}, {"from": 51, "to": 10, "length": 24.686943657969532, "color": "#557f94"}, {"from": 51, "to": 22, "length": 19.543986794442215, "color": "#557f94"}, {"from": 51, "to": 42, "length": 25.57124117433642, "color": "#557f94"}, {"from": 51, "to": 44, "length": 21.998644816297528, "color": "#557f94"}, {"from": 52, "to": 6, "length": 22.53862711620801, "color": "#557f94"}, {"from": 52, "to": 15, "length": 20.22622525724005, "color": "#557f94"}, {"from": 52, "to": 28, "length": 23.06242357443539, "color": "#557f94"}, {"from": 53, "to": 92, "length": 7.035788996849115, "color": "#557f94"}, {"from": 54, "to": 6, "length": 23.84182395666928, "color": "#557f94"}, {"from": 54, "to": 15, "length": 20.98696703122785, "color": "#557f94"}, {"from": 54, "to": 52, "length": 24.823016865236937, "color": "#557f94"}, {"from": 55, "to": 12, "length": 43.75969231364841, "color": "#557f94"}, {"from": 55, "to": 17, "length": 40.577954202048794, "color": "#557f94"}, {"from": 55, "to": 31, "length": 29.376474296197195, "color": "#557f94"}, {"from": 55, "to": 103, "length": 23.580526251321402, "color": "#557f94"}, {"from": 56, "to": 6, "length": 28.22215066603033, "color": "#557f94"}, {"from": 56, "to": 7, "length": 27.41197507984596, "color": "#557f94"}, {"from": 56, "to": 54, "length": 22.33379504636581, "color": "#557f94"}, {"from": 57, "to": 25, "length": 64.65201772523001, "color": "#557f94"}, {"from": 57, "to": 40, "length": 60.59095890415194, "color": "#557f94"}, {"from": 57, "to": 46, "length": 66.95538080198116, "color": "#557f94"}, {"from": 58, "to": 6, "length": 49.25621452223475, "color": "#557f94"}, {"from": 58, "to": 7, "length": 43.20585391034789, "color": "#557f94"}, {"from": 58, "to": 18, "length": 43.47374971669619, "color": "#557f94"}, {"from": 58, "to": 66, "length": 38.39305561671962, "color": "#557f94"}, {"from": 59, "to": 17, "length": 28.31840126193911, "color": "#557f94"}, {"from": 59, "to": 30, "length": 33.25600350628465, "color": "#557f94"}, {"from": 59, "to": 45, "length": 31.871888726010674, "color": "#557f94"}, {"from": 59, "to": 87, "length": 13.393231691817501, "color": "#557f94"}, {"from": 60, "to": 12, "length": 66.87174141721934, "color": "#557f94"}, {"from": 61, "to": 13, "length": 50.369303246895555, "color": "#557f94"}, {"from": 61, "to": 29, "length": 40.8421664155778, "color": "#557f94"}, {"from": 61, "to": 65, "length": 29.16598846040489, "color": "#557f94"}, {"from": 62, "to": 27, "length": 12.628794515774578, "color": "#557f94"}, {"from": 62, "to": 73, "length": 8.549951605921226, "color": "#557f94"}, {"from": 63, "to": 29, "length": 20.730478403415805, "color": "#557f94"}, {"from": 63, "to": 53, "length": 12.498961671655087, "color": "#557f94"}, {"from": 64, "to": 22, "length": 11.700178419338174, "color": "#557f94"}, {"from": 64, "to": 62, "length": 11.636809236192525, "color": "#557f94"}, {"from": 64, "to": 73, "length": 7.006373551713922, "color": "#557f94"}, {"from": 65, "to": 13, "length": 26.44109468972822, "color": "#557f94"}, {"from": 65, "to": 35, "length": 30.187344802015062, "color": "#557f94"}, {"from": 66, "to": 7, "length": 19.02090468713083, "color": "#557f94"}, {"from": 66, "to": 36, "length": 31.0631667345851, "color": "#557f94"}, {"from": 66, "to": 52, "length": 29.920605619725897, "color": "#557f94"}, {"from": 66, "to": 54, "length": 26.48961662745725, "color": "#557f94"}, {"from": 66, "to": 56, "length": 37.620196001232046, "color": "#557f94"}, {"from": 67, "to": 16, "length": 10.40743467907863, "color": "#557f94"}, {"from": 67, "to": 27, "length": 9.09981233637334, "color": "#557f94"}, {"from": 67, "to": 64, "length": 9.278449407362015, "color": "#557f94"}, {"from": 67, "to": 106, "length": 6.607473952629126, "color": "#557f94"}, {"from": 68, "to": 26, "length": 14.603600018295946, "color": "#557f94"}, {"from": 68, "to": 39, "length": 12.877612246406267, "color": "#557f94"}, {"from": 68, "to": 82, "length": 9.762481221751695, "color": "#557f94"}, {"from": 69, "to": 17, "length": 24.964857398518518, "color": "#557f94"}, {"from": 69, "to": 30, "length": 31.444083000137294, "color": "#557f94"}, {"from": 69, "to": 45, "length": 23.200228953910866, "color": "#557f94"}, {"from": 69, "to": 48, "length": 31.613903646963088, "color": "#557f94"}, {"from": 70, "to": 20, "length": 7.7952874598902735, "color": "#557f94"}, {"from": 70, "to": 78, "length": 7.7952874598902735, "color": "#557f94"}, {"from": 71, "to": 53, "length": 10.693895127136159, "color": "#557f94"}, {"from": 71, "to": 63, "length": 22.016117579744474, "color": "#557f94"}, {"from": 71, "to": 92, "length": 8.456915781268426, "color": "#557f94"}, {"from": 72, "to": 40, "length": 21.229901122090226, "color": "#557f94"}, {"from": 72, "to": 53, "length": 14.071286719537907, "color": "#557f94"}, {"from": 72, "to": 63, "length": 16.2617791046126, "color": "#557f94"}, {"from": 72, "to": 71, "length": 20.470702025567427, "color": "#557f94"}, {"from": 73, "to": 16, "length": 9.602175764726518, "color": "#557f94"}, {"from": 73, "to": 27, "length": 9.590200572654869, "color": "#557f94"}, {"from": 73, "to": 37, "length": 12.768153762467422, "color": "#557f94"}, {"from": 73, "to": 67, "length": 7.450192140947162, "color": "#557f94"}, {"from": 73, "to": 106, "length": 3.4629914397915, "color": "#557f94"}, {"from": 74, "to": 53, "length": 27.032029901206954, "color": "#557f94"}, {"from": 74, "to": 63, "length": 28.762791871438754, "color": "#557f94"}, {"from": 74, "to": 71, "length": 26.50617479146694, "color": "#557f94"}, {"from": 74, "to": 72, "length": 24.030958135595686, "color": "#557f94"}, {"from": 75, "to": 33, "length": 58.592972136526214, "color": "#557f94"}, {"from": 75, "to": 74, "length": 55.082421021516424, "color": "#557f94"}, {"from": 75, "to": 89, "length": 39.257065886563815, "color": "#557f94"}, {"from": 76, "to": 19, "length": 46.0576014580521, "color": "#557f94"}, {"from": 76, "to": 36, "length": 58.08644429358472, "color": "#557f94"}, {"from": 76, "to": 58, "length": 46.83966157938582, "color": "#557f94"}, {"from": 77, "to": 13, "length": 51.30044433915116, "color": "#557f94"}, {"from": 77, "to": 35, "length": 47.1796537098793, "color": "#557f94"}, {"from": 77, "to": 65, "length": 45.64111983787431, "color": "#557f94"}, {"from": 78, "to": 64, "length": 17.35049817477828, "color": "#557f94"}, {"from": 78, "to": 100, "length": 11.65870417278914, "color": "#557f94"}, {"from": 79, "to": 26, "length": 13.464020341832404, "color": "#557f94"}, {"from": 79, "to": 67, "length": 12.73070339040608, "color": "#557f94"}, {"from": 79, "to": 68, "length": 13.669950559361205, "color": "#557f94"}, {"from": 80, "to": 37, "length": 16.15301693263011, "color": "#557f94"}, {"from": 80, "to": 73, "length": 18.40067263668345, "color": "#557f94"}, {"from": 81, "to": 42, "length": 18.341154569792987, "color": "#557f94"}, {"from": 81, "to": 64, "length": 20.96829025866863, "color": "#557f94"}, {"from": 81, "to": 97, "length": 15.681408480938813, "color": "#557f94"}, {"from": 82, "to": 37, "length": 9.154759639763025, "color": "#557f94"}, {"from": 82, "to": 39, "length": 16.01437877178283, "color": "#557f94"}, {"from": 82, "to": 73, "length": 16.520929805683604, "color": "#557f94"}, {"from": 83, "to": 0, "length": 28.316086793230298, "color": "#557f94"}, {"from": 83, "to": 3, "length": 28.548625989287302, "color": "#557f94"}, {"from": 83, "to": 98, "length": 15.351235569859504, "color": "#557f94"}, {"from": 84, "to": 6, "length": 53.6037274485177, "color": "#557f94"}, {"from": 84, "to": 7, "length": 49.42588411828596, "color": "#557f94"}, {"from": 84, "to": 19, "length": 53.28929880214615, "color": "#557f94"}, {"from": 84, "to": 36, "length": 51.991612164343024, "color": "#557f94"}, {"from": 84, "to": 66, "length": 50.986934125862234, "color": "#557f94"}, {"from": 85, "to": 14, "length": 77.27521662743838, "color": "#557f94"}, {"from": 85, "to": 32, "length": 84.30974395389235, "color": "#557f94"}, {"from": 85, "to": 75, "length": 70.74836871950089, "color": "#557f94"}, {"from": 85, "to": 89, "length": 66.22228815059681, "color": "#557f94"}, {"from": 86, "to": 13, "length": 20.327106561196636, "color": "#557f94"}, {"from": 86, "to": 42, "length": 30.272757882195542, "color": "#557f94"}, {"from": 86, "to": 112, "length": 18.179649038160616, "color": "#557f94"}, {"from": 87, "to": 17, "length": 37.280232015694445, "color": "#557f94"}, {"from": 87, "to": 33, "length": 38.095093244532016, "color": "#557f94"}, {"from": 87, "to": 45, "length": 37.80163639466935, "color": "#557f94"}, {"from": 87, "to": 95, "length": 34.62833877726937, "color": "#557f94"}, {"from": 88, "to": 40, "length": 123.70887471918638, "color": "#557f94"}, {"from": 88, "to": 46, "length": 120.49693812513433, "color": "#557f94"}, {"from": 88, "to": 57, "length": 65.53084776524271, "color": "#557f94"}, {"from": 88, "to": 72, "length": 134.41035917311473, "color": "#557f94"}, {"from": 88, "to": 74, "length": 126.3314211414523, "color": "#557f94"}, {"from": 89, "to": 30, "length": 48.61742299173012, "color": "#557f94"}, {"from": 89, "to": 33, "length": 37.41789385738886, "color": "#557f94"}, {"from": 89, "to": 83, "length": 45.58448986932933, "color": "#557f94"}, {"from": 89, "to": 95, "length": 34.60616716091109, "color": "#557f94"}, {"from": 90, "to": 42, "length": 34.06752099040805, "color": "#557f94"}, {"from": 90, "to": 65, "length": 32.65929827211391, "color": "#557f94"}, {"from": 90, "to": 86, "length": 22.94861619340132, "color": "#557f94"}, {"from": 90, "to": 111, "length": 14.52226512565479, "color": "#557f94"}, {"from": 91, "to": 24, "length": 72.59102735301323, "color": "#557f94"}, {"from": 91, "to": 41, "length": 96.84025976835046, "color": "#557f94"}, {"from": 91, "to": 75, "length": 115.864418606495, "color": "#557f94"}, {"from": 91, "to": 85, "length": 85.32940869084813, "color": "#557f94"}, {"from": 91, "to": 89, "length": 109.72782790356368, "color": "#557f94"}, {"from": 92, "to": 63, "length": 17.43486882385627, "color": "#557f94"}, {"from": 92, "to": 72, "length": 20.53477244496942, "color": "#557f94"}, {"from": 92, "to": 74, "length": 30.596627830482582, "color": "#557f94"}, {"from": 93, "to": 26, "length": 20.362019828754025, "color": "#557f94"}, {"from": 93, "to": 68, "length": 25.49195030450409, "color": "#557f94"}, {"from": 93, "to": 70, "length": 24.410322453709593, "color": "#557f94"}, {"from": 93, "to": 79, "length": 21.32763003140453, "color": "#557f94"}, {"from": 93, "to": 101, "length": 15.759326741281479, "color": "#557f94"}, {"from": 94, "to": 15, "length": 23.0814038447906, "color": "#557f94"}, {"from": 94, "to": 39, "length": 23.745065229480986, "color": "#557f94"}, {"from": 94, "to": 54, "length": 23.55291952776872, "color": "#557f94"}, {"from": 94, "to": 68, "length": 24.159252976218617, "color": "#557f94"}, {"from": 94, "to": 82, "length": 17.186228025303794, "color": "#557f94"}, {"from": 95, "to": 30, "length": 29.67437572754729, "color": "#557f94"}, {"from": 95, "to": 33, "length": 24.778772350350277, "color": "#557f94"}, {"from": 95, "to": 59, "length": 28.401015451364422, "color": "#557f94"}, {"from": 95, "to": 83, "length": 30.140222988670082, "color": "#557f94"}, {"from": 96, "to": 8, "length": 13.046692893304868, "color": "#557f94"}, {"from": 96, "to": 37, "length": 11.507496415549808, "color": "#557f94"}, {"from": 96, "to": 68, "length": 13.16586486026975, "color": "#557f94"}, {"from": 96, "to": 80, "length": 17.258408042970583, "color": "#557f94"}, {"from": 96, "to": 82, "length": 16.533990422611488, "color": "#557f94"}, {"from": 97, "to": 1, "length": 13.419043880117767, "color": "#557f94"}, {"from": 97, "to": 62, "length": 16.77916263402077, "color": "#557f94"}, {"from": 97, "to": 64, "length": 17.19030917122281, "color": "#557f94"}, {"from": 97, "to": 80, "length": 18.37298036807672, "color": "#557f94"}, {"from": 98, "to": 3, "length": 22.763879017976542, "color": "#557f94"}, {"from": 98, "to": 8, "length": 19.291759186886715, "color": "#557f94"}, {"from": 98, "to": 68, "length": 22.016012745178895, "color": "#557f94"}, {"from": 98, "to": 96, "length": 26.760040028292153, "color": "#557f94"}, {"from": 99, "to": 15, "length": 24.48525413535109, "color": "#557f94"}, {"from": 99, "to": 26, "length": 30.858089732972477, "color": "#557f94"}, {"from": 99, "to": 56, "length": 29.35636312517733, "color": "#557f94"}, {"from": 99, "to": 63, "length": 31.594824897446216, "color": "#557f94"}, {"from": 99, "to": 80, "length": 27.050453470978255, "color": "#557f94"}, {"from": 100, "to": 20, "length": 11.65870417278914, "color": "#557f94"}, {"from": 100, "to": 22, "length": 12.236054103022912, "color": "#557f94"}, {"from": 100, "to": 27, "length": 15.97098213226438, "color": "#557f94"}, {"from": 100, "to": 64, "length": 14.456868438133728, "color": "#557f94"}, {"from": 101, "to": 20, "length": 17.367445718674638, "color": "#557f94"}, {"from": 101, "to": 70, "length": 15.098408190798501, "color": "#557f94"}, {"from": 101, "to": 78, "length": 17.367445718674638, "color": "#557f94"}, {"from": 101, "to": 79, "length": 15.402393995685191, "color": "#557f94"}, {"from": 102, "to": 20, "length": 13.161260858152463, "color": "#557f94"}, {"from": 102, "to": 67, "length": 16.34267665554466, "color": "#557f94"}, {"from": 102, "to": 70, "length": 10.192872798645155, "color": "#557f94"}, {"from": 102, "to": 78, "length": 13.161260858152463, "color": "#557f94"}, {"from": 102, "to": 79, "length": 13.948551762245875, "color": "#557f94"}, {"from": 103, "to": 17, "length": 26.65268383437665, "color": "#557f94"}, {"from": 103, "to": 38, "length": 28.743677043476787, "color": "#557f94"}, {"from": 103, "to": 49, "length": 31.047388178445082, "color": "#557f94"}, {"from": 103, "to": 50, "length": 34.002783362960834, "color": "#557f94"}, {"from": 103, "to": 105, "length": 24.78546994281235, "color": "#557f94"}, {"from": 104, "to": 53, "length": 20.08287104492958, "color": "#557f94"}, {"from": 104, "to": 63, "length": 16.194162572843616, "color": "#557f94"}, {"from": 104, "to": 71, "length": 23.20278966717889, "color": "#557f94"}, {"from": 104, "to": 72, "length": 22.923020640995283, "color": "#557f94"}, {"from": 104, "to": 92, "length": 22.258205971185554, "color": "#557f94"}, {"from": 105, "to": 17, "length": 23.70109500196964, "color": "#557f94"}, {"from": 105, "to": 31, "length": 31.06536983284095, "color": "#557f94"}, {"from": 105, "to": 45, "length": 32.631011733931466, "color": "#557f94"}, {"from": 105, "to": 55, "length": 33.96149629508794, "color": "#557f94"}, {"from": 105, "to": 69, "length": 29.055815045978072, "color": "#557f94"}, {"from": 106, "to": 16, "length": 11.278742689540442, "color": "#557f94"}, {"from": 106, "to": 27, "length": 9.733603992224904, "color": "#557f94"}, {"from": 106, "to": 37, "length": 14.603062156061595, "color": "#557f94"}, {"from": 106, "to": 62, "length": 10.079558202884469, "color": "#557f94"}, {"from": 106, "to": 64, "length": 7.681751344624313, "color": "#557f94"}, {"from": 107, "to": 1, "length": 14.780354286006647, "color": "#557f94"}, {"from": 107, "to": 20, "length": 11.907347469573367, "color": "#557f94"}, {"from": 107, "to": 70, "length": 11.283778724124565, "color": "#557f94"}, {"from": 107, "to": 78, "length": 11.907347469573367, "color": "#557f94"}, {"from": 107, "to": 100, "length": 13.152646722836787, "color": "#557f94"}, {"from": 108, "to": 15, "length": 39.30425889272105, "color": "#557f94"}, {"from": 108, "to": 52, "length": 41.99514347966419, "color": "#557f94"}, {"from": 108, "to": 56, "length": 41.56636102768389, "color": "#557f94"}, {"from": 108, "to": 80, "length": 37.85296200064349, "color": "#557f94"}, {"from": 108, "to": 99, "length": 37.91285059577718, "color": "#557f94"}, {"from": 109, "to": 2, "length": 27.781592358534425, "color": "#557f94"}, {"from": 109, "to": 3, "length": 25.363593600771885, "color": "#557f94"}, {"from": 109, "to": 30, "length": 25.687551427781298, "color": "#557f94"}, {"from": 109, "to": 33, "length": 25.30880097873026, "color": "#557f94"}, {"from": 109, "to": 83, "length": 26.098436638915643, "color": "#557f94"}, {"from": 110, "to": 2, "length": 38.16994649873868, "color": "#557f94"}, {"from": 110, "to": 28, "length": 37.98979925861034, "color": "#557f94"}, {"from": 110, "to": 49, "length": 33.11443380043164, "color": "#557f94"}, {"from": 110, "to": 69, "length": 39.202886009105114, "color": "#557f94"}, {"from": 110, "to": 105, "length": 36.84044534859218, "color": "#557f94"}, {"from": 111, "to": 13, "length": 19.547172682818054, "color": "#557f94"}, {"from": 111, "to": 42, "length": 43.67096080607688, "color": "#557f94"}, {"from": 111, "to": 65, "length": 35.0382679005119, "color": "#557f94"}, {"from": 111, "to": 86, "length": 30.218007939522558, "color": "#557f94"}, {"from": 112, "to": 13, "length": 17.513876114347994, "color": "#557f94"}, {"from": 112, "to": 42, "length": 23.32822097942676, "color": "#557f94"}, {"from": 112, "to": 51, "length": 25.376582935357344, "color": "#557f94"}, {"from": 112, "to": 90, "length": 21.044446403401103, "color": "#557f94"}, {"from": 112, "to": 97, "length": 24.111933036513648, "color": "#557f94"}]]
+nodes = [{
+    "id": 0,
+    "title": "Double-click to open \"Rolling with the punches: An examination of team performance in a design task subject to drastic changes\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 1,
+    "title": "Double-click to open \"Enhancement of shear transfer in composite deck with mechanical fasteners\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 2,
+    "title": "Double-click to open \"Lifting the Veil: Drawing insights about design teams from a cognitively-inspired computational model\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 3,
+    "title": "Double-click to open \"Drawing Inspiration From Human Design Teams for Better Search and Optimization: The Heterogeneous Simulated Annealing Teams Algorithm\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 4,
+    "title": "Double-click to open \"Optimizing Design Teams Based on Problem Properties: Computational Team Simulations and an Applied Empirical Test\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 5,
+    "title": "Double-click to open \"Impossible by design? Fairness, strategy, and Arrow\u2019s impossibility theorem\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 6,
+    "title": "Double-click to open \"Capturing Human Sequence-Learning Abilities in Configuration Design Tasks Through Markov Chains \"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 7,
+    "title": "Double-click to open \"Mining Process Heuristics From Designer Action Data via Hidden Markov Models\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 8,
+    "title": "Double-click to open \"Data on the configuration design of internet-connected home cooling systems by engineering students\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 9,
+    "title": "Double-click to open \"Data on the design of truss structures by teams of engineering students\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 10,
+    "title": "Double-click to open \"Multi-objective optimization and scenario-based robustness analysis of the MoneyMaker Hip Pump\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 11,
+    "title": "Double-click to open \"Pulling at the Digital Thread: Exploring the Tolerance Stack Up Between Automatic Procedures and Expert Strategies in Scan to Print Processes\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 12,
+    "title": "Double-click to open \"An analysis of design process and performance in distributed data science teams\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 13,
+    "title": "Double-click to open \"Design Repository Effectiveness for 3D Convolutional Neural Networks: Application to Additive Manufacturing\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 14,
+    "title": "Double-click to open \"Expanding the Solution Space in Engineering Design Education: A Simulation-Based Investigation of Product Dissection\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 15,
+    "title": "Double-click to open \"Heuristic-Guided Solution Search Through a Two-Tiered Design Grammar\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 16,
+    "title": "Double-click to open \"Image collection of 3D-printed prototypes and non-3D-printed prototypes\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 17,
+    "title": "Double-click to open \"KABOOM: an agent-based model for simulating cognitive style in team problem solving\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 18,
+    "title": "Double-click to open \"Learning to Design From Humans: Imitating Human Designers Through Deep Learning\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 19,
+    "title": "Double-click to open \"Transferring Design Strategies From Human to Computer and Across Design Problems\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 20,
+    "title": "Double-click to open \"The Prototyping Behaviors of Startups: Exploring the Relationship Between Prototyping Behaviors and Startup Strategies\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 21,
+    "title": "Double-click to open \"Detection of System Compromise in Additive Manufacturing Using Video Motion Magnification\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 22,
+    "title": "Double-click to open \"Predicting elastic strain fields in defective microstructures using image colorization algorithms\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 23,
+    "title": "Double-click to open \"Data-Driven Heuristic Induction From Human Design Behavior\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 24,
+    "title": "Double-click to open \"Are you feeling me? An exploration of empathy development in engineering design education\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 25,
+    "title": "Double-click to open \"Assessing Engineering Design: A Comparison of the Effect of Exams and Design Practica on First-Year Students\u2019 Design Self-Efficacy\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 26,
+    "title": "Double-click to open \"Mining Design Heuristics for Additive Manufacturing Via Eye-Tracking Methods and Hidden Markov Modeling\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 27,
+    "title": "Double-click to open \"Image-based data on strain fields of microstructures with porosity defects\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 28,
+    "title": "Double-click to open \"A strategic decision-making architecture toward hybrid teams for dynamic competitive problems\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 29,
+    "title": "Double-click to open \"Lost in Translation: Examining the Complex Relationship Between Prototyping and Communication\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 30,
+    "title": "Double-click to open \"A cautionary tale about the impact of AI on human design teams\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 31,
+    "title": "Double-click to open \"Human versus Artificial Intelligence: A Data-Driven Approach to Real-Time Process Management During Complex Engineering Design\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 32,
+    "title": "Double-click to open \"Empathic creativity: can trait empathy predict creative concept generation and selection?\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 33,
+    "title": "Double-click to open \"Influencers in Design Teams: A Computational Framework to Study their Impact on Idea Generation\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 34,
+    "title": "Double-click to open \"When faced with increasing complexity: The effectiveness of AI assistance for drone design\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 35,
+    "title": "Double-click to open \"Part Filtering Methods for Additive Manufacturing: A Detailed Review and a Novel Process-Agnostic Method\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 36,
+    "title": "Double-click to open \"Goal-Directed Design Agents: Integrating Visual Imitation with One-Step Lookahead Optimization for Generative Design\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 37,
+    "title": "Double-click to open \"A Query Conundrum: The Mental Challenges of Using a Cognitive Assistant\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 38,
+    "title": "Double-click to open \"Data on the design and operation of drones by both individuals and teams\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 39,
+    "title": "Double-click to open \"An Adversarial Agent-Based Design Method Using Stochastic Stackelberg Game Conditions\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 40,
+    "title": "Double-click to open \"A Quantitative Approach to Evaluate the Application of the Extended Situational Teaching Model in Engineering Education\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 41,
+    "title": "Double-click to open \"The cognitive experience of engineering design: an examination of first-year student stress across principal activities of the engineering design process\"",
+    "size": 40,
+    "color": "#84ccdc",
+    "shape": "dot"
+}, {
+    "id": 42,
+    "title": "Double-click to open \"Development and Verification of a Wave Energy Converter Simulation Tool\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 43,
+    "title": "Double-click to open \"Identifying Technical and Economic Improvements to the MoneyMaker Hip Pump through Multi-Objective Optimization\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 44,
+    "title": "Double-click to open \"Improving Irrigation in Remote Areas: Multi-objective Optimization of a Treadle Pump\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 45,
+    "title": "Double-click to open \"Quantitative Comparison of High- and Low-Performing Teams in a Design Task Subject to Drastic Changes\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 46,
+    "title": "Double-click to open \"Research and Practice Group Methodology: A Case Study in Student Success\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 47,
+    "title": "Double-click to open \"Fairness and Manipulation: An Empirical Study of Arrow\u2019s Impossibility Theorem\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 48,
+    "title": "Double-click to open \"Heterogeneous Simulated Annealing Teams: An Optimizing Search Algorithm Inspired by Engineering Design Teams\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 49,
+    "title": "Double-click to open \"Studying Human Design Teams through Computational Teams of Simulated Annealing Agents\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 50,
+    "title": "Double-click to open \"Linking Properties of Design Problems to Optimal Team Characteristics\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 51,
+    "title": "Double-click to open \"Scenario-Based Robustness Analysis of Optimized I.D.E.-Style Treadle Pump Designs\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 52,
+    "title": "Double-click to open \"Utilizing Markov Chains to Understand Operation Sequencing in Design Tasks\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 53,
+    "title": "Double-click to open \"Application of Project-based Learning within the Context of Sustainable Development in Education of International Engineer Citizens\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 54,
+    "title": "Double-click to open \"Eliciting Configuration Design Heuristics with Hidden Markov Models\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 55,
+    "title": "Double-click to open \"Validating a Tool for Predicting Problem-Specific Optimized Team Characteristics\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 56,
+    "title": "Double-click to open \"A Two-Tiered Grammatical Approach For Agent-Based Computational Design\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 57,
+    "title": "Double-click to open \"Design Practica as Authentic Assessments in First-year Engineering Design Courses\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 58,
+    "title": "Double-click to open \"Design Strategy Transfer in Cognitively-Inspired Agents\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 59,
+    "title": "Double-click to open \"Designing Improved Teams for Crowdsourced Competitions\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 60,
+    "title": "Double-click to open \"Helping Teams Expand the Breadth of Their Solution Space Through Product Dissection: A Simulation Based Investigation\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 61,
+    "title": "Double-click to open \"Opportunities for Natural Language Processing in Qualitative Engineering Education Research: Two Examples\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 62,
+    "title": "Double-click to open \"Predicting Part Mass, Required Support Material, and Build Time via Autoencoded Voxel Patterns\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 63,
+    "title": "Double-click to open \"Thus, I had to go with what I had: A Multiple Methods Exploration of Novice Designers Articulation of Prototyping Decisions\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 64,
+    "title": "Double-click to open \"Towards the Rapid Design of Engineered Systems Through Deep Neural Networks\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 65,
+    "title": "Double-click to open \"A Comparative Study Of Virtual Reality And Computer-Aided Design To Evaluate Parts For Additive Manufacturing\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 66,
+    "title": "Double-click to open \"A Differential Game Approach to Dynamic Competitive Decisions Toward Human-Computer Collaboration\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 67,
+    "title": "Double-click to open \"A Standardized Framework for Communicating and Modelling Parametrically Defined Mesostructure Patterns\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 68,
+    "title": "Double-click to open \"Assessing The Impact Of Cognitive Assistants On Mental Workload In Simple Tasks\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 69,
+    "title": "Double-click to open \"Collaborating with Style: Using an Agent-Based Model to Simulate Cognitive Style Diversity in Problem Solving Teams\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 70,
+    "title": "Double-click to open \"Complexity Reduction in Mass Customization To Facilitate Better Decision Support\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 71,
+    "title": "Double-click to open \"Creation and Implementation of a Project Framework to Improve Cornerstone Engineering Design\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 72,
+    "title": "Double-click to open \"Critical Thinking In The Design Classroom: An Analysis Of Student Design Reflections\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 73,
+    "title": "Double-click to open \"Decision-Making In The Prescription Of Orthotics And Prosthetics For Partial-Foot Amputees\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 74,
+    "title": "Double-click to open \"Engineering Futures: Updating a Successful Professional Development Program to Address New Challenges\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 75,
+    "title": "Double-click to open \"Evaluating Idea Quantity And Variety When Using Digital Collaboration Tools To Support Brainstorming In Non-Collocated Teams\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 76,
+    "title": "Double-click to open \"Learning To Design From Humans: Imitating Human Designers Through Deep Learning\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 77,
+    "title": "Double-click to open \"On The Analysis Of A Compromised Additive Manufacturing System Using Spatio-Temporal Decomposition\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 78,
+    "title": "Double-click to open \"The Prototyping Behaviors Of Startups: Exploring The Relationship Between Prototyping Behavior And The Financial Success Of Startups\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 79,
+    "title": "Double-click to open \"Towards an Ontology of Cognitive Assistants\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 80,
+    "title": "Double-click to open \"Using Hidden Markov Models to Uncover Underlying States in Neuroimaging Data for a Design Ideation Task\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 81,
+    "title": "Double-click to open \"A Review of Part Filtering Methods for Additive Manufacturing\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 82,
+    "title": "Double-click to open \"Analyzing the Characteristics of Cognitive-Assistant-Facilitated Ideation Groups\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 83,
+    "title": "Double-click to open \"Analyzing the Effect of Self-Efficacy and Influencers on Design Teams\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 84,
+    "title": "Double-click to open \"Automated Heuristic Induction from Human Design Data\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 85,
+    "title": "Double-click to open \"Can Design Teams Be Empathically Creative? A Simulation-Based Investigation on the Role of Team Empathy on Concept Generation and Selection\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 86,
+    "title": "Double-click to open \"Comparing Attribute- and Form-Based Machine Learning Techniques for Component Prediction\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 87,
+    "title": "Double-click to open \"Comparing Student and Sponsor Perceptions of Interdisciplinary Teams' Capstone Performance\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 88,
+    "title": "Double-click to open \"Comparison of Exams and Design Practica for Assessment in First Year Engineering Design Courses\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 89,
+    "title": "Double-click to open \"Composing empathic design teams: a simulation-based investigation on the role of personality traits and risk-taking attitudes on team empathy\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 90,
+    "title": "Double-click to open \"Deriving Metamodels to Relate Machine Learning Quality to Repository Characteristics in the Context of Additive Manufacturing\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 91,
+    "title": "Double-click to open \"Does empathy beget creativity? Investigating the role of trait empathy on idea generation and selection\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 92,
+    "title": "Double-click to open \"Emergence of Engineering Design Self-efficacy in Engineering Identity Development\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 93,
+    "title": "Double-click to open \"Identifying Stress Signatures Across the Engineering Design Process: Perceived Stress During Concept Generation, Concept Selection, and Prototyping\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 94,
+    "title": "Double-click to open \"Modeling a Strategic Human Engineering Design Process: Human-Inspired Heuristic Guidance Through Learned Visual Design Agents\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 95,
+    "title": "Double-click to open \"Modelling the Dynamics of Influence on Individual Thinking during Idea Generation in Co-design Teams\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 96,
+    "title": "Double-click to open \"Stochastic Stackelberg Games for Agent-Driven Robust Design\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 97,
+    "title": "Double-click to open \"Topic Modeling and Sentiment Analysis of Social Media Data to Drive Experiential Redesign\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 98,
+    "title": "Double-click to open \"Toward Hybrid Teams: A Platform To Understand Human-Computer Collaboration During the Design of Complex Engineered Systems\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 99,
+    "title": "Double-click to open \"Towards an Understanding of Semantic Memory During Idea Generation\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 100,
+    "title": "Double-click to open \"Using Deep Image Colorization to Predict Microstructure-Dependent Strain Fields\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 101,
+    "title": "Double-click to open \"Pitch Imperfect: Designing 3D Printed Claves to Mimic the Sound of Their Wooden Counterparts\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 102,
+    "title": "Double-click to open \"Multi-Objective Model-Based Optimization of Pilot Decision Making for Urban Air Mobility\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 103,
+    "title": "Double-click to open \"Comparing design outcomes achieved by teams of expert and novice designers through agent-based simulation\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 104,
+    "title": "Double-click to open \"Novice Designers' Use of Prototypes as Communication Tools\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 105,
+    "title": "Double-click to open \"Communication in AI-assisted Teams During an Interdisciplinary Drone Design Problem\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 106,
+    "title": "Double-click to open \"A Multi-Agent Reinforcement Learning Framework for Intelligent Manufacturing with Autonomous Mobile Robots\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 107,
+    "title": "Double-click to open \"When the Going Gets Tough: Exploring Changes in the Startup Landscape Due to the Challenges of 2020\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 108,
+    "title": "Double-click to open \"Addressing Challenges to Problem Complexity: Effectiveness of AI Assistance During the Design Process\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 109,
+    "title": "Double-click to open \"Comparing Virtual and Face-to-Face Team Collaboration: Insights From an Agent-Based Simulation\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 110,
+    "title": "Double-click to open \"Using Deep Learning to Simulate Multi-Disciplinary Design Teams\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 111,
+    "title": "Double-click to open \"Stochastically-Trained Physics-Informed Neural Networks: Application to Thermal Analysis in Metal Laser Powder Bed Fusion\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}, {
+    "id": 112,
+    "title": "Double-click to open \"Using Physics-Informed Generative Adversarial Networks to Perform Super-Resolution for Multiphase Fluid Simulations\"",
+    "size": 20,
+    "color": "#247297",
+    "shape": "dot"
+}];
