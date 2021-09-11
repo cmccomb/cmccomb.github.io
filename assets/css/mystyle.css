@@ -17,6 +17,11 @@ html, body {margin: 0; height: 100%; overflow: hidden}
     width: 100%;
 }
 
+p {
+    font-size: 0.9em;
+}
+
+
 #graph-container {
     position: absolute;
     top: 0;
@@ -71,9 +76,6 @@ html, body {margin: 0; height: 100%; overflow: hidden}
 /*        margin: 0 auto;*/
 /*    }*/
 
-/*    p {*/
-/*        font-size: 0.9em;*/
-/*    }*/
 }
 
 .vis-tooltip {
