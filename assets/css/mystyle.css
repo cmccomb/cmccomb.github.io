@@ -58,3 +58,7 @@ p {
     white-space: normal !important;
     visibility: hidden;
 }
+
+#graph-container:focus {
+    outline: 0;
+}
