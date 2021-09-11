@@ -54,13 +54,13 @@ let options = {
         tooltipDelay: 10000000,
     },
     nodes:{
-        icon: {
-            face: 'FontAwesome',
-            code: '\uf15b',
-            // weight: undefined,
-            // size: 50,  //50,
-            color:'#212529'
-        },
+        // icon: {
+        //     face: 'FontAwesome',
+        //     code: '\uf15b',
+        //     // weight: undefined,
+        //     // size: 50,  //50,
+        //     color:'#212529'
+        // },
     }
 }
 
