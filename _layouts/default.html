@@ -46,21 +46,24 @@
                    href="https://scholar.google.com/citations?user=0P9w_S0AAAAJ"><i
                         class="fa fa-graduation-cap"></i></a>
             </div>
+            {% if site.publication_graph == true %}                                
             <button id="exit" class="btn btn-outline-dark w-100 rounded-0 rounded-bottom border-top-0"
                     style="font-size: 0.9em;">
                 <i class="fas fa-vector-square"></i>&nbsp;&nbsp;Explore Publications
             </button>
+        {% endif %}
         </div>
     </div>
 </div>
 
 <footer class="footer mt-auto py-3" id="footer" style="z-index:-100;">
     <div class="container text-center">
-        <span class="text-muted">&copy; <script>document.write(new Date().getFullYear())</script> Chris McComb</span>
+        <span class="text-muted">&copy; <script>document.write(new Date().getFullYear())</script> {{ site.author }}</span>
     </div>
 </footer>
-                                
+{% if site.publication_graph == true %}                                
 {% include scripts.html %}
+{% endif %}
 
 </body>
 </html>
