@@ -1,2 +1,77 @@
 ---
 ---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link href="assets/css/mystyle.css" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml"
+          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22256%22 height=%22256%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2250%22 fill=%22%23212529%22></rect><path d=%22M37.61 56.75L42.51 56.75Q41.82 62.62 38.18 65.81Q34.54 68.99 28.49 68.99L28.49 68.99Q21.94 68.99 18.00 64.29Q14.05 59.60 14.05 51.73L14.05 51.73L14.05 48.17Q14.05 43.02 15.89 39.11Q17.73 35.20 21.11 33.10Q24.48 31.01 28.93 31.01L28.93 31.01Q34.82 31.01 38.37 34.30Q41.93 37.58 42.51 43.40L42.51 43.40L37.61 43.40Q36.97 38.98 34.85 37Q32.73 35.02 28.93 35.02L28.93 35.02Q24.25 35.02 21.60 38.47Q18.95 41.93 18.95 48.30L18.95 48.30L18.95 51.88Q18.95 57.90 21.46 61.45Q23.97 65.01 28.49 65.01L28.49 65.01Q32.56 65.01 34.73 63.17Q36.90 61.32 37.61 56.75L37.61 56.75ZM49.16 31.52L55.46 31.52L67.54 61.68L79.63 31.52L85.95 31.52L85.95 68.48L81.08 68.48L81.08 54.09L81.54 38.55L69.40 68.48L65.67 68.48L53.55 38.63L54.04 54.09L54.04 68.48L49.16 68.48L49.16 31.52Z%22 fill=%22%23fff%22></path></svg>"/>
+    <script src="https://kit.fontawesome.com/c5e7391f02.js" crossorigin="anonymous"></script>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <title>Chris McComb, Ph.D.</title>
+
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@cmccomb"/>
+    <meta name="twitter:title" content="Chris McComb, Ph.D."/>
+    <meta name="twitter:description"
+          content="Researcher and educator interested in sociotechnical systems, machine learning for engineering design, and human-AI teaming"/>
+    <meta name="twitter:image" content="https://cmccomb.com/assets/images/headshot_optimized_square.jpg"/>
+    <meta name="twitter:image:alt" content="A headshot of Christopher McComb"/>
+
+</head>
+<body class="bg-dark d-flex flex-column h-100">
+
+{% if site.publication_graph == true %}
+<div id="graph-container" class="container-fluid blur unselectable"></div>
+{% endif %}
+  
+<div id="profile" class="row h-100 justify-content-center align-items-center ">
+    <div class="card px-0">
+        <!--        <button id="exit" type="button" class="btn-close" aria-label="Close"></button>-->
+        <img src="assets/images/headshot_optimized_square.jpg" class="card-img-top"
+             alt="A headshot of Christopher McComb"/>
+        <div class="card-body">
+            <h5 class="card-title text-center">Chris McComb, Ph.D.</h5>
+            <h6 class="card-subtitle mb-2 text-muted text-center"><a
+                    href="https://meche.engineering.cmu.edu/directory/bios/mccomb-christopher.html">Associate Professor
+                @ CMU</a></h6>
+            <p class="card-text text-center">
+                {{ content }}
+            </p>
+
+            <div class="btn-group d-flex" role="group" aria-label="Basic example">
+                <a class="btn btn-outline-dark" style="border-bottom-left-radius: 0" aria-label=Email"
+                   href="mailto:ccm@cmu.edu"><i class="fa fa-envelope"></i></a>
+                <a class="btn btn-outline-dark rounded-0" aria-label="Twitter" href="https://twitter.com/ccmccomb"><i
+                        class="fa fa-twitter"></i></a>
+                <a class="btn btn-outline-dark rounded-0" aria-label="GitHub" href="https://github.com/cmccomb"><i
+                        class="fa fa-github"></i></a>
+                <a class="btn btn-outline-dark" style="border-bottom-right-radius: 0" aria-label="Google Scholar"
+                   href="https://scholar.google.com/citations?user=0P9w_S0AAAAJ"><i
+                        class="fa fa-graduation-cap"></i></a>
+            </div>
+            <button id="exit" class="btn btn-outline-dark w-100 rounded-0 rounded-bottom border-top-0"
+                    style="font-size: 0.9em;">
+                <i class="fas fa-vector-square"></i>&nbsp;&nbsp;Explore Publications
+            </button>
+        </div>
+    </div>
+</div>
+
+<footer class="footer mt-auto py-3" id="footer" style="z-index:-100;">
+    <div class="container text-center">
+        <span class="text-muted">&copy; <script>document.write(new Date().getFullYear())</script> Chris McComb</span>
+    </div>
+</footer>
+
+
+<script src="assets/js/interface.js"></script>
+<script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/graph.js"></script>
+
+</body>
+</html>
