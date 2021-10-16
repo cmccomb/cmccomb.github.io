@@ -10,7 +10,6 @@
     <script src="https://kit.fontawesome.com/c5e7391f02.js" crossorigin="anonymous"></script>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
     <title>{{ site.title }}</title>
-    {% include twitter_card.html %}
 
 </head>
 <body class="bg-dark d-flex flex-column h-100">
@@ -22,10 +21,10 @@
                 {{ content | markdownify | remove: '<p>' | remove: '</p>' }}
             </p>
 
-            <button id="exit" class="btn btn-outline-dark w-100"
+            <a id="exit" href="https://cmccomb.com" class="btn btn-outline-dark w-100"
                     style="font-size: 0.9em;">
                 Take me home
-            </button>
+            </a>
         </div>
     </div>
 </div>
