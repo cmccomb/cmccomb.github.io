@@ -1,1 +1,6 @@
+bs4
+datasets
 numpy
+plotly
+sklearn
+textwrap
