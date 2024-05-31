@@ -5,7 +5,6 @@ import sklearn.decomposition
 import textwrap
 import numpy
 import datasets
-import skspatial.objects
 import bs4
 
 citations = datasets.load_dataset("ccm/publications")["train"].to_pandas()
