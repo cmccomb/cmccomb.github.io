@@ -3,4 +3,3 @@ datasets
 numpy
 plotly
 scikit-learn
-textwrap
