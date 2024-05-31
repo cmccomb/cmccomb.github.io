@@ -110,4 +110,4 @@ html = open("pubs.html")
 
 soup = BeautifulSoup(html)
 
-open("_includes/graph.html", "w").write(str(soup.html.body.div))
+open("_includes/graph.html", "w").write("".join([str(x) for x in soup.html.body.div.contents]))
