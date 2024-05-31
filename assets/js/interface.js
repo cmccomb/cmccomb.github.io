@@ -1,6 +1,6 @@
 // button stuff
 document.getElementById("exit").onclick = function () {
-    if document.getElementById("exit").visibility == "visible" {
+    if document.getElementById("exit").style.visibility == "visible" {
     document.getElementById("profile").remove();
     document.getElementById("footer").remove();
     document.getElementById("graph-container").classList.remove("blur");
