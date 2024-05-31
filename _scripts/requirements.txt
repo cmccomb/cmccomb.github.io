@@ -2,5 +2,5 @@ bs4
 datasets
 numpy
 plotly
-sklearn
+scikit-learn
 textwrap
