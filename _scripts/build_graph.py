@@ -14,7 +14,7 @@ tsne_embeddings = sklearn.decomposition.PCA(n_components=2, random_state=42).fit
 citations["y"] = tsne_embeddings[:,0]
 citations["x"] = tsne_embeddings[:,1]
 
-citations["score"] = citations["num_citations"]
+citations["score"] = [numpy.log(n+1) for n in citations["num_citations"]]
 
 citations.sort_values("score", ascending=True, inplace=True)
 
