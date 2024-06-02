@@ -10,6 +10,7 @@ import sklearn.manifold
 
 # General settings
 N = 10  # number of top citations to show
+halfN = int(N / 2)  # half of the number of top citations to show
 padding = 1.2  # Padding to give around teh annotation
 
 # Load data from huggingface
@@ -51,8 +52,8 @@ top = citations.tail(N)
 
 # Let's get a right group and a left group to help with plotting
 top.sort_values("x", inplace=True)
-left = top.head(int(N / 2)).sort_values("y", ascending=False)
-right = top.tail(int(N / 2)).sort_values("y", ascending=False)
+left = top.head(halfN).sort_values("y", ascending=False)
+right = top.tail(halfN).sort_values("y", ascending=False)
 
 # Figure out the upper and lower extents of the data
 upper_bound = numpy.max(citations["y"].values)
@@ -64,7 +65,7 @@ right_data = (numpy.max(citations["x"].values), right, "left")
 
 # Add annotations to the plot
 for extent, data, alignment in [left_data, right_data]:
-    for i in range(int(N / 2)):
+    for i in range(halfN):
 
         # Create an extended citation
         extended_citation = (
@@ -105,8 +106,7 @@ for extent, data, alignment in [left_data, right_data]:
             ax=padding * extent,
             axref="x",
             y=data["y"].values[i],
-            ay=(upper_bound - lower_bound) * (int(N / 2) - i - 0.5) / int(N / 2)
-            + lower_bound,
+            ay=(upper_bound - lower_bound) * (halfN - i - 0.5) / halfN + lower_bound,
             ayref="y",
             arrowcolor="#73C1D4",
             xanchor=alignment,
