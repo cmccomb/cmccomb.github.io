@@ -1,13 +1,14 @@
+import textwrap
+
+import bs4
+import datasets
+import numpy
 import plotly.express
 import plotly.graph_objects
-import sklearn.manifold
 import sklearn.decomposition
-import textwrap
-import numpy
-import datasets
-import bs4
+import sklearn.manifold
 
-# Geenral settings
+# General settings
 N = 10  # number of top citations to show
 padding = 1.2  # Padding to give around teh annotation
 
@@ -57,14 +58,16 @@ right = top.tail(int(N / 2)).sort_values("y", ascending=False)
 upper_bound = numpy.max(citations["y"].values)
 lower_bound = numpy.min(citations["y"].values)
 
+# Create data packages fro the left and rigth sides
+left_data = (numpy.min(citations["x"].values), left, "right")
+right_data = (numpy.max(citations["x"].values), right, "left")
+
 # Add annotations to the plot
-for extent, data, alignment in [
-    (numpy.min(citations["x"].values), left, "right"),
-    (numpy.max(citations["x"].values), right, "left"),
-]:
+for extent, data, alignment in [left_data, right_data]:
     for i in range(int(N / 2)):
 
-        formatted_citation = (
+        # Create an extended citation
+        extended_citation = (
             data["bib_dict"].values[i]["author"].split(" and ")[0].split(" ")[-1]
             + " et al. ("
             + str(int(data["bib_dict"].values[i]["pub_year"]))
@@ -72,13 +75,16 @@ for extent, data, alignment in [
             + data["bib_dict"].values[i]["title"]
             + '."'
         )
+
+        # Create full citation with a link
         formatted_citation_with_link = (
-            textwrap.fill(formatted_citation, 40).replace("\n", "<br>")
+            textwrap.fill(extended_citation, 40).replace("\n", "<br>")
             + '<br><a style="color:white" href="'
             + str(data["pub_url"].values[i])
             + '">>>> Read Paper </a>'
         )
 
+        # Add initial annotation with any label
         fig.add_annotation(
             x=data["x"].values[i],
             ax=extent,
@@ -91,6 +97,7 @@ for extent, data, alignment in [
             arrowcolor="#73C1D4",
         )
 
+        # Add final annotation with label
         fig.add_annotation(
             align=alignment,
             text=formatted_citation_with_link,
@@ -124,19 +131,15 @@ fig.update_layout(
 fig.show(
     config={
         "displaylogo": False,
-        # 'modeBarButtonsToRemove': ['select', 'lasso2d']
     }
 )
 
 
 # Export HTML and PNG
-
 fig.write_html("pubs.html")
 
 html = open("pubs.html")
-
 soup = bs4.BeautifulSoup(html)
-
 open("_includes/graph.html", "w").write(
     "".join([str(x) for x in soup.html.body.div.contents])
 )
