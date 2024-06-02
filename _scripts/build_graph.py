@@ -125,11 +125,9 @@ fig.show(
 
 fig.write_html("pubs.html")
 
-from bs4 import BeautifulSoup
-
 html = open("pubs.html")
 
-soup = BeautifulSoup(html)
+soup = bs4.BeautifulSoup(html)
 
 open("_includes/graph.html", "w").write(
     "".join([str(x) for x in soup.html.body.div.contents])
