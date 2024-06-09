@@ -25,8 +25,8 @@ tsne_embeddings = sklearn.manifold.TSNE(n_components=2, random_state=42).fit_tra
 oriented_tsne_embeddings = sklearn.decomposition.PCA(
     n_components=2, random_state=42
 ).fit_transform(tsne_embeddings)
-citations["y"] = oriented_tsne_embeddings[:, 0]
-citations["x"] = oriented_tsne_embeddings[:, 1]
+citations["x"] = oriented_tsne_embeddings[:, 0]
+citations["y"] = oriented_tsne_embeddings[:, 1]
 
 # Add a score which will be used to weight the point in teh plot
 citations["score"] = [numpy.log(n + 1) for n in citations["num_citations"]]
@@ -38,6 +38,9 @@ citations["TitleFormatted"] = [
     for pub in citations["bib_dict"]
 ]
 
+# Boost top 10 scores by 1.5
+citations.loc[citations["score"].nlargest(N).index, "score"] *= 1.5
+
 # Plot and create tooltips for each publication
 fig = plotly.express.scatter(
     citations, x="x", y="y", size="score", custom_data=["TitleFormatted"]
@@ -47,72 +50,83 @@ fig.update_traces(
     marker=dict(color="#73C1D4", opacity=1),
 )
 
-# Now let's just look at the top N publications
-top = citations.tail(N)
+citations.sort_values("score", ascending=False, inplace=True)
 
-# Let's get a right group and a left group to help with plotting
-top.sort_values("x", inplace=True)
-left = top.head(halfN).sort_values("y", ascending=False)
-right = top.tail(halfN).sort_values("y", ascending=False)
+centroid = citations[["x", "y"]].mean()
 
-# Figure out the upper and lower extents of the data
-upper_bound = numpy.max(citations["y"].values)
-lower_bound = numpy.min(citations["y"].values)
-
-# Create data packages fro the left and rigth sides
-left_data = (numpy.min(citations["x"].values), left, "right")
-right_data = (numpy.max(citations["x"].values), right, "left")
+for i in range(N):
+    # Add final annotation with label
+    fig.add_annotation(
+        text="<b>#" + str(int(i + 1)) + "</b>",
+        x=citations["x"].values[i],
+        y=citations["y"].values[i],
+        font=dict(size=10, color="white"),
+        xclick=citations["x"].values[i],
+        yclick=citations["y"].values[i],
+        standoff=None,
+        showarrow=False,
+        axref="x",
+        ayref="y",
+    )
 
 # Add annotations to the plot
-for extent, data, alignment in [left_data, right_data]:
-    for i in range(halfN):
+for i in range(citations.shape[0]):
 
-        # Create an extended citation
-        extended_citation = (
-            data["bib_dict"].values[i]["author"].split(" and ")[0].split(" ")[-1]
-            + " et al. ("
-            + str(int(data["bib_dict"].values[i]["pub_year"]))
-            + ') "'
-            + data["bib_dict"].values[i]["title"]
-            + '."'
-        )
+    # Create an extended citation
+    extended_citation = (
+        citations["bib_dict"].values[i]["author"].split(" and ")[0].split(" ")[-1]
+        + " et al. ("
+        + str(int(citations["bib_dict"].values[i]["pub_year"] or 2024))
+        + ') "'
+        + citations["bib_dict"].values[i]["title"]
+        + '."'
+    )
 
-        # Create full citation with a link
-        formatted_citation_with_link = (
-            textwrap.fill(extended_citation, 40).replace("\n", "<br>")
-            + '<br><a style="color:white" href="'
-            + str(data["pub_url"].values[i])
-            + '">>>> Read Paper </a>'
-        )
+    # Create full citation with a link
+    formatted_citation_with_link = (
+        textwrap.fill(extended_citation, 40).replace("\n", "<br>")
+        + '<br><a style="color:white" href="'
+        + "https://scholar.google.com/citations?view_op=view_citation&citation_for_view="
+        + citations["author_pub_id"].values[i]
+        + '">>>> Read Paper </a>'
+    )
 
-        # Add initial annotation with any label
-        fig.add_annotation(
-            x=data["x"].values[i],
-            ax=extent,
-            axref="x",
-            y=data["y"].values[i],
-            ay=data["y"].values[i],
-            ayref="y",
-            xanchor=alignment,
-            yanchor="middle",
-            arrowcolor="#73C1D4",
-        )
+    # angle from centroid is
+    angle = numpy.arctan2(
+        citations["y"].values[i] - centroid[1], citations["x"].values[i] - centroid[0]
+    )
 
-        # Add final annotation with label
-        fig.add_annotation(
-            align=alignment,
-            text=formatted_citation_with_link,
-            x=extent,
-            ax=padding * extent,
-            axref="x",
-            y=data["y"].values[i],
-            ay=(upper_bound - lower_bound) * (halfN - i - 0.5) / halfN + lower_bound,
-            ayref="y",
-            arrowcolor="#73C1D4",
-            xanchor=alignment,
-            yanchor="middle",
-            font=dict(size=10, color="#73C1D4"),
-        )
+    # Displace notation location in direction away from centroid
+    x_displacement = padding * numpy.cos(angle)
+    y_displacement = padding * numpy.sin(angle)
+
+    # Set x and y anchor alignemnt based on angle
+    x_anchor = "right" if x_displacement < 0 else "left"
+    y_anchor = "top" if y_displacement < 0 else "bottom"
+
+    # Add final annotation with label
+    fig.add_annotation(
+        text=formatted_citation_with_link,
+        arrowcolor="#73C1D4",
+        font=dict(size=10, color="#73C1D4"),
+        clicktoshow="onoff",
+        align="left",
+        xanchor=x_anchor,
+        yanchor=y_anchor,
+        bgcolor="#191C1F",
+        bordercolor="#73C1D4",
+        x=citations["x"].values[i],
+        y=citations["y"].values[i],
+        ax=citations["x"].values[i] + x_displacement,
+        ay=citations["y"].values[i] + y_displacement,
+        yclick=citations["y"].values[i],
+        xclick=citations["x"].values[i],
+        axref="x",
+        ayref="y",
+        visible=True if i < 10 else False,
+        # Standoff as far as markersize requires adaptively
+        standoff=15,
+    )
 
 # Make things pretty - remove axes
 fig.update_xaxes(visible=False)
