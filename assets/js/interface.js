@@ -6,7 +6,7 @@ document.getElementById("exit").onclick = function () {
         document.getElementById("graph-container").classList.remove("blur");
         document.getElementById("graph-container").style.pointerEvents = "auto";
     } else {
-        window.open("https://ccm-search-my-publications.hf.space/", "_self");
+        window.open("https://ccm-chat-with-publications.hf.space/", "_self");
     }
 }
 
