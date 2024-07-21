@@ -97,12 +97,12 @@ for i in range(citations.shape[0]):
     )
 
     # Displace notation location in direction away from centroid
-    x_displacement = padding * numpy.cos(angle)
-    y_displacement = padding * numpy.sin(angle)
+    x_displacement = padding
+    y_displacement = 0
 
     # Set x and y anchor alignemnt based on angle
-    x_anchor = "right" if x_displacement < 0 else "left"
-    y_anchor = "top" if y_displacement < 0 else "bottom"
+    x_anchor = "left"
+    y_anchor = "middle"
 
     # Add final annotation with label
     fig.add_annotation(
