@@ -9,8 +9,6 @@ import sklearn.decomposition
 import sklearn.manifold
 
 # General settings
-N = 10  # number of top citations to show
-halfN = int(N / 2)  # half of the number of top citations to show
 padding = 1.2  # Padding to give around teh annotation
 
 # Load data from huggingface
@@ -29,7 +27,7 @@ citations["x"] = oriented_tsne_embeddings[:, 0]
 citations["y"] = oriented_tsne_embeddings[:, 1]
 
 # Add a score which will be used to weight the point in teh plot
-citations["score"] = [numpy.log(n + 1) for n in citations["num_citations"]]
+citations["score"] = [numpy.log(n + 1)+1 for n in citations["num_citations"]]
 citations.sort_values("score", ascending=True, inplace=True)
 
 # Create a formatted title for each of hte publications
@@ -38,8 +36,6 @@ citations["TitleFormatted"] = [
     for pub in citations["bib_dict"]
 ]
 
-# Boost top 10 scores by 1.5
-citations.loc[citations["score"].nlargest(N).index, "score"] *= 1.5
 
 # Plot and create tooltips for each publication
 fig = plotly.express.scatter(
@@ -53,21 +49,6 @@ fig.update_traces(
 citations.sort_values("score", ascending=False, inplace=True)
 
 centroid = citations[["x", "y"]].mean()
-
-for i in range(N):
-    # Add final annotation with label
-    fig.add_annotation(
-        text="<b>#" + str(int(i + 1)) + "</b>",
-        x=citations["x"].values[i],
-        y=citations["y"].values[i],
-        font=dict(size=10, color="white"),
-        xclick=citations["x"].values[i],
-        yclick=citations["y"].values[i],
-        standoff=None,
-        showarrow=False,
-        axref="x",
-        ayref="y",
-    )
 
 # Add annotations to the plot
 for i in range(citations.shape[0]):
@@ -100,7 +81,7 @@ for i in range(citations.shape[0]):
     x_displacement = padding
     y_displacement = 0
 
-    # Set x and y anchor alignemnt based on angle
+    # Set x and y anchor alignment based on angle
     x_anchor = "left"
     y_anchor = "middle"
 
