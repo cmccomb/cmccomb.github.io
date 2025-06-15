@@ -138,5 +138,7 @@ fig.write_html("pubs.html")
 html = open("pubs.html")
 soup = bs4.BeautifulSoup(html)
 open("_includes/graph.html", "w").write(
-    "".join([str(x) for x in soup.html.body.div.contents])
+    "{% raw %}"
+    + "".join([str(x) for x in soup.html.body.div.contents])
+    + "{% endraw %}"
 )
