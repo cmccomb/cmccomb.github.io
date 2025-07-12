@@ -1,4 +1,5 @@
 import json
+import os
 
 import datasets
 import numpy
@@ -37,6 +38,7 @@ payload = citations[
         "bib_dict",
     ]
 ].to_dict(orient="records")
-
-with open("assets/json/pubs.json", "w") as f:
+with open(
+    os.path.join(os.environ.get("GITHUB_WORKSPACE"), "assets/json/pubs.json"), "w"
+) as f:
     json.dump(payload, f, indent=2)
