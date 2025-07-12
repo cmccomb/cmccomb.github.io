@@ -38,5 +38,5 @@ payload = citations[
     ]
 ].to_dict(orient="records")
 
-with open("../assets/json/pubs.json", "w") as f:
+with open("assets/json/pubs.json", "w") as f:
     json.dump(payload, f, indent=2)

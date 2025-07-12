@@ -33,7 +33,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install Pythong Dependencies
+      - name: Install Python Dependencies
         run: pip install -r _scripts/requirements.txt
       - name: Build Graph
         run: python _scripts/build_json.py
