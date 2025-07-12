@@ -38,6 +38,7 @@ payload = citations[
         "bib_dict",
     ]
 ].to_dict(orient="records")
+print(os.listdir(os.environ.get("GITHUB_WORKSPACE")))
 with open(
     os.path.join(os.environ.get("GITHUB_WORKSPACE"), "assets/json/pubs.json"), "w"
 ) as f:
