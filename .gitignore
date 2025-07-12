@@ -2,3 +2,7 @@
 *~
 .idea
 .venv/*
+
+# Python junk files
+__pycache__/
+*.py[cod]

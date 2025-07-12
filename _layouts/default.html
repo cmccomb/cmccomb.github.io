@@ -4,25 +4,26 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+          integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" rel="stylesheet">
     <link href="assets/css/mystyle.css" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/c5e7391f02.js" crossorigin="anonymous"></script>
+    <script crossorigin="anonymous" src="https://kit.fontawesome.com/c5e7391f02.js"></script>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
     <title>{{ site.title }}</title>
 
 </head>
 <body class="bg-dark d-flex flex-column h-100">
-  
-<div id="profile" class="row h-100 justify-content-center align-items-center ">
+
+<div class="row h-100 justify-content-center align-items-center " id="profile">
     <div class="card px-0">
         <div class="card-body">
             <p class="card-text text-center">
-                {{ content | markdownify | remove: '<p>' | remove: '</p>' }}
+                {{ content | markdownify | remove: '
+            <p>' | remove: '</p>' }}
             </p>
 
-            <a id="exit" href="https://cmccomb.com" class="btn btn-outline-dark w-100"
-                    style="font-size: 0.9em;">
+            <a class="btn btn-outline-dark w-100" href="https://cmccomb.com" id="exit"
+               style="font-size: 0.9em;">
                 Take me home
             </a>
         </div>

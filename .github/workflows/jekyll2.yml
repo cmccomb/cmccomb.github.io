@@ -9,7 +9,7 @@ name: Deploy Jekyll site to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["master"]
+    branches: [ "master" ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -36,7 +36,7 @@ jobs:
       - name: Install Pythong Dependencies
         run: pip install -r _scripts/requirements.txt
       - name: Build Graph
-        run: python _scripts/build_graph.py
+        run: python _scripts/build_json.py
       - name: Setup Ruby
         # https://github.com/ruby/setup-ruby/releases/tag/v1.207.0
         uses: ruby/setup-ruby@4a9ddd6f338a97768b8006bf671dfbad383215f4

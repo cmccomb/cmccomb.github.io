@@ -4,54 +4,190 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+          integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" rel="stylesheet">
     <link href="assets/css/mystyle.css" rel="stylesheet">
-<!--     <link rel="icon" type="image/svg+xml" -->
-<!--           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22256%22 height=%22256%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2250%22 fill=%22%23212529%22></rect><path d=%22M37.61 56.75L42.51 56.75Q41.82 62.62 38.18 65.81Q34.54 68.99 28.49 68.99L28.49 68.99Q21.94 68.99 18.00 64.29Q14.05 59.60 14.05 51.73L14.05 51.73L14.05 48.17Q14.05 43.02 15.89 39.11Q17.73 35.20 21.11 33.10Q24.48 31.01 28.93 31.01L28.93 31.01Q34.82 31.01 38.37 34.30Q41.93 37.58 42.51 43.40L42.51 43.40L37.61 43.40Q36.97 38.98 34.85 37Q32.73 35.02 28.93 35.02L28.93 35.02Q24.25 35.02 21.60 38.47Q18.95 41.93 18.95 48.30L18.95 48.30L18.95 51.88Q18.95 57.90 21.46 61.45Q23.97 65.01 28.49 65.01L28.49 65.01Q32.56 65.01 34.73 63.17Q36.90 61.32 37.61 56.75L37.61 56.75ZM49.16 31.52L55.46 31.52L67.54 61.68L79.63 31.52L85.95 31.52L85.95 68.48L81.08 68.48L81.08 54.09L81.54 38.55L69.40 68.48L65.67 68.48L53.55 38.63L54.04 54.09L54.04 68.48L49.16 68.48L49.16 31.52Z%22 fill=%22%23fff%22></path></svg>"/> -->
-    <script src="https://kit.fontawesome.com/c5e7391f02.js" crossorigin="anonymous"></script>
+    <script crossorigin="anonymous" src="https://kit.fontawesome.com/c5e7391f02.js"></script>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
     <title>{{ site.title }}</title>
-    {% include twitter_card.html %}
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        svg {
+            width: 100%;
+            height: 100vh;
+            background: #191C1F;
+        }
+
+        .tooltip, .label-box {
+            position: absolute;
+            padding: 6px;
+            font-size: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #444;
+            border-radius: 4px;
+            white-space: normal;
+            max-width: 200px;
+        }
+
+        .tooltip {
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .label-box {
+            pointer-events: auto;
+        }
+    </style>
 
 </head>
 <body class="bg-dark d-flex flex-column h-100">
 
-{% if site.publication_graph == true %}
-<div id="graph-container" class="container-fluid blur unselectable p-0">
-    {% include graph.html %}    
+<div class="container-fluid blur unselectable p-0" id="graph-container">
+    <svg></svg>
+    <div class="tooltip"></div>
+
+    <script>
+        const svg = d3.select("svg");
+        const tooltip = d3.select(".tooltip");
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        function addTextToRectangles(svg, rectList) {
+            rectList.forEach(rect => {
+
+                // Add text
+                const t = svg.append("text")
+                    .attr("x", rect.x + rect.width / 2)
+                    .attr("y", rect.y + rect.height / 2)
+                    .attr("dominant-baseline", "middle")
+                    .attr("text-anchor", "middle")
+                    .attr("font-size", "12")
+                    .attr("fill", "black")
+                    .text(rect.text);
+
+                const maxWidth = rect.width - 4; // padding
+                const node = t.node();
+
+                // Measure & truncate if needed
+                if (node.getBBox().width > maxWidth) {
+                    let fullText = rect.text;
+                    let truncated = fullText;
+
+                    while (truncated.length > 0 && node.getBBox().width > maxWidth) {
+                        truncated = truncated.slice(0, -1);
+                        t.text(truncated + "…");
+                    }
+                }
+            });
+        }
+
+        d3.json("assets/json/pubs.json").then(data => {
+            // 1) Scales
+            const xExtent = d3.extent(data, d => d.x);
+            const yExtent = d3.extent(data, d => d.y);
+            const yearExtent = d3.extent(data, d => d.pub_year);
+            const rExtent = d3.extent(data, d => d.num_citations);
+
+            const xScale = d3.scaleLinear().domain(xExtent).range([40, width - 40]);
+            const yScale = d3.scaleLinear().domain(yExtent).range([height - 40, 40]);
+            const rScale = d3.scaleSqrt().domain(rExtent).range([10, 30]);
+            const colorScale = d3.scaleSequential(d3.interpolateMagma).domain(yearExtent);
+
+            // 2) Circle nodes
+            const nodes = data.map((d, i) => ({
+                id: i,
+                x: xScale(d.x),
+                y: yScale(d.y),
+                x_orig: xScale(d.x),
+                y_orig: yScale(d.y),
+                r: rScale(d.num_citations),
+                num_citations: d.num_citations,
+                color: colorScale(d.pub_year),
+                title: d.bib_dict.title,
+                link: `https://scholar.google.com/citations?view_op=view_citation&citation_for_view=${d.author_pub_id}`,
+                selected: false
+            }));
+
+            // 3) Spread circles with a collide‐only force
+            const circleSim = d3.forceSimulation(nodes)
+                .force("x", d3.forceX(d => d.x_orig).strength(1.0))
+                .force("y", d3.forceY(d => d.y_orig).strength(1.0))
+                .force("collide", d3.forceCollide(d => d.r + 1).strength(0.8))
+                .stop();
+            for (let i = 0; i < 200; ++i) circleSim.tick();
+
+            // 4) Draw circles
+            svg.selectAll("rect")
+                .data(nodes)
+                .enter().append("rect")
+                .attr("x", d => d.x - d.r)
+                .attr("y", d => d.y - d.r)
+                .attr("rx", d => d.r)
+                .attr("width", d => 2 * d.r)
+                .attr("height", d => 2 * d.r)
+                .attr("fill", d => d.color)
+                .attr("opacity", 1.0)
+
+                // Add a label box for each circle
+                .on("mouseover", (e, d) => {
+                    // Make the mouse cursor a pointer
+                    e.currentTarget.style.cursor = "pointer";
+
+                    // Show tooltip
+                    tooltip
+                        .html(d.title)
+                        .style("opacity", 1)
+                        .style("left", (e.pageX + 10) + "px")
+                        .style("top", (e.pageY + 10) + "px");
+
+
+                })
+
+                // Hide tooltip on mouse out
+                .on("mouseout", () => {
+                    tooltip.style("opacity", 0);
+                })
+
+                // Open link to doubleclick
+                .on("dblclick", (e, d) => {
+                    window.open(d.link, "_blank");
+                })
+
+        });
+    </script>
 </div>
-{% endif %}
-  
-<div id="profile" class="row h-100 justify-content-center align-items-center ">
+
+<div class="row h-100 justify-content-center align-items-center " id="profile">
     <div class="card px-0">
         <!--        <button id="exit" type="button" class="btn-close" aria-label="Close"></button>-->
-        <img src="{{ site.headshot }}" class="card-img-top"
-             alt="A headshot of {{ site.author }}"/>
+        <img alt="A headshot of {{ site.author }}" class="card-img-top"
+             src="{{ site.headshot }}"/>
         <div class="card-body">
             <h5 class="card-title text-center">{{ site.author}}</h5>
             <h6 class="card-subtitle mb-2 text-muted text-center"> {{ site.affiliation }} </h6>
             <p class="card-text text-center">
-                {{ content | markdownify | remove: '<p>' | remove: '</p>' }}
+                {{ content | markdownify | remove: '
+            <p>' | remove: '</p>' }}
             </p>
 
-            <div class="btn-group d-flex" role="group" aria-label="Basic example">
-                <a class="btn btn-outline-dark" style="border-bottom-left-radius: 0" aria-label=Email"
-                   href="mailto:{{ site.email }}"><i class="fa fa-envelope"></i></a>
-                <a class="btn btn-outline-dark rounded-0" aria-label="Twitter" href="https://twitter.com/{{ site.twitter }}"><i
+            <div aria-label="Basic example" class="btn-group d-flex" role="group">
+                <a aria-label=Email" class="btn btn-outline-dark" href="mailto:{{ site.email }}"
+                   style="border-bottom-left-radius: 0"><i class="fa fa-envelope"></i></a>
+                <a aria-label="Twitter" class="btn btn-outline-dark rounded-0"
+                   href="https://twitter.com/{{ site.twitter }}"><i
                         class="fa fa-twitter"></i></a>
-                <a class="btn btn-outline-dark rounded-0" aria-label="GitHub" href="https://github.com/{{ site.github }}"><i
+                <a aria-label="GitHub" class="btn btn-outline-dark rounded-0"
+                   href="https://github.com/{{ site.github }}"><i
                         class="fa fa-github"></i></a>
-                <a class="btn btn-outline-dark" style="border-bottom-right-radius: 0" aria-label="Google Scholar"
-                   href="https://scholar.google.com/citations?user={{ site.google_scholar }}"><i
+                <a aria-label="Google Scholar" class="btn btn-outline-dark"
+                   href="https://scholar.google.com/citations?user={{ site.google_scholar }}"
+                   style="border-bottom-right-radius: 0"><i
                         class="fa fa-graduation-cap"></i></a>
             </div>
-            {% if site.publication_graph == true %}                                
-            <button id="exit" class="btn btn-outline-dark w-100 rounded-0 rounded-bottom border-top-0"
+            <button class="btn btn-outline-dark w-100 rounded-0 rounded-bottom border-top-0" id="exit"
                     style="font-size: 0.9em;">
                 <i class="fas fa-vector-square"></i>&nbsp;&nbsp;Explore Publications
             </button>
-        {% endif %}
         </div>
     </div>
 </div>
@@ -61,9 +197,7 @@
         <span class="text-muted">&copy; <script>document.write(new Date().getFullYear())</script> {{ site.author | remove: ', Ph.D.' }}</span>
     </div>
 </footer>
-{% if site.publication_graph == true %}                                
 {% include scripts.html %}
-{% endif %}
 
 </body>
 </html>
