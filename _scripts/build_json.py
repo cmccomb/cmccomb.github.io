@@ -38,7 +38,13 @@ payload = citations[
         "bib_dict",
     ]
 ].to_dict(orient="records")
-print(os.listdir(os.environ.get("GITHUB_WORKSPACE")))
+
+# Make directory
+os.makedirs(
+    os.path.join(os.environ.get("GITHUB_WORKSPACE"), "assets/json"), exist_ok=True
+)
+
+# Save to directory
 with open(
     os.path.join(os.environ.get("GITHUB_WORKSPACE"), "assets/json/pubs.json"), "w"
 ) as f:
