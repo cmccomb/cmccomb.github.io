@@ -41,11 +41,11 @@ payload = citations[
 
 # Make directory
 os.makedirs(
-    os.path.join(os.environ.get("GITHUB_WORKSPACE"), "assets/json"), exist_ok=True
+    os.path.join(os.environ.get("GITHUB_WORKSPACE", ".."), "assets/json"), exist_ok=True
 )
 
 # Save to directory
 with open(
-    os.path.join(os.environ.get("GITHUB_WORKSPACE"), "assets/json/pubs.json"), "w"
+    os.path.join(os.environ.get("GITHUB_WORKSPACE", ".."), "assets/json/pubs.json"), "w"
 ) as f:
     json.dump(payload, f, indent=2)

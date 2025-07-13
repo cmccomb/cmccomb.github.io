@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
           integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" rel="stylesheet">
-    <link href="assets/css/mystyle.css" rel="stylesheet">
+    <link href="assets/css/default_style.css" rel="stylesheet">
     <script crossorigin="anonymous" src="https://kit.fontawesome.com/c5e7391f02.js"></script>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
     <title>{{ site.title }}</title>
@@ -17,10 +17,7 @@
 <div class="row h-100 justify-content-center align-items-center " id="profile">
     <div class="card px-0">
         <div class="card-body">
-            <p class="card-text text-center">
-                {{ content | markdownify | remove: '
-            <p>' | remove: '</p>' }}
-            </p>
+            <p class="card-text text-center">{{ content | markdownify | remove: '<p>' | remove: '</p>' }}</p>
 
             <a class="btn btn-outline-dark w-100" href="https://cmccomb.com" id="exit"
                style="font-size: 0.9em;">
