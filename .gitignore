@@ -6,3 +6,7 @@
 # Python junk files
 __pycache__/
 *.py[cod]
+
+# Jekyll junk files
+_site
+
