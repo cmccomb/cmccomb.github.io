@@ -18,7 +18,7 @@
             background: #191C1F;
         }
 
-        .tooltip, .label-box {
+        .tooltip {
             position: absolute;
             padding: 6px;
             font-size: 12px;
@@ -26,16 +26,9 @@
             border: 1px solid #444;
             border-radius: 4px;
             white-space: normal;
-            max-width: 200px;
-        }
-
-        .tooltip {
+            max-width: 400px;
             pointer-events: none;
             opacity: 0;
-        }
-
-        .label-box {
-            pointer-events: auto;
         }
     </style>
 
@@ -52,34 +45,12 @@
         const width = window.innerWidth;
         const height = window.innerHeight;
 
-        function addTextToRectangles(svg, rectList) {
-            rectList.forEach(rect => {
+         svg
+            .attr('width', width)
+            .attr('height', height)
+            .attr('viewBox', `0 0 ${width} ${height}`)
+            // .attr('preserveAspectRatio', 'none');
 
-                // Add text
-                const t = svg.append("text")
-                    .attr("x", rect.x + rect.width / 2)
-                    .attr("y", rect.y + rect.height / 2)
-                    .attr("dominant-baseline", "middle")
-                    .attr("text-anchor", "middle")
-                    .attr("font-size", "12")
-                    .attr("fill", "black")
-                    .text(rect.text);
-
-                const maxWidth = rect.width - 4; // padding
-                const node = t.node();
-
-                // Measure & truncate if needed
-                if (node.getBBox().width > maxWidth) {
-                    let fullText = rect.text;
-                    let truncated = fullText;
-
-                    while (truncated.length > 0 && node.getBBox().width > maxWidth) {
-                        truncated = truncated.slice(0, -1);
-                        t.text(truncated + "…");
-                    }
-                }
-            });
-        }
 
         d3.json("assets/json/pubs.json").then(data => {
             // 1) Scales
@@ -104,6 +75,8 @@
                 num_citations: d.num_citations,
                 color: colorScale(d.pub_year),
                 title: d.bib_dict.title,
+                citation: d.bib_dict.citation,
+                author: d.bib_dict.author,
                 link: `https://scholar.google.com/citations?view_op=view_citation&citation_for_view=${d.author_pub_id}`,
                 selected: false
             }));
@@ -133,9 +106,19 @@
                     // Make the mouse cursor a pointer
                     e.currentTarget.style.cursor = "pointer";
 
+                    // Format the authors list
+                    let authors = d.author.split(" and ");
+                    if (authors.length > 2) {
+                        authors = authors.join(", ");
+                        // Do a final and for the last two authors
+                        authors = authors.replace(/, ([^,]*)$/, ", and $1");
+                    } else {
+                        authors = authors.join(" and ");
+                    }
+
                     // Show tooltip
                     tooltip
-                        .html(d.title)
+                        .html(authors + ". \"" + d.title + ".\" " + d.citation + ".")
                         .style("opacity", 1)
                         .style("left", (e.pageX + 10) + "px")
                         .style("top", (e.pageY + 10) + "px");
@@ -149,9 +132,27 @@
                 })
 
                 // Open link to doubleclick
-                .on("dblclick", (e, d) => {
+                .on("click", (e, d) => {
                     window.open(d.link, "_blank");
                 })
+
+                // On window resize, update the position of the circles
+                .on("resize.updatesvg", () => {
+                    const newWidth = window.innerWidth;
+                    const newHeight = window.innerHeight;
+
+                    svg.attr('width', newWidth)
+                        .attr('height', newHeight)
+                        .attr('viewBox', `0 0 ${newWidth} ${newHeight}`)
+                        // .attr('preserveAspectRatio', 'none');
+
+                    // Update positions of circles, as well as sizes and radii
+                    svg.selectAll("rect")
+                        .attr("x", d => xScale(d.x_orig) - d.r)
+                        .attr("y", d => yScale(d.y_orig) - d.r)
+                        .attr("width", d => 2 * d.r)
+                        .attr("height", d => 2 * d.r);
+                });
 
         });
     </script>

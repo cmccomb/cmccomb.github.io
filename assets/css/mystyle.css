@@ -44,12 +44,12 @@ p {
     height: 100px;
 }
 
-/*  @media (min-width: 768px) {   */
-/*                                */
-/*      #graph-container {        */
-/*          visibility: visible;  */
-/*      }                         */
-/*  }                             */
+  @media (max-width: 768px) {
+
+      #graph-container {
+          visibility: hidden;
+      }
+  }
 
 .vis-tooltip {
     width: 300px;
