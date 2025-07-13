@@ -1,3 +1,11 @@
+"""
+This script builds a JSON file that contains the t-SNE embeddings of the publications. Specifically, it
+1. Loads the dataset from Hugging Face.
+2. Computes t-SNE embeddings for the publication embeddings.
+3. Applies PCA to orient the t-SNE embeddings.
+4. Saves the resulting data to a JSON file.
+"""
+
 import json
 import os
 
@@ -27,7 +35,7 @@ oriented_tsne_embeddings = sklearn.decomposition.PCA(
 citations["x"] = oriented_tsne_embeddings[:, 0]
 citations["y"] = oriented_tsne_embeddings[:, 1]
 
-# after you’ve built `citations` with x, y, score, TitleFormatted, author_pub_id, pub_year …
+# Create a payload for the JSON file
 payload = citations[
     [
         "x",
