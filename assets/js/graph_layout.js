@@ -92,24 +92,6 @@ d3.json("assets/json/pubs.json").then(data => {
         // Open link to doubleclick
         .on("click", (e, d) => {
             window.open(d.link, "_blank");
-        })
-
-        // On window resize, update the position of the circles
-        .on("resize.updatesvg", () => {
-            const newWidth = window.innerWidth;
-            const newHeight = window.innerHeight;
-
-            svg.attr('width', newWidth)
-                .attr('height', newHeight)
-                .attr('viewBox', `0 0 ${newWidth} ${newHeight}`)
-                // .attr('preserveAspectRatio', 'none');
-
-            // Update positions of circles, as well as sizes and radii
-            svg.selectAll("rect")
-                .attr("x", d => xScale(d.x_orig) - d.r)
-                .attr("y", d => yScale(d.y_orig) - d.r)
-                .attr("width", d => 2 * d.r)
-                .attr("height", d => 2 * d.r);
         });
 
 });
