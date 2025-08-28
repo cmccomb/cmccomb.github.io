@@ -4,7 +4,6 @@
 2. Basic formatting with [Bootstrap](https://getbootstrap.com/)
 3. Publication visualization with [D3.js](https://d3js.org/)
 4. Icons by Font Awesome (no changes made, [see license](https://fontawesome.com/license))
-5. Warm color theme for profile card aligned with the publication plot
 
 ## Setup
 
