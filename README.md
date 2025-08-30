@@ -26,3 +26,13 @@
    ```bash
    bundle exec jekyll serve
    ```
+
+## Tests
+
+Run a local build to verify the site compiles:
+
+```bash
+bundle exec jekyll build
+```
+
+Deployment to GitHub Pages runs only after this check passes on `master`.
