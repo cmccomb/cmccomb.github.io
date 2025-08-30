@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - CI workflow to verify the Jekyll site builds.
 - Documentation and tests for the Jekyll serve script.
+- CI workflow to test the serve script.
 
 ### Changed
 - Deployment workflow runs only after the test workflow succeeds.
