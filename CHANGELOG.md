@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Deployment workflow runs only after the test workflow succeeds.
+- Renamed misspelled layout to `nonexistent` and updated references.
 
 ## [0.1.0]
 - Initial release.
