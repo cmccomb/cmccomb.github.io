@@ -1,5 +1,6 @@
 const svg = d3.select("svg");
 const tooltip = d3.select(".tooltip");
+const legendContainer = d3.select(".colorbar-legend");
 
 d3.json("assets/json/pubs.json").then(data => {
     // Extents
@@ -12,6 +13,78 @@ d3.json("assets/json/pubs.json").then(data => {
     const yScale = d3.scaleLinear().domain(yExtent);
     const rScale = d3.scaleSqrt().domain(rExtent);
     const colorScale = d3.scaleSequential(d3.interpolateMagma).domain(yearExtent);
+
+    const legendWidth = 180;
+    const legendHeight = 14;
+    const legendMargins = { top: 20, right: 16, bottom: 30, left: 16 };
+    const gradientId = "publication-year-gradient";
+
+    if (!legendContainer.select("svg").node()) {
+        const legendSvg = legendContainer
+            .append("svg")
+            .attr("class", "colorbar-svg")
+            .attr("width", legendWidth + legendMargins.left + legendMargins.right)
+            .attr("height", legendHeight + legendMargins.top + legendMargins.bottom);
+
+        const defs = legendSvg.append("defs");
+        const gradient = defs
+            .append("linearGradient")
+            .attr("id", gradientId)
+            .attr("x1", "0%")
+            .attr("x2", "100%")
+            .attr("y1", "0%")
+            .attr("y2", "0%");
+
+        const gradientStops = d3.range(0, 1.0001, 0.05);
+        gradient
+            .selectAll("stop")
+            .data(gradientStops)
+            .enter()
+            .append("stop")
+            .attr("offset", d => `${d * 100}%`)
+            .attr("stop-color", d => colorScale(yearExtent[0] + d * (yearExtent[1] - yearExtent[0])));
+
+        legendSvg
+            .append("rect")
+            .attr("x", legendMargins.left)
+            .attr("y", legendMargins.top)
+            .attr("width", legendWidth)
+            .attr("height", legendHeight)
+            .attr("rx", 6)
+            .attr("fill", `url(#${gradientId})`);
+
+        const legendScale = d3.scaleLinear().domain(yearExtent).range([0, legendWidth]);
+        const tickCount = yearExtent[0] === yearExtent[1]
+            ? 1
+            : Math.min(6, Math.max(2, yearExtent[1] - yearExtent[0]));
+        const legendAxis = d3.axisBottom(legendScale)
+            .ticks(tickCount)
+            .tickFormat(d3.format("d"));
+
+        const axisGroup = legendSvg
+            .append("g")
+            .attr("transform", `translate(${legendMargins.left}, ${legendMargins.top + legendHeight})`)
+            .call(legendAxis);
+
+        axisGroup.selectAll("text")
+            .attr("fill", "#f8f9fa")
+            .attr("font-size", 10);
+
+        axisGroup.selectAll("line")
+            .attr("stroke", "rgba(248, 249, 250, 0.4)");
+
+        axisGroup.selectAll("path")
+            .attr("stroke", "rgba(248, 249, 250, 0.4)");
+
+        legendSvg
+            .append("text")
+            .attr("x", legendMargins.left)
+            .attr("y", legendMargins.top - 6)
+            .attr("fill", "#f8f9fa")
+            .attr("font-size", 12)
+            .attr("font-weight", 600)
+            .text("Publication Year");
+    }
 
     const nodes = data.map((d, i) => ({
         id: i,

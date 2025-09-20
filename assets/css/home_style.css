@@ -16,3 +16,24 @@ svg {
     pointer-events: none;
     opacity: 0;
 }
+
+.colorbar-legend {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    padding: 0.75rem 0.9rem 1rem;
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 0.75rem;
+    color: #f8f9fa;
+    pointer-events: none;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(6px);
+}
+
+.colorbar-legend svg {
+    display: block;
+}
+
+.colorbar-legend text {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+}
