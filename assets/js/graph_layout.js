@@ -2,12 +2,22 @@ const svg = d3.select("svg");
 const tooltip = d3.select(".tooltip");
 const legendContainer = d3.select(".colorbar-legend");
 
-d3.json("assets/json/pubs.json").then(data => {
+d3.json("assets/json/pubs.json").then(rawPayload => {
+    const records = Array.isArray(rawPayload?.records)
+        ? rawPayload.records
+        : Array.isArray(rawPayload)
+            ? rawPayload
+            : [];
+    const clusters = Array.isArray(rawPayload?.clusters) ? rawPayload.clusters : [];
+    const clusterSummaryById = new Map(
+        clusters.map(cluster => [String(cluster.id), cluster])
+    );
+
     // Extents
-    const xExtent = d3.extent(data, d => d.x);
-    const yExtent = d3.extent(data, d => d.y);
-    const yearExtent = d3.extent(data, d => d.pub_year);
-    const rExtent = d3.extent(data, d => d.num_citations);
+    const xExtent = d3.extent(records, d => d.x);
+    const yExtent = d3.extent(records, d => d.y);
+    const yearExtent = d3.extent(records, d => d.pub_year);
+    const rExtent = d3.extent(records, d => d.num_citations);
 
     const xScale = d3.scaleLinear().domain(xExtent);
     const yScale = d3.scaleLinear().domain(yExtent);
@@ -86,7 +96,7 @@ d3.json("assets/json/pubs.json").then(data => {
             .text("Publication Year");
     }
 
-    const nodes = data.map((d, i) => ({
+    const nodes = records.map((d, i) => ({
         id: i,
         x_data: d.x,
         y_data: d.y,
@@ -96,6 +106,7 @@ d3.json("assets/json/pubs.json").then(data => {
         citation: d.bib_dict.citation,
         author: d.bib_dict.author,
         link: `https://scholar.google.com/citations?view_op=view_citation&citation_for_view=${d.author_pub_id}`,
+        cluster_id: d.cluster_id,
         selected: false,
         x: 0,
         y: 0,
@@ -104,9 +115,10 @@ d3.json("assets/json/pubs.json").then(data => {
         r: 0,
     }));
 
-    const nodeSel = svg.selectAll("rect")
+    const nodeSel = svg.selectAll("rect.publication-node")
         .data(nodes)
         .enter().append("rect")
+        .attr("class", "publication-node")
         .attr("fill", d => d.color)
         .attr("opacity", 1.0)
         .on("mouseover", (e, d) => {
@@ -132,6 +144,11 @@ d3.json("assets/json/pubs.json").then(data => {
         .on("click", (e, d) => {
             window.open(d.link, "_blank");
         });
+
+    const clusterLabelLayer = svg
+        .append("g")
+        .attr("class", "cluster-label-layer")
+        .attr("aria-hidden", "true");
 
     let circleSim;
 
@@ -178,6 +195,69 @@ d3.json("assets/json/pubs.json").then(data => {
             .attr("rx", d => d.r)
             .attr("width", d => 2 * d.r)
             .attr("height", d => 2 * d.r);
+
+        const clusteredNodes = nodes.filter(d => (
+            d.cluster_id !== null && d.cluster_id !== undefined && Number.isFinite(d.x) && Number.isFinite(d.y)
+        ));
+
+        if (clusteredNodes.length === 0) {
+            clusterLabelLayer.selectAll("g.cluster-label").remove();
+            return;
+        }
+
+        const labelData = Array.from(
+            d3.group(clusteredNodes, d => d.cluster_id),
+            ([clusterId, members]) => {
+                const summary = clusterSummaryById.get(String(clusterId));
+                return {
+                    clusterId,
+                    label: summary?.label ?? `Cluster ${clusterId}`,
+                    x: d3.mean(members, member => member.x) ?? 0,
+                    y: d3.mean(members, member => member.y) ?? 0,
+                };
+            }
+        );
+
+        const mergedLabels = clusterLabelLayer
+            .selectAll("g.cluster-label")
+            .data(labelData, d => d.clusterId)
+            .join(enter => {
+                const group = enter.append("g").attr("class", "cluster-label");
+                group.append("rect").attr("class", "cluster-label-background");
+                group.append("text")
+                    .attr("class", "cluster-label-text")
+                    .attr("text-anchor", "middle")
+                    .attr("dominant-baseline", "middle");
+                return group;
+            });
+
+        mergedLabels
+            .attr("transform", d => `translate(${d.x}, ${d.y})`);
+
+        mergedLabels
+            .select("text")
+            .text(d => d.label);
+
+        mergedLabels.select("rect")
+            .each(function () {
+                const group = d3.select(this.parentNode);
+                const textNode = group.select("text").node();
+                if (!textNode) {
+                    return;
+                }
+
+                const bbox = textNode.getBBox();
+                const horizontalPadding = 12;
+                const verticalPadding = 8;
+
+                d3.select(this)
+                    .attr("x", bbox.x - horizontalPadding / 2)
+                    .attr("y", bbox.y - verticalPadding / 2)
+                    .attr("width", bbox.width + horizontalPadding)
+                    .attr("height", bbox.height + verticalPadding)
+                    .attr("rx", 8)
+                    .attr("ry", 8);
+            });
     }
 
     render();
