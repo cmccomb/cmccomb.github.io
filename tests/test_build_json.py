@@ -71,3 +71,12 @@ def test_keybert_generates_deterministic_label(
 
     assert first_label == "teaming"
     assert first_label == second_label
+
+
+def test_extract_pub_year_handles_missing_values() -> None:
+    """Publication year extraction should default when the source is missing."""
+
+    assert build_json._extract_pub_year({"pub_year": None}) == 2025
+    assert build_json._extract_pub_year({}, default_year=1999) == 1999
+    assert build_json._extract_pub_year("not-a-dict") == 2025
+    assert build_json._extract_pub_year({"pub_year": " 2017 "}) == 2017
