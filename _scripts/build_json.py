@@ -4,7 +4,7 @@ This script builds a JSON payload describing the publication landscape. It:
 
 1. Loads the dataset from Hugging Face.
 2. Projects publication embeddings to two dimensions using t-SNE followed by PCA.
-3. Clusters the projected points with DBSCAN, treating the ``-1`` label as noise.
+3. Clusters the projected points with HDBSCAN, treating the ``-1`` label as noise.
 4. Generates concise cluster labels with KeyBERT and stores the results as JSON.
 """
 
@@ -21,7 +21,7 @@ import numpy
 import pandas
 from keybert import KeyBERT
 from sentence_transformers import SentenceTransformer
-from sklearn.cluster import DBSCAN
+from hdbscan import HDBSCAN
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
@@ -67,15 +67,17 @@ def compute_projection(
 
 def cluster_points(
     coordinates: numpy.ndarray,
-    eps: float = 3.0,
-    min_samples: int = 4,
+    min_cluster_size: int = 4,
+    min_samples: int = 1,
 ) -> numpy.ndarray:
-    """Cluster 2D coordinates using DBSCAN.
+    """Cluster 2D coordinates using HDBSCAN.
 
     Args:
         coordinates: ``(n_samples, 2)`` array of x/y pairs.
-        eps: DBSCAN ``eps`` parameter controlling cluster diameter.
-        min_samples: Minimum number of samples required to form a cluster.
+        min_cluster_size: Minimum number of samples that form a leaf cluster.
+        min_samples: Controls how conservative the clustering is. Smaller values
+            allow more points to be assigned to clusters, while larger values
+            favour marking points as noise.
 
     Returns:
         Array of cluster labels where ``-1`` denotes noise points.
@@ -85,7 +87,7 @@ def cluster_points(
         msg = "Coordinates must be a 2D array with two columns."
         raise ValueError(msg)
 
-    clusterer = DBSCAN(eps=eps, min_samples=min_samples)
+    clusterer = HDBSCAN(min_cluster_size=min_cluster_size, min_samples=min_samples)
     labels = clusterer.fit_predict(coordinates)
     return labels
 
@@ -174,7 +176,7 @@ class ClusterSummary:
 
 
 def _cluster_id_series(labels: Sequence[int]) -> pandas.Series:
-    """Convert raw DBSCAN labels into a pandas Series preserving ``None`` for noise."""
+    """Convert raw HDBSCAN labels into a pandas Series preserving ``None`` for noise."""
 
     return pandas.Series(
         [label if label != -1 else None for label in labels], dtype="object"

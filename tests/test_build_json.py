@@ -33,7 +33,7 @@ def keybert_model() -> KeyBERT:
 
 
 def test_cluster_points_assigns_clusters_and_noise(fixture_records: list[dict[str, object]]) -> None:
-    """DBSCAN should form clusters while marking distant points as noise."""
+    """HDBSCAN should form clusters while marking distant points as noise."""
 
     coordinates = numpy.array([[record["x"], record["y"]] for record in fixture_records], dtype=float)
     labels = build_json.cluster_points(coordinates)
