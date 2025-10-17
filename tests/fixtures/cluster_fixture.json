@@ -1,0 +1,83 @@
+[
+  {
+    "author_pub_id": "pub-1",
+    "x": 0.0,
+    "y": 0.0,
+    "bib_dict": {
+      "title": "Design automation for resilient manufacturing",
+      "conference": "International Design Engineering Conference"
+    }
+  },
+  {
+    "author_pub_id": "pub-2",
+    "x": 0.3,
+    "y": -0.2,
+    "bib_dict": {
+      "title": "Generative design optimization",
+      "conference": "International Design Engineering Conference"
+    }
+  },
+  {
+    "author_pub_id": "pub-3",
+    "x": -0.1,
+    "y": 0.4,
+    "bib_dict": {
+      "title": "Design engineering collaboration",
+      "journal": "Journal of Mechanical Design"
+    }
+  },
+  {
+    "author_pub_id": "pub-4",
+    "x": 0.2,
+    "y": 0.1,
+    "bib_dict": {
+      "title": "Machine learning for design automation",
+      "conference": "International Design Engineering Conference"
+    }
+  },
+  {
+    "author_pub_id": "pub-5",
+    "x": 5.0,
+    "y": 5.1,
+    "bib_dict": {
+      "title": "Human-robot teaming strategies",
+      "conference": "IEEE Robotics Conference"
+    }
+  },
+  {
+    "author_pub_id": "pub-6",
+    "x": 5.2,
+    "y": 4.9,
+    "bib_dict": {
+      "title": "Autonomous robotic assembly",
+      "journal": "Robotics and Automation Letters"
+    }
+  },
+  {
+    "author_pub_id": "pub-7",
+    "x": 4.8,
+    "y": 5.3,
+    "bib_dict": {
+      "title": "Robotic manipulation planning",
+      "conference": "IEEE Robotics Conference"
+    }
+  },
+  {
+    "author_pub_id": "pub-8",
+    "x": 5.1,
+    "y": 5.2,
+    "bib_dict": {
+      "title": "Resilient multi-robot coordination",
+      "journal": "Robotics and Automation Letters"
+    }
+  },
+  {
+    "author_pub_id": "pub-9",
+    "x": 20.0,
+    "y": 20.0,
+    "bib_dict": {
+      "title": "Miscellaneous exploratory study",
+      "conference": "General Science Symposium"
+    }
+  }
+]

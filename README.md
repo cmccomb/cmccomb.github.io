@@ -20,6 +20,22 @@
    python3 _scripts/build_json.py
    ```
 
+   The build step loads the `sentence-transformers/all-MiniLM-L6-v2` embedding
+   model for KeyBERT. Ensure the model assets are available locally before
+   running the script in offline environments:
+
+   ```bash
+   python - <<'PY'
+   from sentence_transformers import SentenceTransformer
+
+   SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+   PY
+   ```
+
+   The generated `assets/json/pubs.json` file now includes a top-level
+   `clusters` collection containing DBSCAN cluster centroids and KeyBERT labels
+   alongside the existing per-publication records.
+
 3. Serve the site locally:
 
    ```bash
