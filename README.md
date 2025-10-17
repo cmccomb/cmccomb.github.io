@@ -34,13 +34,14 @@
    ```
 
    The generated `assets/json/pubs.json` file now includes a top-level
-   `clusters` collection containing DBSCAN cluster centroids and KeyBERT labels
-   alongside the existing per-publication records.
+   `clusters` collection containing HDBSCAN cluster centroids and KeyBERT labels
+   alongside the existing per-publication records. Each cluster is capped at
+   `12.5%` of the publications to keep the visualization balanced.
 
 ## Cluster labels
 
 The publication visualization overlays concise cluster labels at the centroid
-of each DBSCAN cluster. The positions update every render (including window
+of each HDBSCAN cluster. The positions update every render (including window
 resize events), and the typography scales responsively to remain legible on
 small and large displays alike.
 
