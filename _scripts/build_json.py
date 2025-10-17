@@ -117,7 +117,7 @@ def _bib_dict_to_fragments(bib_entry: Dict[str, object]) -> List[str]:
     """Extract text fragments used to label clusters."""
 
     fragments: List[str] = []
-    for key in ("title", "conference", "journal"):
+    for key in ("title", "abstract"):
         value = bib_entry.get(key) if isinstance(bib_entry, dict) else None
         if isinstance(value, str):
             fragments.append(value)
