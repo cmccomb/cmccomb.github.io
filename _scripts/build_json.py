@@ -246,13 +246,48 @@ def build_payload(citations: pandas.DataFrame, label_model: KeyBERT) -> Dict[str
     return payload
 
 
+def _extract_pub_year(bib_entry: object, default_year: int = 2025) -> int:
+    """Return the publication year encoded in a bibliographic entry.
+
+    Args:
+        bib_entry: Raw value from the ``bib_dict`` column. Expected to be a
+            mapping containing a ``pub_year`` field, but may be ``None`` or an
+            unexpected type when the dataset is incomplete.
+        default_year: Fallback year used when the entry is missing or invalid.
+
+    Returns:
+        Integer publication year. Falls back to ``default_year`` when the input
+        does not contain a parsable value.
+    """
+
+    if not isinstance(bib_entry, dict):
+        return default_year
+
+    raw_year = bib_entry.get("pub_year")
+    if raw_year is None:
+        return default_year
+
+    if isinstance(raw_year, (int, float)):
+        return int(raw_year)
+
+    if isinstance(raw_year, str):
+        stripped_year = raw_year.strip()
+        if stripped_year:
+            try:
+                return int(stripped_year)
+            except ValueError:  # pragma: no cover - defensive guard
+                return default_year
+
+    return default_year
+
+
 def load_citations() -> pandas.DataFrame:
     """Load the publications dataset from Hugging Face."""
 
     citations = datasets.load_dataset("ccm/publications")["train"].to_pandas()
     citations["pub_year"] = [
-        int(pub.get("pub_year", 2025)) if isinstance(pub, dict) else 2025
-        for pub in citations["bib_dict"]
+        _extract_pub_year(bib_entry)
+        for bib_entry in citations["bib_dict"]
     ]
     return citations
 
