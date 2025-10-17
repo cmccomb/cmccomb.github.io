@@ -4,6 +4,7 @@
 2. Basic formatting with [Bootstrap](https://getbootstrap.com/)
 3. Publication visualization with [D3.js](https://d3js.org/)
 4. Icons by Font Awesome (no changes made, [see license](https://fontawesome.com/license))
+5. Responsive cluster labels summarizing research areas directly on the scatter plot
 
 ## Setup
 
@@ -35,6 +36,13 @@
    The generated `assets/json/pubs.json` file now includes a top-level
    `clusters` collection containing DBSCAN cluster centroids and KeyBERT labels
    alongside the existing per-publication records.
+
+## Cluster labels
+
+The publication visualization overlays concise cluster labels at the centroid
+of each DBSCAN cluster. The positions update every render (including window
+resize events), and the typography scales responsively to remain legible on
+small and large displays alike.
 
 3. Serve the site locally:
 
