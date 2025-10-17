@@ -29,7 +29,7 @@ from sklearn.manifold import TSNE
 LOGGER = logging.getLogger(__name__)
 
 DEFAULT_RANDOM_STATE = 42
-MAX_CLUSTER_SIZE_FRACTION = 0.125
+MAX_CLUSTER_SIZE_FRACTION = 0.25
 KEYBERT_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
 
