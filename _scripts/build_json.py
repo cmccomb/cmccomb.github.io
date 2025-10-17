@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 import os
 from dataclasses import dataclass
 from typing import Dict, List, Sequence
@@ -28,6 +29,7 @@ from sklearn.manifold import TSNE
 LOGGER = logging.getLogger(__name__)
 
 DEFAULT_RANDOM_STATE = 42
+MAX_CLUSTER_SIZE_FRACTION = 0.125
 KEYBERT_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
 
@@ -79,6 +81,10 @@ def cluster_points(
             allow more points to be assigned to clusters, while larger values
             favour marking points as noise.
 
+    Notes:
+        The largest cluster is capped at ``12.5%`` of the dataset to prevent a
+        single component from subsuming the publication landscape.
+
     Returns:
         Array of cluster labels where ``-1`` denotes noise points.
     """
@@ -87,7 +93,19 @@ def cluster_points(
         msg = "Coordinates must be a 2D array with two columns."
         raise ValueError(msg)
 
-    clusterer = HDBSCAN(min_cluster_size=min_cluster_size, min_samples=min_samples)
+    n_samples = coordinates.shape[0]
+    if n_samples == 0:
+        msg = "At least one coordinate is required to perform clustering."
+        raise ValueError(msg)
+
+    raw_max_cluster_size = max(1, math.floor(n_samples * MAX_CLUSTER_SIZE_FRACTION))
+    max_cluster_size = max(min_cluster_size, raw_max_cluster_size)
+
+    clusterer = HDBSCAN(
+        min_cluster_size=min_cluster_size,
+        min_samples=min_samples,
+        max_cluster_size=max_cluster_size,
+    )
     labels = clusterer.fit_predict(coordinates)
     return labels
 

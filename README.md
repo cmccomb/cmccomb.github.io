@@ -35,7 +35,8 @@
 
    The generated `assets/json/pubs.json` file now includes a top-level
    `clusters` collection containing HDBSCAN cluster centroids and KeyBERT labels
-   alongside the existing per-publication records.
+   alongside the existing per-publication records. Each cluster is capped at
+   `12.5%` of the publications to keep the visualization balanced.
 
 ## Cluster labels
 

@@ -44,6 +44,30 @@ def test_cluster_points_assigns_clusters_and_noise(fixture_records: list[dict[st
     assert labels[-1] == -1
 
 
+def test_cluster_points_limits_cluster_size(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The HDBSCAN clusterer should receive a capped ``max_cluster_size`` value."""
+
+    coordinates = numpy.zeros((40, 2), dtype=float)
+    captured_kwargs: dict[str, object] = {}
+
+    class DummyClusterer:
+        def __init__(self, **kwargs: object) -> None:
+            captured_kwargs.update(kwargs)
+
+        def fit_predict(self, coords: numpy.ndarray) -> numpy.ndarray:
+            return numpy.zeros(coords.shape[0], dtype=int)
+
+    def fake_hdbscan(*args: object, **kwargs: object) -> DummyClusterer:
+        return DummyClusterer(**kwargs)
+
+    monkeypatch.setattr(build_json, "HDBSCAN", fake_hdbscan)
+
+    labels = build_json.cluster_points(coordinates)
+
+    assert numpy.array_equal(labels, numpy.zeros(40, dtype=int))
+    assert captured_kwargs["max_cluster_size"] == 5
+
+
 def test_noise_points_remain_unlabelled(fixture_records: list[dict[str, object]]) -> None:
     """Noise points (label ``-1``) should not retain a cluster identifier."""
 
