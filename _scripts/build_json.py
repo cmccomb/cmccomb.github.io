@@ -156,7 +156,7 @@ def extract_cluster_label(text: str, model: KeyBERT) -> str:
     if not text:
         return ""
 
-    keywords = model.extract_keywords(text, stop_words="english", top_n=1)
+    keywords = model.extract_keywords(text, stop_words="english", top_n=1, keyphrase_ngram_range=(1, 2))
     if not keywords:
         return ""
     return keywords[0][0]
