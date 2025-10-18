@@ -4,4 +4,6 @@ scikit-learn==1.7.1
 hdbscan==0.8.40
 keybert==0.8.4
 sentence-transformers==2.5.1
+spacy==3.7.4
 torch==2.8.0
+transformers==4.46.1
