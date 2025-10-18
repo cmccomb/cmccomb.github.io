@@ -22,7 +22,7 @@ import numpy
 import pandas
 from keybert import KeyBERT
 from sentence_transformers import SentenceTransformer
-from hdbscan import HDBSCAN
+from sklearn.cluster import DBSCAN
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
@@ -72,7 +72,7 @@ def cluster_points(
     min_cluster_size: int = 4,
     min_samples: int = 1,
 ) -> numpy.ndarray:
-    """Cluster 2D coordinates using HDBSCAN.
+    """Cluster 2D coordinates using DBSCAN.
 
     Args:
         coordinates: ``(n_samples, 2)`` array of x/y pairs.
@@ -98,13 +98,9 @@ def cluster_points(
         msg = "At least one coordinate is required to perform clustering."
         raise ValueError(msg)
 
-    raw_max_cluster_size = max(1, math.floor(n_samples * MAX_CLUSTER_SIZE_FRACTION))
-    max_cluster_size = max(min_cluster_size, raw_max_cluster_size)
-
-    clusterer = HDBSCAN(
+    clusterer = DBSCAN(
         min_cluster_size=min_cluster_size,
         min_samples=min_samples,
-        max_cluster_size=max_cluster_size,
     )
     labels = clusterer.fit_predict(coordinates)
     return labels
