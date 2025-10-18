@@ -4,7 +4,7 @@ This script builds a JSON payload describing the publication landscape. It:
 
 1. Loads the dataset from Hugging Face.
 2. Projects publication embeddings to two dimensions using t-SNE followed by PCA.
-3. Clusters the projected points with DBSCAN, treating the ``-1`` label as noise.
+3. Clusters the projected points with HDBSCAN, treating the ``-1`` label as noise.
 4. Generates concise cluster labels with KeyBERT and stores the results as JSON.
 """
 
@@ -21,14 +21,14 @@ import numpy
 import pandas
 from keybert import KeyBERT
 from sentence_transformers import SentenceTransformer
-from sklearn.cluster import DBSCAN
+from hdbscan import HDBSCAN
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
 LOGGER = logging.getLogger(__name__)
 
 DEFAULT_RANDOM_STATE = 42
-MAX_CLUSTER_SIZE_FRACTION = 0.25
+MAX_CLUSTER_SIZE_FRACTION = 0.125
 KEYBERT_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
 
@@ -67,7 +67,7 @@ def compute_projection(
 
 
 def cluster_points(coordinates: numpy.ndarray) -> numpy.ndarray:
-    """Cluster 2D coordinates using DBSCAN.
+    """Cluster 2D coordinates using HDBSCAN.
 
     Args:
         coordinates: ``(n_samples, 2)`` array of x/y pairs.
@@ -89,9 +89,13 @@ def cluster_points(coordinates: numpy.ndarray) -> numpy.ndarray:
         msg = "At least one coordinate is required to perform clustering."
         raise ValueError(msg)
 
-    clusterer = DBSCAN(
-        eps=2.5,
-        min_samples=4,
+    min_cluster_size = 4
+    max_cluster_size = max(min_cluster_size, int(MAX_CLUSTER_SIZE_FRACTION * n_samples))
+    clusterer = HDBSCAN(
+        min_cluster_size=min_cluster_size,
+        min_samples=2,
+        cluster_selection_epsilon=0.5,
+        max_cluster_size=max_cluster_size,
     )
     labels = clusterer.fit_predict(coordinates)
     return labels
