@@ -4,7 +4,7 @@ This script builds a JSON payload describing the publication landscape. It:
 
 1. Loads the dataset from Hugging Face.
 2. Projects publication embeddings to two dimensions using t-SNE followed by PCA.
-3. Clusters the projected points with HDBSCAN, treating the ``-1`` label as noise.
+3. Clusters the projected points with DBSCAN, treating the ``-1`` label as noise.
 4. Generates concise cluster labels with KeyBERT and stores the results as JSON.
 """
 
@@ -67,18 +67,11 @@ def compute_projection(
     return oriented_embeddings
 
 
-def cluster_points(
-    coordinates: numpy.ndarray,
-    min_samples: int = 1,
-) -> numpy.ndarray:
+def cluster_points(coordinates: numpy.ndarray) -> numpy.ndarray:
     """Cluster 2D coordinates using DBSCAN.
 
     Args:
         coordinates: ``(n_samples, 2)`` array of x/y pairs.
-        min_cluster_size: Minimum number of samples that form a leaf cluster.
-        min_samples: Controls how conservative the clustering is. Smaller values
-            allow more points to be assigned to clusters, while larger values
-            favour marking points as noise.
 
     Notes:
         The largest cluster is capped at ``12.5%`` of the dataset to prevent a
@@ -98,7 +91,8 @@ def cluster_points(
         raise ValueError(msg)
 
     clusterer = DBSCAN(
-        min_samples=min_samples,
+        eps=2.0,
+        min_samples=3,
     )
     labels = clusterer.fit_predict(coordinates)
     return labels
@@ -188,7 +182,7 @@ class ClusterSummary:
 
 
 def _cluster_id_series(labels: Sequence[int]) -> pandas.Series:
-    """Convert raw HDBSCAN labels into a pandas Series preserving ``None`` for noise."""
+    """Convert raw DBSCAN labels into a pandas Series preserving ``None`` for noise."""
 
     return pandas.Series(
         [label if label != -1 else None for label in labels], dtype="object"
