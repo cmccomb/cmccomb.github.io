@@ -69,7 +69,6 @@ def compute_projection(
 
 def cluster_points(
     coordinates: numpy.ndarray,
-    min_cluster_size: int = 4,
     min_samples: int = 1,
 ) -> numpy.ndarray:
     """Cluster 2D coordinates using DBSCAN.
@@ -99,7 +98,6 @@ def cluster_points(
         raise ValueError(msg)
 
     clusterer = DBSCAN(
-        min_cluster_size=min_cluster_size,
         min_samples=min_samples,
     )
     labels = clusterer.fit_predict(coordinates)
