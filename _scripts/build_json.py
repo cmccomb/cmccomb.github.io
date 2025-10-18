@@ -90,8 +90,8 @@ def cluster_points(coordinates: numpy.ndarray) -> numpy.ndarray:
         raise ValueError(msg)
 
     clusterer = DBSCAN(
-        eps=2.0,
-        min_samples=3,
+        eps=2.5,
+        min_samples=4,
     )
     labels = clusterer.fit_predict(coordinates)
     return labels
@@ -155,7 +155,7 @@ def extract_cluster_label(text: str, model: KeyBERT) -> str:
     if not text:
         return ""
 
-    keywords = model.extract_keywords(text, stop_words="english", top_n=1, keyphrase_ngram_range=(1, 1), seed_keywords=["additive manufacturing", "teams", "prototyping", "startups", "permafrost"])
+    keywords = model.extract_keywords(text, stop_words="english", top_n=1, keyphrase_ngram_range=(1, 1), seed_keywords=["additive manufacturing", "teamwork", "optimization", "prototyping", "startups", "permafrost", "empathy", "lattice"])
     if not keywords:
         return ""
     return keywords[0][0]
