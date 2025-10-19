@@ -18,26 +18,26 @@
 
    ```bash
    pip install -r _scripts/requirements.txt
-   python3 _scripts/build_json.py
+   python3 _scripts/build_json.py --dataset ccm/publications --revision main --seed 42
    ```
 
-   The build step loads the `allenai/specter2` adapter on top of the
-   `allenai/specter2_base` transformer to generate KeyBERT embeddings.
-   Ensure both the base model and adapter weights are available locally before
-   running the script in offline environments:
+   The CLI is deterministic: the seed is recorded in the generated
+   `assets/json/pubs.json` file alongside the tuned DBSCAN parameters and
+   projection perplexity. Toggle verbosity or dry-run behaviour as required:
 
    ```bash
-   python - <<'PY'
-   from _scripts import build_json
-
-   build_json.ensure_sentence_transformer(build_json.KEYBERT_MODEL_NAME)
-   PY
+   python3 _scripts/build_json.py --dry-run --verbose
+   python3 _scripts/build_json.py --force --seed 2025
    ```
 
-   The generated `assets/json/pubs.json` file now includes a top-level
-   `clusters` collection containing DBSCAN cluster centroids and KeyBERT labels
-   alongside the existing per-publication records. Each cluster is capped at
-   `12.5%` of the publications to keep the visualization balanced.
+   Offline environments are supported by pre-populating the Hugging Face cache
+   and setting `HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1`. The script will
+   reuse cached copies of the `allenai/specter2` base model and adapter without
+   hitting the network.
+
+   Cluster labels now come from class-based TF-IDF summaries with KeyBERT MMR
+   fallback, and clustering happens in PCA-reduced space for improved
+   stability.
 
 ## Cluster labels
 
@@ -54,10 +54,15 @@ small and large displays alike.
 
 ## Tests
 
-Run a local build to verify the site compiles:
+Run the automated test suite to validate the helpers and ensure deterministic
+builds:
+
+```bash
+pytest
+```
+
+You can still compile the static site locally with:
 
 ```bash
 bundle exec jekyll build
 ```
-
-Deployment to GitHub Pages runs only after this check passes on `master`.
