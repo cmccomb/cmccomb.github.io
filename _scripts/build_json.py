@@ -24,6 +24,7 @@ from typing import Any, Dict, List, Protocol, Sequence, TYPE_CHECKING
 import datasets  # type: ignore[import-untyped]
 import numpy
 import pandas  # type: ignore[import-untyped]
+from huggingface_hub import snapshot_download
 from numpy.typing import NDArray
 from sklearn.cluster import DBSCAN  # type: ignore[import-untyped]
 from sklearn.decomposition import PCA  # type: ignore[import-untyped]
@@ -105,10 +106,12 @@ def _build_specter2_sentence_transformer() -> "SentenceTransformer":
     from sentence_transformers import SentenceTransformer  # type: ignore[import-untyped]
     from sentence_transformers import models as st_models  # type: ignore[import-untyped]
 
+    offline = _transformers_offline()
+
     try:
-        transformer = st_models.Transformer(
+        base_model_path = snapshot_download(
             SPECTER2_BASE_MODEL_NAME,
-            local_files_only=_transformers_offline(),
+            local_files_only=offline,
         )
     except (OSError, ValueError) as exc:  # pragma: no cover - defensive
         msg = (
@@ -118,15 +121,16 @@ def _build_specter2_sentence_transformer() -> "SentenceTransformer":
         raise RuntimeError(msg % SPECTER2_BASE_MODEL_NAME) from exc
 
     try:
-        adapter_model = AutoAdapterModel.from_pretrained(
-            SPECTER2_BASE_MODEL_NAME,
-            local_files_only=_transformers_offline(),
+        transformer = st_models.Transformer(base_model_path)
+        adapter_model = AutoAdapterModel.from_pretrained(base_model_path)
+        adapter_path = snapshot_download(
+            KEYBERT_MODEL_NAME,
+            local_files_only=offline,
         )
         adapter_name = adapter_model.load_adapter(
-            KEYBERT_MODEL_NAME,
-            source="hf",
+            adapter_path,
+            source="local",
             load_as=KEYBERT_MODEL_NAME,
-            local_files_only=_transformers_offline(),
         )
         adapter_model.set_active_adapters(adapter_name)
     except (OSError, ValueError) as exc:  # pragma: no cover - defensive
