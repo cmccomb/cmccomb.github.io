@@ -60,8 +60,13 @@ def _build_specter2_sentence_transformer() -> SentenceTransformer:
 
     transformer.auto_model = adapter_model
 
-    pooling = st_models.Pooling(transformer.get_word_embedding_dimension())
-    return SentenceTransformer(modules=[transformer, pooling])
+    pooling = st_models.Pooling(
+        transformer.get_word_embedding_dimension(),
+        pooling_mode_cls_token=True,
+        pooling_mode_mean_tokens=False,
+    )
+    normalize = st_models.Normalize()
+    return SentenceTransformer(modules=[transformer, pooling, normalize])
 
 
 def compute_projection(
