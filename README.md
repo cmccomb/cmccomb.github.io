@@ -21,27 +21,28 @@
    python3 _scripts/build_json.py
    ```
 
-   The build step loads the `sentence-transformers/all-MiniLM-L6-v2` embedding
-   model for KeyBERT. Ensure the model assets are available locally before
+   The build step loads the `allenai/specter2` adapter on top of the
+   `allenai/specter2_base` transformer to generate KeyBERT embeddings.
+   Ensure both the base model and adapter weights are available locally before
    running the script in offline environments:
 
    ```bash
    python - <<'PY'
-   from sentence_transformers import SentenceTransformer
+   from _scripts import build_json
 
-   SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+   build_json.ensure_sentence_transformer(build_json.KEYBERT_MODEL_NAME)
    PY
    ```
 
    The generated `assets/json/pubs.json` file now includes a top-level
-   `clusters` collection containing HDBSCAN cluster centroids and KeyBERT labels
+   `clusters` collection containing DBSCAN cluster centroids and KeyBERT labels
    alongside the existing per-publication records. Each cluster is capped at
    `12.5%` of the publications to keep the visualization balanced.
 
 ## Cluster labels
 
 The publication visualization overlays concise cluster labels at the centroid
-of each HDBSCAN cluster. The positions update every render (including window
+of each DBSCAN cluster. The positions update every render (including window
 resize events), and the typography scales responsively to remain legible on
 small and large displays alike.
 

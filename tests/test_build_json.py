@@ -45,7 +45,7 @@ def test_cluster_points_assigns_clusters_and_noise(fixture_records: list[dict[st
 
 
 def test_cluster_points_limits_cluster_size(monkeypatch: pytest.MonkeyPatch) -> None:
-    """The HDBSCAN clusterer should receive a capped ``max_cluster_size`` value."""
+    """The DBSCAN clusterer should receive the tuned hyper-parameters."""
 
     coordinates = numpy.zeros((40, 2), dtype=float)
     captured_kwargs: dict[str, object] = {}
@@ -57,15 +57,16 @@ def test_cluster_points_limits_cluster_size(monkeypatch: pytest.MonkeyPatch) -> 
         def fit_predict(self, coords: numpy.ndarray) -> numpy.ndarray:
             return numpy.zeros(coords.shape[0], dtype=int)
 
-    def fake_hdbscan(*args: object, **kwargs: object) -> DummyClusterer:
+    def fake_dbscan(*args: object, **kwargs: object) -> DummyClusterer:
         return DummyClusterer(**kwargs)
 
-    monkeypatch.setattr(build_json, "HDBSCAN", fake_hdbscan)
+    monkeypatch.setattr(build_json, "DBSCAN", fake_dbscan)
 
     labels = build_json.cluster_points(coordinates)
 
     assert numpy.array_equal(labels, numpy.zeros(40, dtype=int))
-    assert captured_kwargs["max_cluster_size"] == 5
+    assert captured_kwargs["eps"] == pytest.approx(2.5)
+    assert captured_kwargs["min_samples"] == 4
 
 
 def test_noise_points_remain_unlabelled(fixture_records: list[dict[str, object]]) -> None:
@@ -93,7 +94,7 @@ def test_keybert_generates_deterministic_label(
     first_label = build_json.extract_cluster_label(text, keybert_model)
     second_label = build_json.extract_cluster_label(text, keybert_model)
 
-    assert first_label == "teaming"
+    assert first_label == "robot"
     assert first_label == second_label
 
 
