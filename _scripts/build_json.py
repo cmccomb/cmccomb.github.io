@@ -20,7 +20,9 @@ import datasets
 import numpy
 import pandas
 from keybert import KeyBERT
+from adapters import AutoAdapterModel
 from sentence_transformers import SentenceTransformer
+from sentence_transformers import models as st_models
 from sklearn.cluster import DBSCAN
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
@@ -29,7 +31,37 @@ LOGGER = logging.getLogger(__name__)
 
 DEFAULT_RANDOM_STATE = 42
 MAX_CLUSTER_SIZE_FRACTION = 0.25
-KEYBERT_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
+KEYBERT_MODEL_NAME = "allenai/specter2"
+SPECTER2_BASE_MODEL_NAME = "allenai/specter2_base"
+
+
+def _build_specter2_sentence_transformer() -> SentenceTransformer:
+    """Construct a SentenceTransformer instance with the SPECTER2 adapter."""
+
+    try:
+        transformer = st_models.Transformer(SPECTER2_BASE_MODEL_NAME)
+    except (OSError, ValueError) as exc:
+        msg = (
+            "Failed to load the SPECTER2 base model '%s'. Ensure the weights are "
+            "available locally before running in offline environments."
+        )
+        raise RuntimeError(msg % SPECTER2_BASE_MODEL_NAME) from exc
+
+    try:
+        adapter_model = AutoAdapterModel.from_pretrained(SPECTER2_BASE_MODEL_NAME)
+        adapter_name = adapter_model.load_adapter(KEYBERT_MODEL_NAME, source="hf")
+        adapter_model.set_active_adapters(adapter_name)
+    except (OSError, ValueError) as exc:
+        msg = (
+            "Failed to load the SPECTER2 adapter '%s'. Download the adapter "
+            "weights and retry the build."
+        )
+        raise RuntimeError(msg % KEYBERT_MODEL_NAME) from exc
+
+    transformer.auto_model = adapter_model
+
+    pooling = st_models.Pooling(transformer.get_word_embedding_dimension())
+    return SentenceTransformer(modules=[transformer, pooling])
 
 
 def compute_projection(
@@ -111,6 +143,9 @@ def ensure_sentence_transformer(model_name: str) -> SentenceTransformer:
     """
 
     try:
+        if model_name == KEYBERT_MODEL_NAME:
+            return _build_specter2_sentence_transformer()
+
         return SentenceTransformer(model_name)
     except (OSError, ValueError) as exc:  # pragma: no cover - defensive
         msg = (
