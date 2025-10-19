@@ -56,7 +56,7 @@ KEYBERT_MODEL_NAME = "allenai/specter2"
 SPECTER2_BASE_MODEL_NAME = "allenai/specter2_base"
 DEFAULT_DATASET_ID = "ccm/publications"
 DEFAULT_DATASET_REVISION = "main"
-EPSILON_ADJUSTMENT_FACTOR = 0.5
+EPSILON_ADJUSTMENT_FACTOR = 0.25
 
 @dataclass(frozen=True)
 class ProjectionResult:
