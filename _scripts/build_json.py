@@ -389,7 +389,7 @@ def ctfidf_labels(
 
     vectorizer = CountVectorizer(
         ngram_range=(2, 3),
-        stop_words="english",
+        stop_words=None,
         min_df=1,
         max_df=0.9,
     )
@@ -409,7 +409,7 @@ def ctfidf_labels(
         if row.sum() == 0:
             continue
         top_indices = row.argsort()[-top_k:][::-1]
-        labels_out[cluster_id] = ", ".join(vocabulary[top_indices])
+        labels_out[cluster_id] = vocabulary[top_indices][0]
 
     return labels_out
 
