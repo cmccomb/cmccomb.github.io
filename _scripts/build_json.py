@@ -53,6 +53,7 @@ DEFAULT_DATASET_REVISION = "main"
 DEFAULT_KMEANS_CLUSTERS = 12
 STOP_WORDS = ["of", "and", "selection"]
 
+
 @dataclass(frozen=True)
 class ProjectionResult:
     """Container for projection coordinates and provenance."""
@@ -437,7 +438,6 @@ class ClusterSummary:
 def summarize_clusters(
     citations: pandas.DataFrame,
     labels: Sequence[int],
-    label_model: KeywordModel,
     ctfidf: Dict[int, str] | None = None,
 ) -> List[ClusterSummary]:
     """Build cluster summaries including centroid coordinates and labels."""
@@ -459,9 +459,6 @@ def summarize_clusters(
         centroid_x = float(cluster_records["x"].mean())
         centroid_y = float(cluster_records["y"].mean())
         label = ctfidf.get(cluster_id, "")
-        if not label:
-            text = build_cluster_text(cluster_records)
-            label = extract_cluster_label(text, label_model)
 
         summaries.append(
             ClusterSummary(
@@ -583,7 +580,6 @@ def curation_metadata(
 ) -> Dict[str, object]:
     """Build a metadata dictionary describing the build configuration."""
 
-    import keybert  # type: ignore[import-untyped]
     import sentence_transformers  # type: ignore[import-untyped]
     import sklearn  # type: ignore[import-untyped]
 
@@ -608,7 +604,6 @@ def curation_metadata(
             "numpy": numpy.__version__,
             "pandas": pandas.__version__,
             "sklearn": sklearn.__version__,
-            "keybert": keybert.__version__,
             "sentence_transformers": sentence_transformers.__version__,
             "datasets": datasets.__version__,
         },
@@ -617,7 +612,6 @@ def curation_metadata(
 
 def build_payload(
     citations: pandas.DataFrame,
-    label_model: KeywordModel,
     *,
     random_state: int = DEFAULT_RANDOM_STATE,
     dataset_id: str = DEFAULT_DATASET_ID,
@@ -642,9 +636,7 @@ def build_payload(
     citations["cluster_id"] = _cluster_id_series(label_sequence)
 
     ctfidf = ctfidf_labels(citations, label_sequence, top_k=2)
-    summaries = summarize_clusters(
-        citations, label_sequence, label_model, ctfidf=ctfidf
-    )
+    summaries = summarize_clusters(citations, label_sequence, ctfidf=ctfidf)
 
     records = citations[
         [
@@ -692,8 +684,6 @@ def _parse_args() -> argparse.Namespace:
 def main() -> int:
     """Entry point for building the publication JSON payload."""
 
-    from keybert import KeyBERT  # type: ignore[import-untyped]
-
     args = _parse_args()
     logging.basicConfig(
         level=logging.DEBUG if args.verbose else logging.INFO,
@@ -710,12 +700,10 @@ def main() -> int:
 
     LOGGER.info("Loading KeyBERT model: %s", KEYBERT_MODEL_NAME)
     sentence_transformer = ensure_sentence_transformer(KEYBERT_MODEL_NAME)
-    label_model = KeyBERT(model=sentence_transformer)
 
     LOGGER.info("Building JSON payload")
     payload = build_payload(
         citations,
-        label_model,
         random_state=args.seed,
         dataset_id=args.dataset,
         dataset_revision=args.revision,
