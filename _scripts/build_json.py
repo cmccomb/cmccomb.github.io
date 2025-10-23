@@ -56,7 +56,8 @@ KEYBERT_MODEL_NAME = "allenai/specter2"
 SPECTER2_BASE_MODEL_NAME = "allenai/specter2_base"
 DEFAULT_DATASET_ID = "ccm/publications"
 DEFAULT_DATASET_REVISION = "main"
-EPSILON_ADJUSTMENT_FACTOR = 0.25
+AUTOTUNE_DISTANCE_QUANTILE = 0.90
+EPSILON_ADJUSTMENT_FACTOR = 0.18
 
 @dataclass(frozen=True)
 class ProjectionResult:
@@ -259,7 +260,11 @@ def cluster_points_from_embeddings(
     reduced = reduce_for_clustering(embeddings, random_state)
     min_samples = min(4, embeddings.shape[0])
     min_samples = max(1, min_samples)
-    eps = autotune_dbscan_eps(reduced.matrix, k=min_samples, quantile=0.95)*EPSILON_ADJUSTMENT_FACTOR
+    eps = autotune_dbscan_eps(
+        reduced.matrix,
+        k=min_samples,
+        quantile=AUTOTUNE_DISTANCE_QUANTILE,
+    ) * EPSILON_ADJUSTMENT_FACTOR
     LOGGER.info("DBSCAN eps=%.3f (auto), min_samples=%d", eps, min_samples)
     clusterer = DBSCAN(eps=eps, min_samples=min_samples, n_jobs=-1)
     labels = clusterer.fit_predict(reduced.matrix)
