@@ -10,6 +10,7 @@ from typing import Any, Dict, List
 import numpy
 import pandas  # type: ignore[import-untyped]
 import pytest
+from sklearn.cluster import KMeans  # type: ignore[import-untyped]
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
@@ -85,6 +86,62 @@ def test_cluster_points_from_embeddings_finds_multiple_topics() -> None:
 
     unique_labels = set(result.labels)
     assert len(unique_labels) == build_json.DEFAULT_KMEANS_CLUSTERS
+
+
+def test_cluster_points_refines_using_projection() -> None:
+    """Clusters should be reinitialised in the projection space."""
+
+    rng = numpy.random.default_rng(17)
+    n_clusters = build_json.DEFAULT_KMEANS_CLUSTERS
+    points_per_cluster = 12
+    feature_dim = 64
+
+    embedding_groups: list[numpy.ndarray] = []
+    projection_groups: list[numpy.ndarray] = []
+    for cluster_id in range(n_clusters):
+        angle = (2 * numpy.pi * cluster_id) / float(n_clusters)
+        center_2d = numpy.array([numpy.cos(angle) * 5.0, numpy.sin(angle) * 5.0])
+        embedding_cluster = rng.normal(
+            loc=0.0,
+            scale=0.3,
+            size=(points_per_cluster, feature_dim),
+        )
+        embedding_cluster[:, :2] += center_2d
+        projection_cluster = rng.normal(
+            loc=center_2d,
+            scale=0.2,
+            size=(points_per_cluster, 2),
+        )
+        embedding_groups.append(embedding_cluster)
+        projection_groups.append(projection_cluster)
+
+    embeddings = numpy.vstack(embedding_groups)
+    projection = numpy.vstack(projection_groups)
+
+    result = build_json.cluster_points_from_embeddings(
+        embeddings,
+        projection,
+        random_state=11,
+    )
+
+    assert result.space == "tsne(init=pca50)"
+
+    reduced = build_json.reduce_for_clustering(embeddings, random_state=11)
+    base_clusterer = KMeans(n_clusters=n_clusters, random_state=11)
+    base_labels = base_clusterer.fit_predict(reduced.matrix)
+
+    centroids = numpy.vstack(
+        [projection[base_labels == cluster_id].mean(axis=0) for cluster_id in range(n_clusters)]
+    )
+    expected_clusterer = KMeans(
+        n_clusters=n_clusters,
+        init=centroids,
+        n_init=1,
+        random_state=11,
+    )
+    expected_labels = expected_clusterer.fit_predict(projection)
+
+    numpy.testing.assert_array_equal(result.labels, expected_labels)
 
 
 def test_ctfidf_labels_produces_multiword_phrases() -> None:
