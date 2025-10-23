@@ -22,7 +22,7 @@
    ```
 
    The CLI is deterministic: the seed is recorded in the generated
-   `assets/json/pubs.json` file alongside the tuned DBSCAN parameters and
+   `assets/json/pubs.json` file alongside the configured K-means settings and
    projection perplexity. Toggle verbosity or dry-run behaviour as required:
 
    ```bash
@@ -37,14 +37,13 @@
 
    Cluster labels now come from class-based TF-IDF summaries with KeyBERT MMR
    fallback, and clustering happens in PCA-reduced space for improved
-   stability. The DBSCAN autotuning heuristics bias eps toward smaller
-   neighbourhoods so the production dataset consistently surfaces about seven
-   topical clusters.
+   stability. Default K-means clustering (eight centroids) keeps the topics
+   balanced without any additional hyperparameter tuning.
 
 ## Cluster labels
 
 The publication visualization overlays concise cluster labels at the centroid
-of each DBSCAN cluster. The positions update every render (including window
+of each K-means cluster. The positions update every render (including window
 resize events), and the typography scales responsively to remain legible on
 small and large displays alike.
 

@@ -26,16 +26,10 @@ import numpy
 import pandas  # type: ignore[import-untyped]
 from huggingface_hub import snapshot_download
 from numpy.typing import NDArray
-from sklearn.cluster import DBSCAN  # type: ignore[import-untyped]
+from sklearn.cluster import KMeans  # type: ignore[import-untyped]
 from sklearn.decomposition import PCA  # type: ignore[import-untyped]
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer  # type: ignore[import-untyped]
 from sklearn.manifold import TSNE  # type: ignore[import-untyped]
-from sklearn.neighbors import NearestNeighbors  # type: ignore[import-untyped]
-
-try:  # pragma: no cover - optional dependency
-    import hdbscan  # type: ignore
-except Exception:  # pragma: no cover - defensive guard
-    hdbscan = None
 
 
 if TYPE_CHECKING:  # pragma: no cover - imported for static type checking only
@@ -56,8 +50,7 @@ KEYBERT_MODEL_NAME = "allenai/specter2"
 SPECTER2_BASE_MODEL_NAME = "allenai/specter2_base"
 DEFAULT_DATASET_ID = "ccm/publications"
 DEFAULT_DATASET_REVISION = "main"
-AUTOTUNE_DISTANCE_QUANTILE = 0.90
-EPSILON_ADJUSTMENT_FACTOR = 0.18
+DEFAULT_KMEANS_CLUSTERS = 8
 
 @dataclass(frozen=True)
 class ProjectionResult:
@@ -82,8 +75,7 @@ class ClusteringResult:
     labels: numpy.ndarray
     space: str
     algorithm: str
-    eps: float | None
-    min_samples: int
+    n_clusters: int
 
 
 def _transformers_offline() -> bool:
@@ -226,64 +218,24 @@ def reduce_for_clustering(
     return ReducedSpace(matrix=reduced, descriptor=descriptor)
 
 
-def autotune_dbscan_eps(
-    data: numpy.ndarray,
-    k: int = 4,
-    quantile: float = 0.95,
-) -> float:
-    """Estimate an ``eps`` value for DBSCAN via the k-NN distance heuristic."""
-
-    if data.ndim != 2:
-        msg = "Data must be a 2D array to estimate DBSCAN eps."
-        raise ValueError(msg)
-
-    n_samples = data.shape[0]
-    if n_samples == 0:
-        msg = "At least one sample is required to estimate eps."
-        raise ValueError(msg)
-
-    effective_k = min(max(1, k), n_samples)
-    nbrs = NearestNeighbors(n_neighbors=effective_k)
-    dists, _ = nbrs.fit(data).kneighbors(data)
-    kth = numpy.sort(dists[:, -1])
-    eps = float(numpy.quantile(kth, quantile))
-    if eps == 0.0:
-        eps = float(numpy.finfo(data.dtype).eps)
-    return eps
-
-
 def cluster_points_from_embeddings(
     embeddings: numpy.ndarray, random_state: int = DEFAULT_RANDOM_STATE
 ) -> ClusteringResult:
-    """Cluster embeddings using DBSCAN in a reduced-dimensional space."""
+    """Cluster embeddings using K-means in a reduced-dimensional space."""
 
     reduced = reduce_for_clustering(embeddings, random_state)
-    min_samples = min(4, embeddings.shape[0])
-    min_samples = max(1, min_samples)
-    eps = autotune_dbscan_eps(
-        reduced.matrix,
-        k=min_samples,
-        quantile=AUTOTUNE_DISTANCE_QUANTILE,
-    ) * EPSILON_ADJUSTMENT_FACTOR
-    LOGGER.info("DBSCAN eps=%.3f (auto), min_samples=%d", eps, min_samples)
-    clusterer = DBSCAN(eps=eps, min_samples=min_samples, n_jobs=-1)
+    clusterer = KMeans(
+        n_clusters=DEFAULT_KMEANS_CLUSTERS,
+        random_state=random_state,
+    )
     labels = clusterer.fit_predict(reduced.matrix)
-    algorithm = "dbscan"
-    eps_used: float | None = eps
-
-    if numpy.all(labels == -1) and hdbscan is not None and reduced.matrix.shape[0] >= 2:
-        LOGGER.info("DBSCAN produced only noise; retrying with HDBSCAN.")
-        clusterer_hdb = hdbscan.HDBSCAN(min_cluster_size=max(min_samples, 5))
-        labels = clusterer_hdb.fit_predict(reduced.matrix)
-        algorithm = "hdbscan"
-        eps_used = None
+    algorithm = "kmeans"
 
     return ClusteringResult(
         labels=labels,
         space=reduced.descriptor,
         algorithm=algorithm,
-        eps=eps_used,
-        min_samples=min_samples,
+        n_clusters=int(clusterer.n_clusters),
     )
 
 
@@ -587,8 +539,7 @@ def curation_metadata(
         "clustering": {
             "space": clustering.space,
             "algorithm": clustering.algorithm,
-            "eps": float(clustering.eps) if clustering.eps is not None else None,
-            "min_samples": int(clustering.min_samples),
+            "n_clusters": int(clustering.n_clusters),
         },
         "noise_fraction": noise_fraction,
         "record_count": record_count,

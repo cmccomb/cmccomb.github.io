@@ -49,7 +49,7 @@ def test_compute_projection_is_deterministic() -> None:
 
 
 def test_cluster_points_from_embeddings_forms_clusters() -> None:
-    """DBSCAN should discover two dense clusters in embedding space."""
+    """K-means should partition the embeddings into the configured groups."""
 
     rng = numpy.random.default_rng(42)
     cluster_a = rng.normal(loc=0.0, scale=0.2, size=(20, 64))
@@ -58,9 +58,9 @@ def test_cluster_points_from_embeddings_forms_clusters() -> None:
 
     result = build_json.cluster_points_from_embeddings(embeddings, random_state=13)
 
-    unique_labels = {label for label in result.labels if label != -1}
-    assert len(unique_labels) == 2
-    assert result.algorithm in {"dbscan", "hdbscan"}
+    unique_labels = set(result.labels)
+    assert len(unique_labels) == build_json.DEFAULT_KMEANS_CLUSTERS
+    assert result.algorithm == "kmeans"
 
 
 def test_cluster_points_from_embeddings_finds_multiple_topics() -> None:
@@ -83,8 +83,8 @@ def test_cluster_points_from_embeddings_finds_multiple_topics() -> None:
 
     result = build_json.cluster_points_from_embeddings(embeddings, random_state=11)
 
-    unique_labels = [label for label in set(result.labels) if label != -1]
-    assert 6 <= len(unique_labels) <= 8
+    unique_labels = set(result.labels)
+    assert len(unique_labels) == build_json.DEFAULT_KMEANS_CLUSTERS
 
 
 def test_ctfidf_labels_produces_multiword_phrases() -> None:
