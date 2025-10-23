@@ -50,7 +50,7 @@ KEYBERT_MODEL_NAME = "allenai/specter2"
 SPECTER2_BASE_MODEL_NAME = "allenai/specter2_base"
 DEFAULT_DATASET_ID = "ccm/publications"
 DEFAULT_DATASET_REVISION = "main"
-DEFAULT_KMEANS_CLUSTERS = 8
+DEFAULT_KMEANS_CLUSTERS = 12
 
 @dataclass(frozen=True)
 class ProjectionResult:
@@ -344,8 +344,7 @@ def extract_cluster_label(text: str, model: KeywordModel) -> str:
         top_n=3,
         keyphrase_ngram_range=(2, 3),
     )
-    phrases = [keyword for keyword, _ in keywords]
-    return ", ".join(phrases)
+    return keywords[0]
 
 
 def _cluster_id_series(labels: Sequence[int]) -> pandas.Series:
