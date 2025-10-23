@@ -218,24 +218,84 @@ def reduce_for_clustering(
     return ReducedSpace(matrix=reduced, descriptor=descriptor)
 
 
+def _compute_cluster_centroids(
+    points: numpy.ndarray, labels: numpy.ndarray, n_clusters: int
+) -> numpy.ndarray:
+    """Return centroids for each cluster in the provided space."""
+
+    centroids = numpy.zeros((n_clusters, points.shape[1]), dtype=float)
+    for cluster_id in range(n_clusters):
+        mask = labels == cluster_id
+        if not numpy.any(mask):
+            msg = f"Cluster {cluster_id} has no assigned points."
+            raise ValueError(msg)
+        centroids[cluster_id] = points[mask].mean(axis=0)
+    return centroids
+
+
+def _refine_clusters_in_projection(
+    projection: numpy.ndarray,
+    labels: numpy.ndarray,
+    *,
+    n_clusters: int,
+    random_state: int,
+) -> tuple[KMeans, numpy.ndarray]:
+    """Refit K-means in the projection space using the supplied initial labels."""
+
+    centroids = _compute_cluster_centroids(projection, labels, n_clusters)
+    clusterer = KMeans(
+        n_clusters=n_clusters,
+        init=centroids,
+        n_init=1,
+        random_state=random_state,
+    )
+    refined_labels = clusterer.fit_predict(projection)
+    return clusterer, refined_labels
+
+
 def cluster_points_from_embeddings(
-    embeddings: numpy.ndarray, random_state: int = DEFAULT_RANDOM_STATE
+    embeddings: numpy.ndarray,
+    projection: numpy.ndarray | None = None,
+    *,
+    random_state: int = DEFAULT_RANDOM_STATE,
 ) -> ClusteringResult:
-    """Cluster embeddings using K-means in a reduced-dimensional space."""
+    """Cluster embeddings using K-means in reduced space and refine in projection."""
 
     reduced = reduce_for_clustering(embeddings, random_state)
-    clusterer = KMeans(
+    base_clusterer = KMeans(
         n_clusters=DEFAULT_KMEANS_CLUSTERS,
         random_state=random_state,
     )
-    labels = clusterer.fit_predict(reduced.matrix)
+    base_labels = base_clusterer.fit_predict(reduced.matrix)
+
+    final_clusterer = base_clusterer
+    final_labels = numpy.asarray(base_labels, dtype=int)
+    final_space = reduced.descriptor
+
+    if projection is not None:
+        if projection.ndim != 2:
+            msg = "Projection array must be two-dimensional."
+            raise ValueError(msg)
+        if projection.shape[0] != embeddings.shape[0]:
+            msg = "Projection must have the same number of rows as embeddings."
+            raise ValueError(msg)
+
+        final_clusterer, refined_labels = _refine_clusters_in_projection(
+            projection,
+            final_labels,
+            n_clusters=int(base_clusterer.n_clusters),
+            random_state=random_state,
+        )
+        final_labels = numpy.asarray(refined_labels, dtype=int)
+        final_space = f"tsne(init={reduced.descriptor})"
+
     algorithm = "kmeans"
 
     return ClusteringResult(
-        labels=labels,
-        space=reduced.descriptor,
+        labels=final_labels,
+        space=final_space,
         algorithm=algorithm,
-        n_clusters=int(clusterer.n_clusters),
+        n_clusters=int(final_clusterer.n_clusters),
     )
 
 
@@ -566,8 +626,12 @@ def build_payload(
     """Construct the JSON payload including records and cluster summaries."""
 
     embeddings = numpy.stack(citations["embedding"].values)
-    clustering = cluster_points_from_embeddings(embeddings, random_state=random_state)
     projection = compute_projection(embeddings, random_state=random_state)
+    clustering = cluster_points_from_embeddings(
+        embeddings,
+        projection.coordinates,
+        random_state=random_state,
+    )
 
     coordinates = projection.coordinates
     labels_array: NDArray[numpy.int_] = numpy.asarray(clustering.labels, dtype=int)
