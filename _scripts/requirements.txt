@@ -5,5 +5,5 @@ keybert==0.8.4
 sentence-transformers==2.5.1
 torch==2.8.0
 adapter-transformers==4.0.0
-peft==0.13.0
-accelerate==1.10.1
+#peft==0.13.0
+#accelerate==1.10.1
