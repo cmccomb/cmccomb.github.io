@@ -1,7 +1,6 @@
 datasets==4.0.0
 numpy==2.3.2
 scikit-learn==1.7.1
-hdbscan==0.8.40
 keybert==0.8.4
 sentence-transformers==2.5.1
 torch==2.8.0
