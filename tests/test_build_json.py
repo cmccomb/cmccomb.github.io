@@ -63,6 +63,30 @@ def test_cluster_points_from_embeddings_forms_clusters() -> None:
     assert result.algorithm in {"dbscan", "hdbscan"}
 
 
+def test_cluster_points_from_embeddings_finds_multiple_topics() -> None:
+    """The clustering heuristics should surface several granular topics."""
+
+    rng = numpy.random.default_rng(3)
+    points_per_cluster = 40
+    clusters: list[numpy.ndarray] = []
+    for index in range(7):
+        angle = 2 * numpy.pi * index / 7
+        center = numpy.array([
+            numpy.cos(angle) * 6.0,
+            numpy.sin(angle) * 6.0,
+        ])
+        samples = rng.normal(loc=0.0, scale=0.35, size=(points_per_cluster, 6))
+        samples[:, :2] += center
+        clusters.append(samples)
+
+    embeddings = numpy.vstack(clusters)
+
+    result = build_json.cluster_points_from_embeddings(embeddings, random_state=11)
+
+    unique_labels = [label for label in set(result.labels) if label != -1]
+    assert 6 <= len(unique_labels) <= 8
+
+
 def test_ctfidf_labels_produces_multiword_phrases() -> None:
     """The c-TF-IDF helper should surface informative phrases per cluster."""
 

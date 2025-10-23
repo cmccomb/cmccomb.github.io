@@ -37,7 +37,9 @@
 
    Cluster labels now come from class-based TF-IDF summaries with KeyBERT MMR
    fallback, and clustering happens in PCA-reduced space for improved
-   stability.
+   stability. The DBSCAN autotuning heuristics bias eps toward smaller
+   neighbourhoods so the production dataset consistently surfaces about seven
+   topical clusters.
 
 ## Cluster labels
 
