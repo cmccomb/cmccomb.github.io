@@ -698,9 +698,6 @@ def main() -> int:
     )
     citations = load_citations(dataset_id=args.dataset, revision=args.revision)
 
-    LOGGER.info("Loading KeyBERT model: %s", KEYBERT_MODEL_NAME)
-    sentence_transformer = ensure_sentence_transformer(KEYBERT_MODEL_NAME)
-
     LOGGER.info("Building JSON payload")
     payload = build_payload(
         citations,
