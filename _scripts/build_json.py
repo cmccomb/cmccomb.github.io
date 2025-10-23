@@ -51,6 +51,7 @@ SPECTER2_BASE_MODEL_NAME = "allenai/specter2_base"
 DEFAULT_DATASET_ID = "ccm/publications"
 DEFAULT_DATASET_REVISION = "main"
 DEFAULT_KMEANS_CLUSTERS = 12
+STOP_WORDS = ["of", "and", "selection"]
 
 @dataclass(frozen=True)
 class ProjectionResult:
@@ -338,7 +339,7 @@ def extract_cluster_label(text: str, model: KeywordModel) -> str:
 
     keywords = model.extract_keywords(
         text,
-        stop_words="english",
+        stop_words=STOP_WORDS,
         use_mmr=True,
         diversity=0.7,
         top_n=3,
@@ -389,7 +390,7 @@ def ctfidf_labels(
 
     vectorizer = CountVectorizer(
         ngram_range=(2, 3),
-        stop_words=None,
+        stop_words=STOP_WORDS,
         min_df=1,
         max_df=0.9,
     )
