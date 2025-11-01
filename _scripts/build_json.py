@@ -531,29 +531,6 @@ def load_citations(
     return table
 
 
-def limit_citations(
-    citations: pandas.DataFrame,
-    max_records: int,
-) -> pandas.DataFrame:
-    """Return at most ``max_records`` rows prioritising recent publications."""
-
-    if max_records <= 0:
-        msg = "max_records must be a positive integer"
-        raise ValueError(msg)
-
-    if len(citations) <= max_records:
-        return citations
-
-    sorted_citations = citations.sort_values(
-        by=["pub_year", "num_citations", "author_pub_id"],
-        ascending=[False, False, True],
-        kind="mergesort",
-    )
-    limited = sorted_citations.head(max_records).copy()
-    limited.reset_index(drop=True, inplace=True)
-    return limited
-
-
 def _hash_bytes(payload: bytes) -> str:
     """Return the SHA-256 hash for the provided payload."""
 
@@ -600,7 +577,6 @@ def curation_metadata(
     dataset_revision: str | None,
     noise_fraction: float,
     record_count: int,
-    record_limit: int | None = None,
 ) -> Dict[str, object]:
     """Build a metadata dictionary describing the build configuration."""
 
@@ -623,7 +599,6 @@ def curation_metadata(
         },
         "noise_fraction": noise_fraction,
         "record_count": record_count,
-        "record_limit": record_limit,
         "versions": {
             "python": platform.python_version(),
             "numpy": numpy.__version__,
@@ -641,7 +616,6 @@ def build_payload(
     random_state: int = DEFAULT_RANDOM_STATE,
     dataset_id: str = DEFAULT_DATASET_ID,
     dataset_revision: str | None = DEFAULT_DATASET_REVISION,
-    record_limit: int | None = None,
 ) -> Dict[str, object]:
     """Construct the JSON payload including records and cluster summaries."""
 
@@ -687,7 +661,6 @@ def build_payload(
             dataset_revision=dataset_revision,
             noise_fraction=noise_fraction,
             record_count=len(records),
-            record_limit=record_limit,
         ),
         "records": records,
         "clusters": [summary.as_dict() for summary in summaries],
@@ -705,7 +678,6 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--verbose", action="store_true")
-    parser.add_argument("--max-records", type=int, default=None)
     return parser.parse_args()
 
 
@@ -726,17 +698,12 @@ def main() -> int:
     )
     citations = load_citations(dataset_id=args.dataset, revision=args.revision)
 
-    if args.max_records is not None:
-        LOGGER.info("Limiting dataset to the %d most recent records", args.max_records)
-        citations = limit_citations(citations, args.max_records)
-
     LOGGER.info("Building JSON payload")
     payload = build_payload(
         citations,
         random_state=args.seed,
         dataset_id=args.dataset,
         dataset_revision=args.revision,
-        record_limit=args.max_records,
     )
 
     if args.dry_run:
