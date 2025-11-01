@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import numpy
 import pandas  # type: ignore[import-untyped]
@@ -17,62 +17,23 @@ sys.path.append(str(Path(__file__).resolve().parents[1]))
 from _scripts import build_json
 
 
+class DummyLabelModel:
+    """Minimal KeyBERT-like model returning deterministic labels."""
+
+    def __init__(self) -> None:
+        self.calls: List[Dict[str, Any]] = []
+
+    def extract_keywords(self, text: str, **kwargs: Any) -> List[tuple[str, float]]:
+        self.calls.append({"text": text, "kwargs": kwargs})
+        return [("design automation", 0.9), ("robot teamwork", 0.8)]
+
+
 @pytest.fixture(scope="session")
 def fixture_records() -> list[dict[str, object]]:
     """Load the synthetic publication dataset for clustering tests."""
 
     fixture_path = Path(__file__).parent / "fixtures" / "cluster_fixture.json"
     return json.loads(fixture_path.read_text())
-
-
-def test_limit_citations_prioritises_recent_records() -> None:
-    """Recent publications should be preferred when limiting the dataset."""
-
-    citations = pandas.DataFrame(
-        [
-            {
-                "author_pub_id": "old-high",
-                "pub_year": 2018,
-                "num_citations": 75,
-            },
-            {
-                "author_pub_id": "recent-low",
-                "pub_year": 2024,
-                "num_citations": 2,
-            },
-            {
-                "author_pub_id": "recent-high",
-                "pub_year": 2024,
-                "num_citations": 11,
-            },
-            {
-                "author_pub_id": "mid",
-                "pub_year": 2022,
-                "num_citations": 5,
-            },
-        ]
-    )
-
-    limited = build_json.limit_citations(citations, max_records=2)
-
-    assert limited["author_pub_id"].tolist() == ["recent-high", "recent-low"]
-
-
-def test_limit_citations_rejects_non_positive_limits() -> None:
-    """The limiter should validate the configured maximum number of records."""
-
-    citations = pandas.DataFrame(
-        [
-            {
-                "author_pub_id": "only",
-                "pub_year": 2020,
-                "num_citations": 1,
-            }
-        ]
-    )
-
-    with pytest.raises(ValueError):
-        build_json.limit_citations(citations, max_records=0)
 
 
 def test_compute_projection_is_deterministic() -> None:
@@ -226,10 +187,10 @@ def test_ctfidf_labels_produces_multiword_phrases() -> None:
     assert "design automation" in phrases[1]
 
 
-def test_summarize_clusters_uses_ctfidf_labels(
+def test_summarize_clusters_uses_ctfidf_and_fallback(
     fixture_records: List[Dict[str, object]],
 ) -> None:
-    """Summaries should expose c-TF-IDF labels when they are available."""
+    """Summaries should prefer c-TF-IDF labels while falling back to KeyBERT."""
 
     citations = pandas.DataFrame(fixture_records)
     embeddings = numpy.array([[rec["x"], rec["y"]] for rec in fixture_records])
@@ -237,16 +198,20 @@ def test_summarize_clusters_uses_ctfidf_labels(
 
     citations["x"] = embeddings[:, 0]
     citations["y"] = embeddings[:, 1]
+    dummy_model = DummyLabelModel()
 
-    ctfidf_map = {0: "design automation"}
+    ctfidf_map = {0: "design automation", 1: ""}
     summaries = build_json.summarize_clusters(
-        citations, labels.tolist(), ctfidf=ctfidf_map
+        citations, labels.tolist(), dummy_model, ctfidf=ctfidf_map
     )
 
     lookup = {summary.cluster_id: summary for summary in summaries}
 
     assert lookup[0].label == "design automation"
-    assert lookup[1].label == ""
+    assert lookup[1].label == "design automation, robot teamwork"
+    assert (
+        dummy_model.calls
+    ), "Fallback labeller should be invoked for missing c-TF-IDF labels."
 
 
 def test_dump_payload_skips_identical_payload(tmp_path: Path) -> None:

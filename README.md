@@ -27,7 +27,6 @@
    ```bash
    python3 _scripts/build_json.py --dry-run --verbose
    python3 _scripts/build_json.py --force --seed 2025
-   python3 _scripts/build_json.py --force --max-records 250
    ```
 
    Offline environments are supported by pre-populating the Hugging Face cache
@@ -52,18 +51,6 @@ small and large displays alike.
    ```bash
    bundle exec jekyll serve
    ```
-
-## Automation
-
-Two scheduled GitHub Actions workflows keep the publication dataset fresh:
-
-* **Monthly publication refresh** rebuilds the entire dataset on the first day
-  of every month (`.github/workflows/publications-monthly.yml`). It force
-  regenerates `assets/json/pubs.json` and publishes the result as a build
-  artifact for review.
-* **Weekly publication refresh** captures the 250 most recent publications each
-  Monday (`.github/workflows/publications-weekly.yml`). This faster run offers
-  early visibility into new entries without the full monthly cost.
 
 ## Tests
 
