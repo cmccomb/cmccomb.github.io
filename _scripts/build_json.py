@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import json
 import logging
-import math
 import os
 from dataclasses import dataclass
 from typing import Dict, List, Sequence
@@ -156,7 +155,19 @@ def extract_cluster_label(text: str, model: KeyBERT) -> str:
     if not text:
         return ""
 
-    keywords = model.extract_keywords(text, stop_words="english", top_n=1, keyphrase_ngram_range=(1, 2), seed_keywords=["additive manufacturing", "teams", "prototyping", "startups", "permafrost"])
+    keywords = model.extract_keywords(
+        text,
+        stop_words="english",
+        top_n=1,
+        keyphrase_ngram_range=(1, 2),
+        seed_keywords=[
+            "additive manufacturing",
+            "teams",
+            "prototyping",
+            "startups",
+            "permafrost",
+        ],
+    )
     if not keywords:
         return ""
     return keywords[0][0]
@@ -222,7 +233,9 @@ def summarize_clusters(
     return summaries
 
 
-def build_payload(citations: pandas.DataFrame, label_model: KeyBERT) -> Dict[str, object]:
+def build_payload(
+    citations: pandas.DataFrame, label_model: KeyBERT
+) -> Dict[str, object]:
     """Construct the JSON payload including records and cluster summaries."""
 
     embeddings = numpy.stack(citations["embedding"].values)
@@ -294,8 +307,7 @@ def load_citations() -> pandas.DataFrame:
 
     citations = datasets.load_dataset("ccm/publications")["train"].to_pandas()
     citations["pub_year"] = [
-        _extract_pub_year(bib_entry)
-        for bib_entry in citations["bib_dict"]
+        _extract_pub_year(bib_entry) for bib_entry in citations["bib_dict"]
     ]
     return citations
 
