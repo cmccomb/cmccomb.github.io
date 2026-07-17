@@ -16,6 +16,7 @@ import logging
 import os
 import platform
 import random
+import re
 import tempfile
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -39,6 +40,8 @@ DEFAULT_DATASET_ID = "ccm/publications"
 DEFAULT_DATASET_REVISION = "main"
 DEFAULT_KMEANS_CLUSTERS = 12
 STOP_WORDS = ["of", "and", "selection"]
+MIN_LABEL_COVERAGE = 0.20
+MIN_LABEL_RECORDS = 2
 
 
 @dataclass(frozen=True)
@@ -247,10 +250,44 @@ def _cluster_id_series(labels: Sequence[int]) -> pandas.Series:
     )
 
 
+def _normalise_label_text(value: str) -> str:
+    """Normalise text so c-TF-IDF phrases can be matched across records."""
+
+    return " ".join(re.findall(r"[a-z0-9]+", value.lower()))
+
+
+def _phrase_document_coverage(phrase: str, records: pandas.DataFrame) -> int:
+    """Count records whose title or abstract contains a candidate phrase."""
+
+    normalised_phrase = _normalise_label_text(phrase)
+    if not normalised_phrase:
+        return 0
+
+    needle = f" {normalised_phrase} "
+    matching_records = 0
+    for bib_entry in records["bib_dict"]:
+        fragments = _bib_dict_to_fragments(bib_entry)
+        document = f" {_normalise_label_text(' '.join(fragments))} "
+        if needle in document:
+            matching_records += 1
+    return matching_records
+
+
+def _minimum_label_coverage(record_count: int) -> int:
+    """Return the minimum number of records that should support a label."""
+
+    if record_count <= 0:
+        return 0
+    return min(
+        record_count,
+        max(MIN_LABEL_RECORDS, int(numpy.ceil(record_count * MIN_LABEL_COVERAGE))),
+    )
+
+
 def ctfidf_labels(
-    citations: pandas.DataFrame, labels: Sequence[int], top_k: int = 3
+    citations: pandas.DataFrame, labels: Sequence[int]
 ) -> Dict[int, str]:
-    """Generate cluster labels using class-based TF-IDF."""
+    """Generate representative cluster labels using coverage-aware c-TF-IDF."""
 
     label_list = [int(label) for label in labels]
     df = citations.copy()
@@ -299,8 +336,16 @@ def ctfidf_labels(
         row = tfidf_matrix[index].toarray().ravel()
         if row.sum() == 0:
             continue
-        top_indices = row.argsort()[-top_k:][::-1]
-        labels_out[cluster_id] = vocabulary[top_indices][0]
+        cluster_records = df[df["cluster_id"] == cluster_id]
+        minimum_coverage = _minimum_label_coverage(len(cluster_records))
+        ranked_indices = row.argsort()[::-1]
+        for candidate_index in ranked_indices:
+            candidate = vocabulary[candidate_index]
+            if _phrase_document_coverage(candidate, cluster_records) >= minimum_coverage:
+                labels_out[cluster_id] = candidate
+                break
+        else:
+            labels_out[cluster_id] = vocabulary[ranked_indices[0]]
 
     return labels_out
 
@@ -546,7 +591,7 @@ def build_payload(
     citations["y"] = coordinates[:, 1]
     citations["cluster_id"] = _cluster_id_series(label_sequence)
 
-    ctfidf = ctfidf_labels(citations, label_sequence, top_k=2)
+    ctfidf = ctfidf_labels(citations, label_sequence)
     summaries = summarize_clusters(citations, label_sequence, ctfidf=ctfidf)
 
     records = citations[

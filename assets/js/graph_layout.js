@@ -5,6 +5,9 @@
     const tooltip = d3.select(".tooltip");
     const legendContainer = d3.select(".colorbar-legend");
     const statusElement = document.getElementById("graph-status");
+    const legacyLabelCorrections = new Map([
+        ["face to face", "design teams"],
+    ]);
 
     function showGraphError(error) {
         console.error("Unable to render publication graph", error);
@@ -27,6 +30,11 @@
             return `${authors.join(", ")}, and ${lastAuthor}`;
         }
         return authors.join(" and ");
+    }
+
+    function displayClusterLabel(label) {
+        const value = String(label || "").trim();
+        return legacyLabelCorrections.get(value.toLowerCase()) || value;
     }
 
     d3.json("assets/json/pubs.json").then(rawPayload => {
@@ -251,7 +259,7 @@
                     return {
                         clusterId,
                         label: typeof summary?.label === "string" && summary.label
-                            ? summary.label
+                            ? displayClusterLabel(summary.label)
                             : `Cluster ${clusterId}`,
                         x: d3.mean(members, member => member.x) ?? 0,
                         y: d3.mean(members, member => member.y) ?? 0,

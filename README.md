@@ -12,7 +12,8 @@ with an interactive D3 publication map.
   [`ccm/publications`](https://huggingface.co/datasets/ccm/publications)
   Hugging Face dataset.
 - `_scripts/build_json.py` converts existing publication embeddings into the
-  two-dimensional map and labels clusters with class-based TF-IDF.
+  two-dimensional map and labels clusters with coverage-aware class-based
+  TF-IDF.
 - The separate
   [`scrape-my-publications`](https://github.com/cmccomb/scrape-my-publications)
   repository refreshes Scholar metadata and embeddings on the first day of
