@@ -170,10 +170,73 @@ def test_ctfidf_labels_produces_multiword_phrases() -> None:
     )
     labels = numpy.array([0, 0, 1, 1])
 
-    phrases = build_json.ctfidf_labels(citations, labels.tolist(), top_k=2)
+    phrases = build_json.ctfidf_labels(citations, labels.tolist())
 
     assert phrases[0].startswith("robot teamwork")
     assert "design automation" in phrases[1]
+
+
+def test_ctfidf_labels_prioritises_cluster_wide_phrases() -> None:
+    """A phrase from a few papers should not name a much broader cluster."""
+
+    citations = pandas.DataFrame(
+        [
+            {
+                "author_pub_id": "a1",
+                "bib_dict": {
+                    "title": "Virtual face-to-face collaboration",
+                    "abstract": "Face-to-face collaboration face-to-face collaboration.",
+                },
+            },
+            {
+                "author_pub_id": "a2",
+                "bib_dict": {
+                    "title": "Face-to-face team collaboration",
+                    "abstract": "Face-to-face collaboration face-to-face collaboration.",
+                },
+            },
+            {
+                "author_pub_id": "a3",
+                "bib_dict": {
+                    "title": "Design teams coordinate concepts",
+                    "abstract": "Design teams compare concepts.",
+                },
+            },
+            {
+                "author_pub_id": "a4",
+                "bib_dict": {
+                    "title": "Design teams select ideas",
+                    "abstract": "Design teams select concepts.",
+                },
+            },
+            {
+                "author_pub_id": "a5",
+                "bib_dict": {
+                    "title": "Design teams improve collaboration",
+                    "abstract": "Design teams study collaboration.",
+                },
+            },
+            {
+                "author_pub_id": "b1",
+                "bib_dict": {
+                    "title": "Manufacturing systems optimisation",
+                    "abstract": "Manufacturing systems improve production.",
+                },
+            },
+            {
+                "author_pub_id": "b2",
+                "bib_dict": {
+                    "title": "Manufacturing systems reliability",
+                    "abstract": "Manufacturing systems support production.",
+                },
+            },
+        ]
+    )
+    labels = numpy.array([0, 0, 0, 0, 0, 1, 1])
+
+    phrases = build_json.ctfidf_labels(citations, labels.tolist())
+
+    assert phrases[0] == "design teams"
 
 
 def test_summarize_clusters_uses_ctfidf_labels(
