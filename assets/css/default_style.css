@@ -20,10 +20,17 @@ html, body {
 }
 
 .icon {
-    width: 1em;
-    height: 1em;
-    vertical-align: -0.125em;
+    display: block;
+    width: 1.1rem;
+    height: 1.1rem;
     fill: currentColor;
+}
+
+.btn-group > .btn {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    min-height: 2.45rem;
 }
 
 .contact-first {
@@ -40,6 +47,19 @@ html, body {
     font-size: 0.9em;
     gap: 0.5rem;
     justify-content: center;
+}
+
+.explore-button .icon {
+    display: none;
+}
+
+.explore-button::before {
+    width: 1rem;
+    height: 1rem;
+    content: "";
+    background: currentColor;
+    mask: url("../images/icons/explore.svg") center / contain no-repeat;
+    -webkit-mask: url("../images/icons/explore.svg") center / contain no-repeat;
 }
 
 #footer {
