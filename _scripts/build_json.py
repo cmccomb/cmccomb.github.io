@@ -19,35 +19,22 @@ import random
 import tempfile
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Protocol, Sequence, TYPE_CHECKING
+from pathlib import Path
+from typing import Dict, List, Sequence
 
 import datasets  # type: ignore[import-untyped]
 import numpy
 import pandas  # type: ignore[import-untyped]
-from huggingface_hub import snapshot_download
+from huggingface_hub import HfApi
 from numpy.typing import NDArray
 from sklearn.cluster import KMeans  # type: ignore[import-untyped]
 from sklearn.decomposition import PCA  # type: ignore[import-untyped]
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer  # type: ignore[import-untyped]
 from sklearn.manifold import TSNE  # type: ignore[import-untyped]
 
-
-if TYPE_CHECKING:  # pragma: no cover - imported for static type checking only
-    from sentence_transformers import SentenceTransformer  # type: ignore[import-untyped]
-
-
-class KeywordModel(Protocol):
-    """Protocol describing the keyword extraction interface."""
-
-    def extract_keywords(self, text: str, **kwargs: Any) -> List[tuple[str, float]]:
-        """Return ranked keywords for the supplied text."""
-
-
 LOGGER = logging.getLogger(__name__)
 
 DEFAULT_RANDOM_STATE = 42
-KEYBERT_MODEL_NAME = "allenai/specter2"
-SPECTER2_BASE_MODEL_NAME = "allenai/specter2_base"
 DEFAULT_DATASET_ID = "ccm/publications"
 DEFAULT_DATASET_REVISION = "main"
 DEFAULT_KMEANS_CLUSTERS = 12
@@ -80,92 +67,11 @@ class ClusteringResult:
     n_clusters: int
 
 
-def _transformers_offline() -> bool:
-    """Return whether transformers assets must be loaded from a local cache."""
-
-    value = os.environ.get("TRANSFORMERS_OFFLINE", "0").lower()
-    return value in {"1", "true", "yes"}
-
-
 def _datasets_offline() -> bool:
     """Return whether Hugging Face datasets should avoid network access."""
 
     value = os.environ.get("HF_DATASETS_OFFLINE", "0").lower()
     return value in {"1", "true", "yes"}
-
-
-def _build_specter2_sentence_transformer() -> "SentenceTransformer":
-    """Construct a SentenceTransformer instance with the SPECTER2 adapter."""
-
-    from adapters import AutoAdapterModel  # type: ignore[import-untyped]
-    from sentence_transformers import SentenceTransformer  # type: ignore[import-untyped]
-    from sentence_transformers import models as st_models  # type: ignore[import-untyped]
-
-    offline = _transformers_offline()
-
-    try:
-        base_model_path = snapshot_download(
-            SPECTER2_BASE_MODEL_NAME,
-            local_files_only=offline,
-        )
-    except (OSError, ValueError) as exc:  # pragma: no cover - defensive
-        msg = (
-            "Failed to load the SPECTER2 base model '%s'. Ensure the weights are "
-            "available locally before running in offline environments."
-        )
-        raise RuntimeError(msg % SPECTER2_BASE_MODEL_NAME) from exc
-
-    try:
-        transformer = st_models.Transformer(base_model_path)
-        adapter_model = AutoAdapterModel.from_pretrained(base_model_path)
-        adapter_path = snapshot_download(
-            KEYBERT_MODEL_NAME,
-            local_files_only=offline,
-        )
-        adapter_name = adapter_model.load_adapter(
-            adapter_path,
-            source="local",
-            load_as=KEYBERT_MODEL_NAME,
-        )
-        adapter_model.set_active_adapters(adapter_name)
-    except (OSError, ValueError) as exc:  # pragma: no cover - defensive
-        msg = (
-            "Failed to load the SPECTER2 adapter '%s'. Download the adapter "
-            "weights and retry the build."
-        )
-        raise RuntimeError(msg % KEYBERT_MODEL_NAME) from exc
-
-    transformer.auto_model = adapter_model
-
-    pooling = st_models.Pooling(
-        transformer.get_word_embedding_dimension(),
-        pooling_mode_cls_token=True,
-        pooling_mode_mean_tokens=False,
-    )
-    normalize = st_models.Normalize()
-    return SentenceTransformer(modules=[transformer, pooling, normalize])
-
-
-def ensure_sentence_transformer(model_name: str) -> "SentenceTransformer":
-    """Ensure a sentence-transformer model is available locally."""
-
-    from sentence_transformers import SentenceTransformer  # type: ignore[import-untyped]
-
-    try:
-        if model_name == KEYBERT_MODEL_NAME:
-            return _build_specter2_sentence_transformer()
-
-        return SentenceTransformer(
-            model_name,
-            local_files_only=_transformers_offline(),
-        )
-    except (OSError, ValueError) as exc:  # pragma: no cover - defensive
-        msg = (
-            "Failed to load sentence-transformer model '%s'. Ensure the model is "
-            "downloaded and accessible in CI environments."
-        )
-        raise RuntimeError(msg % model_name) from exc
-
 
 def compute_projection(
     embeddings: numpy.ndarray,
@@ -332,23 +238,6 @@ def build_cluster_text(records: pandas.DataFrame, max_chars: int = 100_000) -> s
     return ". ".join(fragments)
 
 
-def extract_cluster_label(text: str, model: KeywordModel) -> str:
-    """Extract a concise label for the supplied text using KeyBERT."""
-
-    if not text:
-        return ""
-
-    keywords = model.extract_keywords(
-        text,
-        stop_words=STOP_WORDS,
-        use_mmr=True,
-        diversity=0.7,
-        top_n=3,
-        keyphrase_ngram_range=(2, 3),
-    )
-    return keywords[0]
-
-
 def _cluster_id_series(labels: Sequence[int]) -> pandas.Series:
     """Convert raw clustering labels into a Series preserving ``None`` for noise."""
 
@@ -472,8 +361,11 @@ def summarize_clusters(
     return summaries
 
 
-def _extract_pub_year(bib_entry: object, default_year: int = 2025) -> int:
+def _extract_pub_year(bib_entry: object, default_year: int | None = None) -> int:
     """Return the publication year encoded in a bibliographic entry."""
+
+    if default_year is None:
+        default_year = datetime.now(timezone.utc).year
 
     if not isinstance(bib_entry, dict):
         return default_year
@@ -531,6 +423,22 @@ def load_citations(
     return table
 
 
+def resolve_dataset_commit(
+    dataset_id: str = DEFAULT_DATASET_ID,
+    revision: str | None = DEFAULT_DATASET_REVISION,
+) -> str | None:
+    """Resolve a mutable Hugging Face revision to its immutable commit SHA."""
+
+    if not revision or _datasets_offline():
+        return revision
+
+    try:
+        return HfApi().dataset_info(dataset_id, revision=revision).sha
+    except Exception as exc:  # pragma: no cover - network-dependent fallback
+        LOGGER.warning("Could not resolve dataset commit: %s", exc)
+        return revision
+
+
 def _hash_bytes(payload: bytes) -> str:
     """Return the SHA-256 hash for the provided payload."""
 
@@ -540,10 +448,12 @@ def _hash_bytes(payload: bytes) -> str:
 def dump_payload(payload: Dict[str, object], force: bool = False) -> bool:
     """Persist the payload to ``assets/json/pubs.json`` using an atomic write."""
 
-    workspace = os.environ.get("GITHUB_WORKSPACE", "..")
-    output_dir = os.path.join(workspace, "assets/json")
+    workspace = Path(
+        os.environ.get("GITHUB_WORKSPACE", Path(__file__).resolve().parents[1])
+    )
+    output_dir = workspace / "assets/json"
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, "pubs.json")
+    output_path = output_dir / "pubs.json"
 
     payload_bytes = json.dumps(
         payload,
@@ -575,12 +485,12 @@ def curation_metadata(
     clustering: ClusteringResult,
     dataset_id: str,
     dataset_revision: str | None,
+    dataset_commit: str | None,
     noise_fraction: float,
     record_count: int,
 ) -> Dict[str, object]:
     """Build a metadata dictionary describing the build configuration."""
 
-    import sentence_transformers  # type: ignore[import-untyped]
     import sklearn  # type: ignore[import-untyped]
 
     return {
@@ -588,6 +498,7 @@ def curation_metadata(
         "random_state": random_state,
         "dataset_id": dataset_id,
         "dataset_revision": dataset_revision,
+        "dataset_commit": dataset_commit,
         "projection": {
             "method": "tsne+pca",
             "perplexity": int(projection.perplexity),
@@ -604,7 +515,6 @@ def curation_metadata(
             "numpy": numpy.__version__,
             "pandas": pandas.__version__,
             "sklearn": sklearn.__version__,
-            "sentence_transformers": sentence_transformers.__version__,
             "datasets": datasets.__version__,
         },
     }
@@ -616,6 +526,7 @@ def build_payload(
     random_state: int = DEFAULT_RANDOM_STATE,
     dataset_id: str = DEFAULT_DATASET_ID,
     dataset_revision: str | None = DEFAULT_DATASET_REVISION,
+    dataset_commit: str | None = None,
 ) -> Dict[str, object]:
     """Construct the JSON payload including records and cluster summaries."""
 
@@ -659,6 +570,7 @@ def build_payload(
             clustering=clustering,
             dataset_id=dataset_id,
             dataset_revision=dataset_revision,
+            dataset_commit=dataset_commit,
             noise_fraction=noise_fraction,
             record_count=len(records),
         ),
@@ -697,6 +609,7 @@ def main() -> int:
         "Loading citations dataset %s (revision=%s)", args.dataset, args.revision
     )
     citations = load_citations(dataset_id=args.dataset, revision=args.revision)
+    dataset_commit = resolve_dataset_commit(args.dataset, args.revision)
 
     LOGGER.info("Building JSON payload")
     payload = build_payload(
@@ -704,6 +617,7 @@ def main() -> int:
         random_state=args.seed,
         dataset_id=args.dataset,
         dataset_revision=args.revision,
+        dataset_commit=dataset_commit,
     )
 
     if args.dry_run:
