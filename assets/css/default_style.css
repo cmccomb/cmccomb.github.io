@@ -19,6 +19,33 @@ html, body {
     width: 100%;
 }
 
+.icon {
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.125em;
+    fill: currentColor;
+}
+
+.contact-first {
+    border-bottom-left-radius: 0;
+}
+
+.btn-group > .btn:last-child {
+    border-bottom-right-radius: 0;
+}
+
+.explore-button {
+    align-items: center;
+    display: flex;
+    font-size: 0.9em;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+#footer {
+    z-index: -100;
+}
+
 p {
     font-size: 0.9em;
 }
@@ -32,6 +59,10 @@ p {
     /*visibility: hidden;*/
     pointer-events: none;
     user-select: none;
+}
+
+#graph-container.graph-active {
+    pointer-events: auto;
 }
 
 .blur {
@@ -48,6 +79,10 @@ p {
 
       #graph-container {
           visibility: hidden;
+      }
+
+      #graph-container.graph-active {
+          visibility: visible;
       }
   }
 

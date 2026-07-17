@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: bundler
+    directory: /
+    schedule:
+      interval: monthly
+      timezone: America/New_York
+      time: "06:17"
+    open-pull-requests-limit: 5
+  - package-ecosystem: pip
+    directory: /_scripts
+    schedule:
+      interval: monthly
+      timezone: America/New_York
+      time: "06:23"
+    open-pull-requests-limit: 5
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+      timezone: America/New_York
+      time: "06:29"
+    open-pull-requests-limit: 5

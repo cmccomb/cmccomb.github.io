@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out tested revision
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@003a5c4d8d6321bd302e38f6f0ec593f77f06600 # v1.319.0
+        with:
+          bundler-cache: true
+      - name: Audit Ruby dependencies
+        run: |
+          gem install bundler-audit --version 0.9.3 --no-document
+          bundle-audit check --update
+      - name: Build site
+        run: bundle exec jekyll build --strict_front_matter
+
+  publication-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out tested revision
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: _scripts/requirements*.txt
+      - name: Install test dependencies
+        run: python -m pip install --requirement _scripts/requirements-dev.txt
+      - name: Run Python tests
+        run: python -m pytest
+      - name: Audit Python dependencies
+        run: python -m pip_audit --local
+      - name: Validate committed publication snapshot
+        run: python _scripts/validate_publications_json.py
+      - name: Check JavaScript syntax
+        run: |
+          node --check assets/js/graph_layout.js
+          node --check assets/js/interface.js

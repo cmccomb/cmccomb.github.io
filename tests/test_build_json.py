@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Dict, List
 
 import numpy
 import pandas  # type: ignore[import-untyped]
@@ -15,17 +15,6 @@ from sklearn.cluster import KMeans  # type: ignore[import-untyped]
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from _scripts import build_json
-
-
-class DummyLabelModel:
-    """Minimal KeyBERT-like model returning deterministic labels."""
-
-    def __init__(self) -> None:
-        self.calls: List[Dict[str, Any]] = []
-
-    def extract_keywords(self, text: str, **kwargs: Any) -> List[tuple[str, float]]:
-        self.calls.append({"text": text, "kwargs": kwargs})
-        return [("design automation", 0.9), ("robot teamwork", 0.8)]
 
 
 @pytest.fixture(scope="session")
@@ -187,10 +176,10 @@ def test_ctfidf_labels_produces_multiword_phrases() -> None:
     assert "design automation" in phrases[1]
 
 
-def test_summarize_clusters_uses_ctfidf_and_fallback(
+def test_summarize_clusters_uses_ctfidf_labels(
     fixture_records: List[Dict[str, object]],
 ) -> None:
-    """Summaries should prefer c-TF-IDF labels while falling back to KeyBERT."""
+    """Summaries should use the supplied c-TF-IDF labels."""
 
     citations = pandas.DataFrame(fixture_records)
     embeddings = numpy.array([[rec["x"], rec["y"]] for rec in fixture_records])
@@ -198,20 +187,23 @@ def test_summarize_clusters_uses_ctfidf_and_fallback(
 
     citations["x"] = embeddings[:, 0]
     citations["y"] = embeddings[:, 1]
-    dummy_model = DummyLabelModel()
-
-    ctfidf_map = {0: "design automation", 1: ""}
+    ctfidf_map = {0: "design automation", 1: "robot teamwork"}
     summaries = build_json.summarize_clusters(
-        citations, labels.tolist(), dummy_model, ctfidf=ctfidf_map
+        citations, labels.tolist(), ctfidf=ctfidf_map
     )
 
     lookup = {summary.cluster_id: summary for summary in summaries}
 
     assert lookup[0].label == "design automation"
-    assert lookup[1].label == "design automation, robot teamwork"
-    assert (
-        dummy_model.calls
-    ), "Fallback labeller should be invoked for missing c-TF-IDF labels."
+    assert lookup[1].label == "robot teamwork"
+
+
+def test_missing_publication_year_uses_current_year() -> None:
+    """Missing publication years should not stay pinned to an old calendar year."""
+
+    assert build_json._extract_pub_year({}) == build_json.datetime.now(
+        build_json.timezone.utc
+    ).year
 
 
 def test_dump_payload_skips_identical_payload(tmp_path: Path) -> None:

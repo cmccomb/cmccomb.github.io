@@ -17,6 +17,21 @@
     opacity: 0;
 }
 
+.graph-status {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    max-width: min(32rem, calc(100vw - 3rem));
+    padding: 1rem 1.25rem;
+    transform: translate(-50%, -50%);
+    color: #f8f9fa;
+    background: rgba(33, 37, 41, 0.95);
+    border: 1px solid rgba(248, 249, 250, 0.35);
+    border-radius: 0.75rem;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+}
+
 .colorbar-legend {
     position: absolute;
     top: 1.5rem;

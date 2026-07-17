@@ -1,71 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-    <!--  Title for the page  -->
-    <title>{{ site.title }}</title>
-
-    <!--  Load meta information  -->
     <meta charset="utf-8">
-    <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-
-    <!--  Load style sheets  -->
-    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
-          integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" rel="stylesheet">
-    <link href="assets/css/default_style.css" rel="stylesheet">
-    <link href="assets/css/home_style.css" rel="stylesheet">
-
-    <!--  Load additional scripts and libraries  -->
-    <script crossorigin="anonymous" src="https://kit.fontawesome.com/c5e7391f02.js"></script>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'self'; upgrade-insecure-requests">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="no-referrer" name="referrer">
+    <meta content="{{ site.author }}" name="author">
+    <meta content="Research, publications, and professional profile for {{ site.author }}." name="description">
+    <title>{{ site.title }}</title>
+    <link href="{{ '/assets/images/favicon.svg' | relative_url }}" rel="icon" type="image/svg+xml">
+    <link href="{{ '/assets/vendor/bootstrap/bootstrap.min.css' | relative_url }}" rel="stylesheet">
+    <link href="{{ '/assets/css/default_style.css' | relative_url }}" rel="stylesheet">
+    <link href="{{ '/assets/css/home_style.css' | relative_url }}" rel="stylesheet">
+    <script defer src="{{ '/assets/vendor/d3/d3.v7.9.0.min.js' | relative_url }}"></script>
+    <script defer src="{{ '/assets/js/graph_layout.js' | relative_url }}"></script>
 </head>
 <body class="bg-dark d-flex flex-column h-100">
 
 <div class="container-fluid blur unselectable p-0" id="graph-container">
-    <svg></svg>
+    <svg id="publication-graph" role="img" aria-label="Interactive map of publications grouped by research topic"></svg>
     <div class="tooltip"></div>
     <div class="colorbar-legend" role="img" aria-label="Color legend for publication years"></div>
-    <script src="assets/js/graph_layout.js"></script>
+    <div class="graph-status" id="graph-status" role="status" aria-live="polite" hidden></div>
 </div>
 
 <div class="row h-100 justify-content-center align-items-center " id="profile">
     <div class="card px-0">
         <!--        <button id="exit" type="button" class="btn-close" aria-label="Close"></button>-->
         <img alt="A headshot of {{ site.author }}" class="card-img-top"
-             src="{{ site.headshot }}"/>
+             src="{{ site.headshot | relative_url }}"/>
         <div class="card-body">
             <h5 class="card-title text-center">{{ site.author }}</h5>
             <h6 class="card-subtitle mb-2 text-muted text-center"> {{ site.affiliation }} </h6>
             <p class="card-text text-center">{{ content | markdownify | remove: '<p>' | remove: '</p>' }}</p>
 
-            <div aria-label="Basic example" class="btn-group d-flex" role="group">
-                <a aria-label="Email" class="btn btn-outline-dark" href="mailto:{{ site.email }}"
-                   style="border-bottom-left-radius: 0"><i class="fa fa-envelope"></i></a>
+            <div aria-label="Contact and profile links" class="btn-group d-flex" role="group">
+                <a aria-label="Email" class="btn btn-outline-dark contact-first" href="mailto:{{ site.email }}">
+                    <svg aria-hidden="true" class="icon" viewBox="0 0 16 16"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-.5a.5.5 0 0 0-.5.5v.217l6.5 3.9 6.5-3.9V4a.5.5 0 0 0-.5-.5H2Zm12.5 2.466-4.882 2.93 4.882 3.051V5.966Zm-.574 6.534L8 8.793 2.074 12.5h11.852ZM1.5 11.947l4.882-3.051L1.5 5.966v5.981Z"/></svg>
+                </a>
                 <a aria-label="LinkedIn" class="btn btn-outline-dark rounded-0"
-                   href="https://www.linkedin.com/in/{{ site.linkedin }}"><i
-                        class="fa fa-linkedin"></i></a>
+                   href="https://www.linkedin.com/in/{{ site.linkedin }}">
+                    <svg aria-hidden="true" class="icon" viewBox="0 0 16 16"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146Zm4.943 12.248V6.169H2.542v7.225h2.401Zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.521-1.248-1.342-1.248-.821 0-1.358.54-1.358 1.248 0 .694.521 1.248 1.327 1.248h.015Zm3.778 8.212h2.4V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.4V9.251c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225Z"/></svg>
+                </a>
                 <a aria-label="GitHub" class="btn btn-outline-dark rounded-0"
-                   href="https://github.com/{{ site.github }}"><i
-                        class="fa fa-github"></i></a>
+                   href="https://github.com/{{ site.github }}">
+                    <svg aria-hidden="true" class="icon" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.64 0 8.13c0 3.59 2.29 6.64 5.47 7.72.4.08.55-.18.55-.39 0-.19-.01-.84-.01-1.52-2.01.38-2.53-.5-2.69-.96-.09-.23-.48-.96-.82-1.15-.28-.16-.68-.56-.01-.57.63-.01 1.08.59 1.23.83.72 1.23 1.87.88 2.33.67.07-.53.28-.88.51-1.08-1.78-.21-3.64-.91-3.64-4.02 0-.89.31-1.62.82-2.19-.08-.21-.36-1.04.08-2.16 0 0 .67-.22 2.2.84A7.4 7.4 0 0 1 8 3.88c.68 0 1.36.09 2 .27 1.53-1.06 2.2-.84 2.2-.84.44 1.12.16 1.95.08 2.16.51.57.82 1.3.82 2.19 0 3.12-1.87 3.81-3.65 4.02.29.25.54.74.54 1.51 0 1.09-.01 1.96-.01 2.23 0 .22.15.47.55.39A8.14 8.14 0 0 0 16 8.13C16 3.64 12.42 0 8 0Z"/></svg>
+                </a>
                 <a aria-label="Google Scholar" class="btn btn-outline-dark"
-                   href="https://scholar.google.com/citations?user={{ site.google_scholar }}"
-                   style="border-bottom-right-radius: 0"><i
-                        class="fa fa-graduation-cap"></i></a>
+                   href="https://scholar.google.com/citations?user={{ site.google_scholar }}">
+                    <svg aria-hidden="true" class="icon" viewBox="0 0 16 16"><path d="M8.211.5a.5.5 0 0 0-.422 0l-7.5 3.5a.5.5 0 0 0 .025.916L3 6.075V9.5a.5.5 0 0 0 .148.355l.002.002.004.003.01.01.033.027c.058.045.142.108.252.181.22.147.54.344.95.54.82.394 2.06.782 3.601.782s2.78-.388 3.601-.782c.41-.196.73-.393.95-.54.11-.073.194-.136.252-.181l.043-.037a.5.5 0 0 0 .154-.36V6.075l1-.436V8.5a.5.5 0 0 0 1 0V5.203l.686-.287a.5.5 0 0 0 .025-.916l-7.5-3.5ZM4 6.512 8 8.274l4-1.762v2.743c-.176.108-.4.234-.673.365-.706.34-1.8.68-3.327.68s-2.62-.34-3.327-.68A6.6 6.6 0 0 1 4 9.255V6.512ZM8 7.176 1.758 4.5 8 1.824 14.242 4.5 8 7.176Z"/></svg>
+                </a>
             </div>
-            <button class="btn btn-outline-dark w-100 rounded-0 rounded-bottom border-top-0" id="exit"
-                    style="font-size: 0.9em;">
-                <i class="fas fa-vector-square"></i>&nbsp;&nbsp;Explore Publications
+            <button class="btn btn-outline-dark w-100 rounded-0 rounded-bottom border-top-0 explore-button" id="exit">
+                <svg aria-hidden="true" class="icon" viewBox="0 0 16 16"><path d="M1.5 1A1.5 1.5 0 0 0 0 2.5v11A1.5 1.5 0 0 0 1.5 15h13a1.5 1.5 0 0 0 1.5-1.5v-11A1.5 1.5 0 0 0 14.5 1h-13ZM1 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v11a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-11Zm2.5 9.5a.5.5 0 0 0 .5-.5V9h2.5a.5.5 0 0 0 0-1H4V5.5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 .5.5Zm9-8a.5.5 0 0 0-.5.5V7H9.5a.5.5 0 0 0 0 1H12v2.5a.5.5 0 0 0 1 0v-6a.5.5 0 0 0-.5-.5Z"/></svg>
+                <span>Explore Publications</span>
             </button>
         </div>
     </div>
 </div>
 
-<footer class="footer mt-auto py-3" id="footer" style="z-index:-100;">
+<footer class="footer mt-auto py-3" id="footer">
     <div class="container text-center">
-        <span class="text-muted">&copy; <script>document.write(new Date().getFullYear())</script> {{ site.author | remove: ', Ph.D.' }}</span>
+        <span class="text-muted">&copy; {{ site.time | date: '%Y' }} {{ site.author | remove: ', Ph.D.' }}</span>
     </div>
 </footer>
-<script src="assets/js/interface.js"></script>
+<script defer src="{{ '/assets/js/interface.js' | relative_url }}"></script>
 
 </body>
 </html>

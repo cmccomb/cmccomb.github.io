@@ -1,68 +1,63 @@
-# cmccomb.github.io
+# cmccomb.com
 
-1. Site layout with [Jekyll](https://jekyllrb.com/)
-2. Basic formatting with [Bootstrap](https://getbootstrap.com/)
-3. Publication visualization with [D3.js](https://d3js.org/)
-4. Icons by Font Awesome (no changes made, [see license](https://fontawesome.com/license))
+Source for [cmccomb.com](https://cmccomb.com/), a single-page Jekyll profile
+with an interactive D3 publication map.
 
-## Setup
+## Architecture
 
-1. Install Ruby dependencies:
+- Jekyll renders the profile and GitHub Pages hosts the static output.
+- Bootstrap CSS and D3 are stored under `assets/vendor` so the live page does
+  not depend on third-party CDNs.
+- `assets/json/pubs.json` is a committed, validated snapshot of the
+  [`ccm/publications`](https://huggingface.co/datasets/ccm/publications)
+  Hugging Face dataset.
+- `_scripts/build_json.py` converts existing publication embeddings into the
+  two-dimensional map and labels clusters with class-based TF-IDF.
+- The separate
+  [`scrape-my-publications`](https://github.com/cmccomb/scrape-my-publications)
+  repository refreshes Scholar metadata and embeddings on the first day of
+  each month. This repository rebuilds and deploys the graph on the second day.
 
-   ```bash
-   bundle install
-   ```
+PyTorch and model downloads are not needed in this repository: the graph build
+uses embeddings already stored in the publication dataset.
 
-2. Install Python dependencies and build JSON:
+## Local development
 
-   ```bash
-   pip install -r _scripts/requirements.txt
-   python3 _scripts/build_json.py --dataset ccm/publications --revision main --seed 42
-   ```
-
-   The CLI is deterministic: the seed is recorded in the generated
-   `assets/json/pubs.json` file alongside the configured K-means settings and
-   projection perplexity. Toggle verbosity or dry-run behaviour as required:
-
-   ```bash
-   python3 _scripts/build_json.py --dry-run --verbose
-   python3 _scripts/build_json.py --force --seed 2025
-   ```
-
-   Offline environments are supported by pre-populating the Hugging Face cache
-   and setting `HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1`. The script will
-   reuse cached copies of the `allenai/specter2` base model and adapter without
-   hitting the network.
-
-   Cluster labels now come from class-based TF-IDF summaries with KeyBERT MMR
-   fallback, and clustering happens in PCA-reduced space for improved
-   stability. Default K-means clustering (eight centroids) keeps the topics
-   balanced without any additional hyperparameter tuning.
-
-## Cluster labels
-
-The publication visualization overlays concise cluster labels at the centroid
-of each K-means cluster. The positions update every render (including window
-resize events), and the typography scales responsively to remain legible on
-small and large displays alike.
-
-3. Serve the site locally:
-
-   ```bash
-   bundle exec jekyll serve
-   ```
-
-## Tests
-
-Run the automated test suite to validate the helpers and ensure deterministic
-builds:
+Install the locked Ruby dependencies and build the site:
 
 ```bash
-pytest
+bundle install
+bundle exec jekyll build --strict_front_matter
+bundle exec jekyll serve
 ```
 
-You can still compile the static site locally with:
+Install the pinned Python test dependencies:
 
 ```bash
-bundle exec jekyll build
+python -m pip install --requirement _scripts/requirements-dev.txt
+python -m pytest
+python _scripts/validate_publications_json.py
 ```
+
+Regenerate the graph from the current dataset:
+
+```bash
+python _scripts/build_json.py --dataset ccm/publications --revision main --seed 42
+python _scripts/validate_publications_json.py --max-age-days 1
+```
+
+The generated JSON records the requested dataset revision and its resolved
+Hugging Face commit SHA for provenance.
+
+## Automation
+
+- `CI` runs the Jekyll build, Python tests, snapshot validation, and JavaScript
+  syntax checks with read-only permissions.
+- `Deploy site` publishes only the exact `master` revision that passed CI.
+- `Refresh publication graph` rebuilds the committed snapshot monthly,
+  validates it, records the update, and deploys it in the same trusted run.
+- Dependabot monitors Ruby, Python, and GitHub Actions dependencies.
+
+All external Actions are pinned to immutable commit SHAs. The live page also
+uses a restrictive content security policy and renders publication metadata as
+text rather than HTML.
