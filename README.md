@@ -17,7 +17,8 @@ with an interactive D3 publication map.
 - The separate
   [`scrape-my-publications`](https://github.com/cmccomb/scrape-my-publications)
   repository refreshes Scholar metadata and embeddings on the first day of
-  each month. This repository rebuilds and deploys the graph on the second day.
+  January, April, July, and October. This repository rebuilds and deploys the
+  graph on the following day.
 
 PyTorch and model downloads are not needed in this repository: the graph build
 uses embeddings already stored in the publication dataset.
