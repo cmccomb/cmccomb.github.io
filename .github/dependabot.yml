@@ -14,6 +14,13 @@ updates:
       timezone: America/New_York
       time: "06:23"
     open-pull-requests-limit: 5
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+      timezone: America/New_York
+      time: "06:26"
+    open-pull-requests-limit: 5
   - package-ecosystem: github-actions
     directory: /
     schedule:

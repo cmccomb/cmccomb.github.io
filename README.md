@@ -17,8 +17,10 @@ with an interactive D3 publication map.
 - The separate
   [`scrape-my-publications`](https://github.com/cmccomb/scrape-my-publications)
   repository refreshes Scholar metadata and embeddings on the first day of
-  January, April, July, and October. This repository rebuilds and deploys the
-  graph on the following day.
+  January, April, July, and October. This repository rebuilds the graph on the
+  following day and opens or updates a pull request from the controlled
+  `automation/publication-graph-refresh` branch. Merging that pull request uses
+  the normal tested deployment path.
 
 PyTorch and model downloads are not needed in this repository: the graph build
 uses embeddings already stored in the publication dataset.
@@ -41,6 +43,14 @@ python -m pytest
 python _scripts/validate_publications_json.py
 ```
 
+Install the locked browser test dependencies and Chromium:
+
+```bash
+npm ci
+npx playwright install chromium
+npm run test:browser
+```
+
 Regenerate the graph from the current dataset:
 
 ```bash
@@ -53,12 +63,15 @@ Hugging Face commit SHA for provenance.
 
 ## Automation
 
-- `CI` runs the Jekyll build, Python tests, snapshot validation, and JavaScript
-  syntax checks with read-only permissions.
-- `Deploy site` publishes only the exact `master` revision that passed CI.
-- `Refresh publication graph` rebuilds the committed snapshot monthly,
-  validates it, records the update, and deploys it in the same trusted run.
-- Dependabot monitors Ruby, Python, and GitHub Actions dependencies.
+- `CI` runs the Jekyll build, Python tests, snapshot validation, JavaScript
+  syntax checks, and Playwright/axe browser accessibility tests with read-only
+  permissions.
+- `Deploy site` publishes only the exact `master` push revision that passed CI;
+  it has no manual deployment path.
+- `Refresh publication graph` runs quarterly with read-only build permissions,
+  validates the proposed snapshot, and passes it to a narrowly permissioned job
+  that updates a pull request. It never pushes to `master` or deploys.
+- Dependabot monitors Ruby, Python, npm, and GitHub Actions dependencies.
 
 All external Actions are pinned to immutable commit SHAs. The live page also
 uses a restrictive content security policy and renders publication metadata as

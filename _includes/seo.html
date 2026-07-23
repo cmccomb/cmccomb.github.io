@@ -1,0 +1,70 @@
+{%- assign seo_title = site.title -%}
+{%- if page.title and page.title != site.title -%}
+  {%- assign seo_title = page.title | append: ' | ' | append: site.title -%}
+{%- endif -%}
+{%- assign seo_description = page.description | default: site.description -%}
+{%- assign seo_path = page.canonical_url | default: page.url | default: '/' -%}
+{%- assign seo_canonical_url = seo_path | absolute_url -%}
+{%- assign seo_image_url = site.headshot | absolute_url -%}
+{%- assign person_url = '/' | absolute_url -%}
+{%- assign person_email = site.email | prepend: 'mailto:' -%}
+{%- assign github_url = site.github | prepend: 'https://github.com/' -%}
+{%- assign linkedin_url = site.linkedin | prepend: 'https://www.linkedin.com/in/' -%}
+{%- assign scholar_url = site.google_scholar | prepend: 'https://scholar.google.com/citations?user=' -%}
+{%- assign twitter_url = site.twitter | prepend: 'https://x.com/' -%}
+<title>{{ seo_title | escape }}</title>
+<meta content="{{ seo_description | escape }}" name="description">
+<link href="{{ seo_canonical_url | escape }}" rel="canonical">
+{%- if page.noindex %}
+<meta content="noindex, nofollow" name="robots">
+{%- endif %}
+<meta content="{{ site.locale | default: 'en_US' | escape }}" property="og:locale">
+<meta content="{% if page.noindex %}website{% else %}profile{% endif %}" property="og:type">
+<meta content="{{ site.title | escape }}" property="og:site_name">
+<meta content="{{ seo_title | escape }}" property="og:title">
+<meta content="{{ seo_description | escape }}" property="og:description">
+<meta content="{{ seo_canonical_url | escape }}" property="og:url">
+<meta content="{{ seo_image_url | escape }}" property="og:image">
+<meta content="image/jpeg" property="og:image:type">
+<meta content="600" property="og:image:width">
+<meta content="600" property="og:image:height">
+<meta content="Headshot of {{ site.person_name | default: site.author | escape }}" property="og:image:alt">
+<meta content="summary" name="twitter:card">
+{%- if site.twitter %}
+<meta content="@{{ site.twitter | escape }}" name="twitter:site">
+<meta content="@{{ site.twitter | escape }}" name="twitter:creator">
+{%- endif %}
+<meta content="{{ seo_title | escape }}" name="twitter:title">
+<meta content="{{ seo_description | escape }}" name="twitter:description">
+<meta content="{{ seo_image_url | escape }}" name="twitter:image">
+<meta content="Headshot of {{ site.person_name | default: site.author | escape }}" name="twitter:image:alt">
+{%- unless page.noindex %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": {{ site.person_name | default: site.author | jsonify }},
+  "url": {{ person_url | jsonify }},
+  "image": {{ seo_image_url | jsonify }},
+  "email": {{ person_email | jsonify }},
+  "jobTitle": {{ site.job_title | jsonify }},
+  "worksFor": {
+    "@type": "CollegeOrUniversity",
+    "name": {{ site.organization.name | jsonify }},
+    "url": {{ site.organization.url | jsonify }}
+  },
+  "affiliation": {
+    "@type": "CollegeOrUniversity",
+    "name": {{ site.organization.name | jsonify }},
+    "url": {{ site.organization.url | jsonify }}
+  },
+  "sameAs": [
+    {{ github_url | jsonify }},
+    {{ linkedin_url | jsonify }},
+    {{ scholar_url | jsonify }},
+    {{ twitter_url | jsonify }},
+    {{ site.cmu_profile | jsonify }}
+  ]
+}
+</script>
+{%- endunless %}

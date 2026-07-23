@@ -5,6 +5,7 @@
     const tooltip = d3.select(".tooltip");
     const legendContainer = d3.select(".colorbar-legend");
     const statusElement = document.getElementById("graph-status");
+    const graphContainer = document.getElementById("graph-container");
     const legacyLabelCorrections = new Map([
         ["face to face", "design teams"],
     ]);
@@ -169,31 +170,148 @@
             r: 0,
         }));
 
-        const nodeSelection = svg.selectAll("rect.publication-node")
+        const publicationLinks = svg.selectAll("a.publication-link")
             .data(nodes)
             .enter()
-            .append("rect")
+            .append("a")
+            .attr("class", "publication-link")
+            .attr("href", node => node.link)
+            .attr("target", "_blank")
+            .attr("rel", "noopener noreferrer")
+            .attr("tabindex", -1)
+            .attr("aria-describedby", "publication-tooltip")
+            .attr("aria-label", node => (
+                `${node.title}; ${node.num_citations} citation${node.num_citations === 1 ? "" : "s"}`
+            ));
+        const nodeSelection = publicationLinks.append("rect")
             .attr("class", "publication-node")
             .attr("fill", node => node.color)
-            .attr("opacity", 1)
-            .attr("role", "link")
-            .attr("aria-label", node => `${node.title}; ${node.num_citations} citations`)
-            .on("mouseover", (event, node) => {
-                event.currentTarget.style.cursor = "pointer";
-                const tooltipText = [
-                    formatAuthors(node.author),
-                    `“${node.title}.”`,
-                    node.citation,
-                ].filter(Boolean).join(" ");
-                tooltip.text(tooltipText)
-                    .style("opacity", 1)
-                    .style("left", `${event.pageX + 10}px`)
-                    .style("top", `${event.pageY + 10}px`);
+            .attr("opacity", 1);
+        const publicationLinkNodes = publicationLinks.nodes();
+        let activePublicationIndex = 0;
+
+        function graphIsActive() {
+            return graphContainer?.classList.contains("graph-active") ?? false;
+        }
+
+        function setRovingIndex(index, shouldFocus = false) {
+            const boundedIndex = Math.max(0, Math.min(publicationLinkNodes.length - 1, index));
+            activePublicationIndex = boundedIndex;
+            publicationLinks.attr("tabindex", (_node, linkIndex) => (
+                graphIsActive() && linkIndex === activePublicationIndex ? 0 : -1
+            ));
+
+            if (shouldFocus) {
+                publicationLinkNodes[activePublicationIndex]?.focus({ preventScroll: true });
+            }
+        }
+
+        function getTooltipText(node) {
+            return [
+                formatAuthors(node.author),
+                `“${node.title}.”`,
+                node.citation,
+            ].filter(Boolean).join(" ");
+        }
+
+        function positionTooltip(clientX, clientY) {
+            const tooltipNode = tooltip.node();
+            if (!tooltipNode) {
+                return;
+            }
+
+            const margin = 12;
+            const offset = 12;
+            const maxLeft = Math.max(margin, window.innerWidth - tooltipNode.offsetWidth - margin);
+            const maxTop = Math.max(margin, window.innerHeight - tooltipNode.offsetHeight - margin);
+            const preferredTop = clientY + offset + tooltipNode.offsetHeight <= window.innerHeight - margin
+                ? clientY + offset
+                : clientY - tooltipNode.offsetHeight - offset;
+
+            tooltip
+                .style("left", `${Math.max(margin, Math.min(clientX + offset, maxLeft))}px`)
+                .style("top", `${Math.max(margin, Math.min(preferredTop, maxTop))}px`);
+        }
+
+        function showPointerTooltip(event, node) {
+            tooltip
+                .text(getTooltipText(node))
+                .attr("aria-hidden", "false")
+                .style("opacity", 1);
+            positionTooltip(event.clientX, event.clientY);
+        }
+
+        function showFocusTooltip(event, node) {
+            const target = event.currentTarget.querySelector(".publication-node")
+                || event.currentTarget;
+            const bounds = target.getBoundingClientRect();
+            tooltip
+                .text(getTooltipText(node))
+                .attr("aria-hidden", "false")
+                .style("opacity", 1);
+            positionTooltip(
+                bounds.left + bounds.width / 2,
+                bounds.top + bounds.height / 2
+            );
+        }
+
+        function hideTooltip() {
+            tooltip
+                .attr("aria-hidden", "true")
+                .style("opacity", 0);
+        }
+
+        publicationLinks
+            .on("mouseenter", showPointerTooltip)
+            .on("mousemove", showPointerTooltip)
+            .on("mouseleave", event => {
+                if (document.activeElement !== event.currentTarget) {
+                    hideTooltip();
+                }
             })
-            .on("mouseout", () => tooltip.style("opacity", 0))
-            .on("click", (_event, node) => {
-                window.open(node.link, "_blank", "noopener,noreferrer");
+            .on("focus", function handlePublicationFocus(event, node) {
+                activePublicationIndex = publicationLinkNodes.indexOf(this);
+                setRovingIndex(activePublicationIndex);
+                showFocusTooltip(event, node);
+            })
+            .on("blur", hideTooltip)
+            .on("keydown", event => {
+                let nextIndex;
+                switch (event.key) {
+                    case "ArrowRight":
+                    case "ArrowDown":
+                        nextIndex = (activePublicationIndex + 1) % publicationLinkNodes.length;
+                        break;
+                    case "ArrowLeft":
+                    case "ArrowUp":
+                        nextIndex = (
+                            activePublicationIndex - 1 + publicationLinkNodes.length
+                        ) % publicationLinkNodes.length;
+                        break;
+                    case "Home":
+                        nextIndex = 0;
+                        break;
+                    case "End":
+                        nextIndex = publicationLinkNodes.length - 1;
+                        break;
+                    default:
+                        return;
+                }
+
+                event.preventDefault();
+                setRovingIndex(nextIndex, true);
             });
+
+        setRovingIndex(activePublicationIndex);
+        graphContainer?.addEventListener("publicationgraph:visibilitychange", event => {
+            if (event.detail?.isVisible) {
+                setRovingIndex(activePublicationIndex);
+                return;
+            }
+
+            publicationLinks.attr("tabindex", -1);
+            hideTooltip();
+        });
 
         const clusterLabelLayer = svg.append("g")
             .attr("class", "cluster-label-layer")
