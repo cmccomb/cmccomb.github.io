@@ -7,9 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pages: write
-  id-token: write
+  contents: read
 
 concurrency:
   group: publication-graph-refresh
@@ -17,14 +15,17 @@ concurrency:
 
 jobs:
   build:
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    outputs:
+      changed: ${{ steps.changes.outputs.changed }}
     steps:
-      - name: Check out the default branch
+      - name: Check out the trigger revision
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          ref: master
-          persist-credentials: true
+          ref: ${{ github.sha }}
+          persist-credentials: false
       - name: Set up Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
@@ -37,38 +38,114 @@ jobs:
         run: python _scripts/build_json.py --dataset ccm/publications --revision main --seed 42
       - name: Validate fresh publication snapshot
         run: python _scripts/validate_publications_json.py --max-age-days 1
-      - name: Record the refreshed snapshot
+      - name: Detect publication changes
+        id: changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/json/pubs.json
-          if git diff --cached --quiet; then
-            exit 0
+          if git diff --quiet -- assets/json/pubs.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
-          git commit -m "Refresh publication graph [skip ci]"
-          git push origin HEAD:master
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@003a5c4d8d6321bd302e38f6f0ec593f77f06600 # v1.319.0
+      - name: Upload validated publication snapshot
+        if: steps.changes.outputs.changed == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          bundler-cache: true
-      - name: Configure Pages
-        id: pages
-        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
-      - name: Build site
-        run: bundle exec jekyll build --strict_front_matter --baseurl "${{ steps.pages.outputs.base_path }}"
-        env:
-          JEKYLL_ENV: production
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+          name: publication-graph-${{ github.run_id }}-${{ github.run_attempt }}
+          path: assets/json/pubs.json
+          if-no-files-found: error
+          retention-days: 7
 
-  deploy:
+  propose:
     needs: build
+    if: needs.build.outputs.changed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: write
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+      - name: Check out the validated base revision
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Download validated publication snapshot
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: publication-graph-${{ github.run_id }}-${{ github.run_attempt }}
+          path: refresh-artifact
+      - name: Update the controlled automation branch
+        id: update
+        env:
+          AUTOMATION_BRANCH: automation/publication-graph-refresh
+        run: |
+          git fetch origin \
+            "+refs/heads/${AUTOMATION_BRANCH}:refs/remotes/origin/${AUTOMATION_BRANCH}" \
+            || true
+          git switch --create "$AUTOMATION_BRANCH"
+          cp refresh-artifact/pubs.json assets/json/pubs.json
+          git add assets/json/pubs.json
+
+          if git diff --cached --quiet; then
+            echo "updated=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Refresh publication graph"
+          git push --force-with-lease origin "HEAD:refs/heads/${AUTOMATION_BRANCH}"
+          echo "updated=true" >> "$GITHUB_OUTPUT"
+          echo "branch=${AUTOMATION_BRANCH}" >> "$GITHUB_OUTPUT"
+      - name: Open or update the refresh pull request
+        if: steps.update.outputs.updated == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          AUTOMATION_BRANCH: ${{ steps.update.outputs.branch }}
+        run: |
+          pr_body="$RUNNER_TEMP/publication-refresh-pr.md"
+          {
+            echo "Automated quarterly publication graph refresh."
+            echo
+            echo "- Validated source run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo "- Base branch: \`master\`"
+            echo "- Automation branch: \`${AUTOMATION_BRANCH}\`"
+            echo
+            echo "This pull request intentionally uses the normal CI and deployment path."
+          } > "$pr_body"
+
+          pr_number="$(
+            gh pr list \
+              --repo "$GITHUB_REPOSITORY" \
+              --base master \
+              --head "$AUTOMATION_BRANCH" \
+              --state open \
+              --json number \
+              --jq '.[0].number'
+          )"
+
+          if [[ -n "$pr_number" ]]; then
+            gh api \
+              --method PATCH \
+              "repos/${GITHUB_REPOSITORY}/pulls/${pr_number}" \
+              -f title="Refresh publication graph" \
+              -F body=@"$pr_body"
+          else
+            gh pr create \
+              --repo "$GITHUB_REPOSITORY" \
+              --base master \
+              --head "$AUTOMATION_BRANCH" \
+              --title "Refresh publication graph" \
+              --body-file "$pr_body"
+          fi
+      - name: Dispatch CI for the automation branch
+        if: steps.update.outputs.updated == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          AUTOMATION_BRANCH: ${{ steps.update.outputs.branch }}
+        run: |
+          gh workflow run ci.yml \
+            --repo "$GITHUB_REPOSITORY" \
+            --ref "$AUTOMATION_BRANCH"

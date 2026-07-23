@@ -7,8 +7,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="no-referrer" name="referrer">
     <meta content="{{ site.author }}" name="author">
-    <meta content="Research, publications, and professional profile for {{ site.author }}." name="description">
-    <title>{{ site.title }}</title>
+    {% include seo.html %}
     <link href="{{ '/assets/images/favicon.svg' | relative_url }}" rel="icon" type="image/svg+xml">
     <link href="{{ '/assets/vendor/bootstrap/bootstrap.min.css' | relative_url }}" rel="stylesheet">
     <link href="{{ '/assets/css/default_style.css' | relative_url }}" rel="stylesheet">
@@ -16,23 +15,34 @@
     <script defer src="{{ '/assets/vendor/d3/d3.v7.9.0.min.js' | relative_url }}"></script>
     <script defer src="{{ '/assets/js/graph_layout.js' | relative_url }}"></script>
 </head>
-<body class="bg-dark d-flex flex-column h-100">
+<body class="bg-dark d-flex flex-column">
 
-<div class="container-fluid blur unselectable p-0" id="graph-container">
-    <svg id="publication-graph" role="img" aria-label="Interactive map of publications grouped by research topic"></svg>
-    <div class="tooltip"></div>
+<div aria-hidden="true" aria-label="Interactive publication map"
+     class="container-fluid blur unselectable p-0" id="graph-container" inert role="region">
+    <button class="btn btn-light graph-close" hidden id="graph-close" type="button">
+        <span aria-hidden="true">&larr;</span>
+        <span>Back to profile</span>
+    </button>
+    <svg aria-describedby="publication-graph-description" aria-labelledby="publication-graph-title"
+         id="publication-graph" role="group">
+        <title id="publication-graph-title">Interactive publication map</title>
+        <desc id="publication-graph-description">
+            Publications are grouped by research topic. Use Tab to enter the map and arrow keys to move between publications.
+        </desc>
+    </svg>
+    <div aria-hidden="true" class="tooltip" id="publication-tooltip" role="tooltip"></div>
     <div class="colorbar-legend" role="img" aria-label="Color legend for publication years"></div>
     <div class="graph-status" id="graph-status" role="status" aria-live="polite" hidden></div>
 </div>
 
-<div class="row h-100 justify-content-center align-items-center " id="profile">
+<main aria-hidden="false" class="profile-shell d-flex flex-grow-1 justify-content-center align-items-center"
+      id="profile">
     <div class="card px-0">
-        <!--        <button id="exit" type="button" class="btn-close" aria-label="Close"></button>-->
         <img alt="A headshot of {{ site.author }}" class="card-img-top"
-             src="{{ site.headshot | relative_url }}"/>
+             decoding="async" height="600" src="{{ site.headshot | relative_url }}" width="600">
         <div class="card-body">
-            <h5 class="card-title text-center">{{ site.author }}</h5>
-            <h6 class="card-subtitle mb-2 text-muted text-center"> {{ site.affiliation }} </h6>
+            <h1 class="card-title h5 text-center">{{ site.author }}</h1>
+            <p class="card-subtitle h6 mb-2 text-muted text-center"> {{ site.affiliation }} </p>
             <p class="card-text text-center">{{ content | markdownify | remove: '<p>' | remove: '</p>' }}</p>
 
             <div aria-label="Contact and profile links" class="btn-group d-flex" role="group">
@@ -48,19 +58,21 @@
                     <svg aria-hidden="true" class="icon" viewBox="0 0 512 512"><path d="M216.5 362.5c-66-8-112.5-55.5-112.5-117 0-25 9-52 24-70-6.5-16.5-5.5-51.5 2-66 20-2.5 47 8 63 22.5 19-6 39-9 63.5-9s44.5 3 62.5 8.5c15.5-14 43-24.5 63-22 7 13.5 8 48.5 1.5 65.5 16 19 24.5 44.5 24.5 70.5 0 61.5-46.5 108-113.5 116.5 17 11 28.5 35 28.5 62.5l0 52C323 491.5 335.5 500 350.5 494 441 459.5 512 369 512 257 512 115.5 397 0 255.5 0S0 115.5 0 257c0 111 70.5 203 165.5 237.5 13.5 5 26.5-4 26.5-17.5l0-40c-7 3-16 5-24 5-33 0-52.5-18-66.5-51.5-5.5-13.5-11.5-21.5-23-23-6-.5-8-3-8-6 0-6 10-10.5 20-10.5 14.5 0 27 9 40 27.5 10 14.5 20.5 21 33 21s20.5-4.5 32-16c8.5-8.5 15-16 21-21z"/></svg>
                 </a>
                 <a aria-label="Google Scholar" class="btn btn-outline-dark"
-                   href="https://scholar.google.com/citations?user={{ site.google_scholar }}">
+                   href="https://scholar.google.com/citations?user={{ site.google_scholar }}&amp;hl=en">
                     <svg aria-hidden="true" class="icon" viewBox="0 0 512 512"><path d="M390.9 298.5s0 .1 .1 .1c9.2 19.4 14.4 41.1 14.4 64-.1 82.5-66.9 149.4-149.4 149.4S106.7 445.1 106.7 362.7c0-22.9 5.2-44.6 14.4-64 1.7-3.6 3.6-7.2 5.6-10.7 4.4-7.6 9.4-14.7 15-21.3 27.4-32.6 68.5-53.3 114.4-53.3 33.6 0 64.6 11.1 89.6 29.9 9.1 6.9 17.4 14.7 24.8 23.5 5.6 6.6 10.6 13.8 15 21.3 2 3.4 3.8 7 5.5 10.5l-.1-.1zm26.4-18.8c-30.1-58.4-91-98.4-161.3-98.4s-131.2 40-161.3 98.4l-94.7-77 256-202.7 256 202.7-94.7 77.1 0-.1z"/></svg>
                 </a>
             </div>
-            <button class="btn btn-outline-dark w-100 rounded-0 rounded-bottom border-top-0 explore-button" id="exit">
-                <svg aria-hidden="true" class="icon" viewBox="0 0 16 16"><path d="M1.5 1A1.5 1.5 0 0 0 0 2.5v11A1.5 1.5 0 0 0 1.5 15h13a1.5 1.5 0 0 0 1.5-1.5v-11A1.5 1.5 0 0 0 14.5 1h-13ZM1 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v11a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-11Zm2.5 9.5a.5.5 0 0 0 .5-.5V9h2.5a.5.5 0 0 0 0-1H4V5.5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 .5.5Zm9-8a.5.5 0 0 0-.5.5V7H9.5a.5.5 0 0 0 0 1H12v2.5a.5.5 0 0 0 1 0v-6a.5.5 0 0 0-.5-.5Z"/></svg>
-                <span>Explore Publications</span>
-            </button>
+            <a aria-controls="graph-container" aria-expanded="false"
+               class="btn btn-outline-dark w-100 rounded-0 rounded-bottom border-top-0 explore-button"
+               href="https://scholar.google.com/citations?user={{ site.google_scholar }}&amp;hl=en" id="exit">
+                <span class="explore-label--graph">Explore publication map</span>
+                <span class="explore-label--scholar">View publications on Google Scholar</span>
+            </a>
         </div>
     </div>
-</div>
+</main>
 
-<footer class="footer mt-auto py-3" id="footer">
+<footer aria-hidden="false" class="footer mt-auto py-3" id="footer">
     <div class="container text-center">
         <span class="text-muted">&copy; {{ site.time | date: '%Y' }} {{ site.author | remove: ', Ph.D.' }}</span>
     </div>

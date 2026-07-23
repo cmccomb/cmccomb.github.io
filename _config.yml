@@ -1,12 +1,36 @@
 title: "Chris McComb, Ph.D."
 description: "Research, publications, and professional profile for Chris McComb."
 url: "https://cmccomb.com"
+baseurl: ""
 timezone: "America/New_York"
+locale: "en_US"
 author: "Chris McComb, Ph.D."
+person_name: "Chris McComb"
+job_title: "Professor, Mechanical Engineering"
 affiliation: "<a href='https://meche.engineering.cmu.edu/directory/bios/mccomb-christopher.html'>Professor @ CMU</a>"
+organization:
+  name: "Carnegie Mellon University"
+  url: "https://www.cmu.edu/"
+cmu_profile: "https://meche.engineering.cmu.edu/directory/bios/mccomb-christopher.html"
 email: ccm@cmu.edu
 twitter: ccmccomb
 github: cmccomb
 linkedin: ccmcc
 google_scholar: 0P9w_S0AAAAJ
-headshot: 'assets/images/headshot_optimized_square.jpg'
+headshot: "/assets/images/headshot_optimized_square.jpg"
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - LICENSE.md
+  - README.md
+  - SECURITY.md
+  - THIRD_PARTY_NOTICES.md
+  - comb.gemspec
+  - node_modules
+  - package-lock.json
+  - package.json
+  - playwright-report
+  - playwright.config.ts
+  - test-results
+  - tests

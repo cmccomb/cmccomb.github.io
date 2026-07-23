@@ -10,3 +10,8 @@ __pycache__/
 # Jekyll junk files
 _site
 .jekyll-cache
+
+# Node and Playwright outputs
+node_modules/
+test-results/
+playwright-report/
