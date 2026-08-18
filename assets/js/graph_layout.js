@@ -319,14 +319,16 @@
         let simulation;
 
         function render() {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
+            const containerBounds = graphContainer?.getBoundingClientRect();
+            const width = Math.max(1, Math.round(containerBounds?.width || window.innerWidth));
+            const height = Math.max(1, Math.round(containerBounds?.height || window.innerHeight));
             svg.attr("width", width)
                 .attr("height", height)
                 .attr("viewBox", `0 0 ${width} ${height}`);
 
-            xScale.range([40, width - 40]);
-            yScale.range([height - 40, 40]);
+            const mapPadding = width <= 768 ? 24 : 40;
+            xScale.range([mapPadding, width - mapPadding]);
+            yScale.range([height - mapPadding, mapPadding]);
             const radiusBase = Math.sqrt(width * height);
             radiusScale.range([radiusBase / 100, radiusBase / 50]);
             nodes.forEach(node => {
@@ -395,10 +397,9 @@
                         .attr("dominant-baseline", "middle");
                     return group;
                 });
-            mergedLabels.attr("transform", label => `translate(${label.x}, ${label.y})`);
             mergedLabels.select("text").text(label => label.label);
-            mergedLabels.select("rect").each(function sizeLabelBackground() {
-                const group = d3.select(this.parentNode);
+            mergedLabels.each(function sizeAndPositionLabel(label) {
+                const group = d3.select(this);
                 const textNode = group.select("text").node();
                 if (!textNode) {
                     return;
@@ -406,11 +407,25 @@
                 const boundingBox = textNode.getBBox();
                 const horizontalPadding = 12;
                 const verticalPadding = 8;
-                d3.select(this)
+                const labelWidth = boundingBox.width + horizontalPadding;
+                const labelHeight = boundingBox.height + verticalPadding;
+                const labelMargin = 8;
+                const clampedX = Math.max(
+                    labelMargin + labelWidth / 2,
+                    Math.min(width - labelMargin - labelWidth / 2, label.x)
+                );
+                const clampedY = Math.max(
+                    labelMargin + labelHeight / 2,
+                    Math.min(height - labelMargin - labelHeight / 2, label.y)
+                );
+
+                group
+                    .attr("transform", `translate(${clampedX}, ${clampedY})`)
+                    .select("rect")
                     .attr("x", boundingBox.x - horizontalPadding / 2)
                     .attr("y", boundingBox.y - verticalPadding / 2)
-                    .attr("width", boundingBox.width + horizontalPadding)
-                    .attr("height", boundingBox.height + verticalPadding)
+                    .attr("width", labelWidth)
+                    .attr("height", labelHeight)
                     .attr("rx", 8)
                     .attr("ry", 8);
             });
