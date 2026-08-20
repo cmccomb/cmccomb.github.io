@@ -6,7 +6,6 @@
     const graphCloseButton = document.getElementById("graph-close");
     const profile = document.getElementById("profile");
     const footer = document.getElementById("footer");
-    const mobileQuery = window.matchMedia("(max-width: 768px)");
 
     if (
         !exploreButton
@@ -38,7 +37,7 @@
             && !event.shiftKey
         );
 
-        if (mobileQuery.matches || !isPlainPrimaryClick) {
+        if (!isPlainPrimaryClick) {
             return;
         }
 

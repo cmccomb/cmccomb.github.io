@@ -68,13 +68,10 @@ body {
     font-size: 0.9em;
     gap: 0.5rem;
     justify-content: center;
+    white-space: nowrap;
 }
 
 .explore-button .icon {
-    display: none;
-}
-
-.explore-label--scholar {
     display: none;
 }
 
@@ -107,6 +104,7 @@ p {
     height: 100vh;
     overflow: hidden;
     pointer-events: none;
+    touch-action: manipulation;
     user-select: none;
     z-index: 0;
 }
@@ -130,9 +128,10 @@ p {
     align-items: center;
     display: inline-flex;
     gap: 0.45rem;
-    left: max(1rem, env(safe-area-inset-left));
+    left: max(1rem, calc(env(safe-area-inset-left) + 0.5rem));
+    min-height: 2.75rem;
     position: absolute;
-    top: max(1rem, env(safe-area-inset-top));
+    top: max(1rem, calc(env(safe-area-inset-top) + 0.5rem));
     z-index: 4;
 }
 
@@ -140,24 +139,6 @@ p {
 #footer[hidden],
 .graph-close[hidden] {
     display: none !important;
-}
-
-@media (max-width: 768px) {
-    .explore-label--graph {
-        display: none;
-    }
-
-    .explore-label--scholar {
-        display: inline;
-    }
-
-    #graph-container {
-        visibility: hidden;
-    }
-
-    #graph-container.graph-active {
-        visibility: visible;
-    }
 }
 
 .vis-tooltip {
