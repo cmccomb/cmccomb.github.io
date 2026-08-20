@@ -189,25 +189,80 @@ test.describe("homepage", () => {
     await expect(explore).toBeFocused();
   });
 
-  test("uses the explicit Google Scholar fallback on mobile", async ({
+  test("opens and closes the responsive publication map on mobile", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/");
 
+    const graph = page.locator("#graph-container");
     const explore = page.locator("#exit");
+    const close = page.locator("#graph-close");
     await expect(explore).toHaveAttribute("href", SCHOLAR_URL_PATTERN);
-    await expect(explore.locator(".explore-label--scholar")).toBeVisible();
-    await expect(explore.locator(".explore-label--graph")).toBeHidden();
+    await expect(explore).toHaveText("Explore publication map");
+    const exploreBounds = await explore.boundingBox();
+    expect(exploreBounds?.height).toBeLessThanOrEqual(40);
 
-    await page.route("https://scholar.google.com/**", async (route) => {
-      await route.fulfill({
-        contentType: "text/html",
-        body: "<title>Google Scholar</title>",
-      });
-    });
     await explore.click();
-    await expect(page).toHaveURL(SCHOLAR_URL_PATTERN);
+    await expect(page).toHaveURL(`${TEST_ORIGIN}/`);
+    await expect(graph).toHaveAttribute("aria-hidden", "false");
+    await expect(close).toBeVisible();
+    await expect(close).toBeFocused();
+    await expect(page.locator("a.publication-link").first()).toHaveAttribute(
+      "tabindex",
+      "0",
+    );
+
+    const mobileLayout = await page.evaluate(() => {
+      const viewportWidth = document.documentElement.clientWidth;
+      const viewportHeight = document.documentElement.clientHeight;
+      const graphBounds = document
+        .getElementById("graph-container")
+        ?.getBoundingClientRect();
+      const closeBounds = document
+        .getElementById("graph-close")
+        ?.getBoundingClientRect();
+      const labelsAreInViewport = Array.from(
+        document.querySelectorAll(".cluster-label"),
+      ).every((label) => {
+        const bounds = label.getBoundingClientRect();
+        return (
+          bounds.left >= 0
+          && bounds.top >= 0
+          && bounds.right <= viewportWidth
+          && bounds.bottom <= viewportHeight
+        );
+      });
+
+      return {
+        graphHeight: graphBounds?.height,
+        graphWidth: graphBounds?.width,
+        closeIsInViewport: Boolean(
+          closeBounds
+          && closeBounds.left >= 0
+          && closeBounds.top >= 0
+          && closeBounds.right <= viewportWidth
+          && closeBounds.bottom <= viewportHeight
+        ),
+        hasHorizontalOverflow:
+          document.documentElement.scrollWidth > viewportWidth,
+        labelsAreInViewport,
+        viewportHeight,
+        viewportWidth,
+      };
+    });
+
+    expect(mobileLayout.graphWidth).toBe(mobileLayout.viewportWidth);
+    expect(mobileLayout.graphHeight).toBe(mobileLayout.viewportHeight);
+    expect(mobileLayout.closeIsInViewport).toBe(true);
+    expect(mobileLayout.hasHorizontalOverflow).toBe(false);
+    expect(mobileLayout.labelsAreInViewport).toBe(true);
+    await expectNoAccessibilityViolations(page);
+
+    await close.click();
+    await expect(graph).toHaveAttribute("aria-hidden", "true");
+    await expect(explore).toBeVisible();
+    await expect(explore).toBeFocused();
   });
 });
 
