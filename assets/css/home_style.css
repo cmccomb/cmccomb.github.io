@@ -78,7 +78,13 @@
 }
 
 .graph-command-bar[hidden] {
-    display: none !important;
+    /* Preserve the active layout geometry behind the profile preview. */
+    display: grid !important;
+    visibility: hidden;
+}
+
+.graph-command-bar[hidden] .graph-close[hidden] {
+    display: inline-flex !important;
 }
 
 .graph-command-bar .graph-close {

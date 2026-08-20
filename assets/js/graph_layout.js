@@ -608,7 +608,6 @@
         graphContainer?.addEventListener("publicationgraph:visibilitychange", event => {
             if (event.detail?.isVisible) {
                 setRovingIndex(activePublicationIndex);
-                render();
                 return;
             }
 
@@ -636,7 +635,7 @@
                 .attr("viewBox", `0 0 ${width} ${height}`);
 
             const mapPadding = width <= 768 ? 24 : 40;
-            const commandBarBounds = graphCommandBar && !graphCommandBar.hidden
+            const commandBarBounds = graphCommandBar
                 ? graphCommandBar.getBoundingClientRect()
                 : null;
             const topPadding = commandBarBounds
