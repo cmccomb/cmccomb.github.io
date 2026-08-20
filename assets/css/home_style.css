@@ -27,7 +27,7 @@
 }
 
 .publication-node {
-    transition: filter 120ms ease, stroke-width 120ms ease;
+    transition: filter 120ms ease, opacity 120ms ease, stroke-width 120ms ease;
     vector-effect: non-scaling-stroke;
 }
 
@@ -37,6 +37,195 @@
     filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.95));
     stroke: #fff;
     stroke-width: 3px;
+}
+
+.publication-link.search-hidden {
+    opacity: 0.08;
+    pointer-events: none;
+}
+
+.publication-link.search-match .publication-node {
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.9));
+    stroke: rgba(255, 255, 255, 0.9);
+    stroke-width: 2px;
+}
+
+.publication-link.selected .publication-node {
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 1));
+    stroke: #fff;
+    stroke-width: 4px;
+}
+
+.graph-command-bar {
+    position: absolute;
+    z-index: 7;
+    top: 1rem;
+    left: 50%;
+    display: grid;
+    grid-template-columns: auto minmax(20rem, 1fr) auto;
+    align-items: center;
+    justify-content: stretch;
+    gap: 0.65rem;
+    width: min(58rem, calc(100vw - 2rem));
+    padding: 0.65rem;
+    transform: translateX(-50%);
+    color: #f8f9fa;
+    background: rgba(12, 14, 16, 0.92);
+    border: 1px solid rgba(248, 249, 250, 0.22);
+    border-radius: 0.85rem;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.38);
+    backdrop-filter: blur(10px);
+}
+
+.graph-command-bar[hidden] {
+    display: none !important;
+}
+
+.graph-command-bar .graph-close {
+    position: static;
+    display: inline-flex;
+    align-self: stretch;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: auto;
+    min-width: 4rem;
+    min-height: 4rem;
+    aspect-ratio: 1;
+    padding: 0;
+    color: #f8f9fa;
+    background: rgba(248, 249, 250, 0.12);
+    border: 1px solid rgba(248, 249, 250, 0.28);
+    border-radius: 0.55rem;
+}
+
+.graph-close-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.graph-command-bar .graph-close:hover,
+.graph-command-bar .graph-close:focus-visible,
+.graph-search-clear:hover:not(:disabled),
+.graph-search-clear:focus-visible {
+    color: #101214;
+    background: #f8f9fa;
+}
+
+.graph-toolbar {
+    min-width: 0;
+}
+
+.graph-search-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.35rem;
+}
+
+.graph-search-label {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+}
+
+.graph-search-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.graph-search-input,
+.graph-search-clear {
+    min-height: 2.75rem;
+}
+
+.graph-search-input {
+    min-width: 0;
+}
+
+.graph-search-clear {
+    flex: 0 0 auto;
+    color: #f8f9fa;
+    background: rgba(248, 249, 250, 0.12);
+    border: 1px solid rgba(248, 249, 250, 0.28);
+}
+
+#publication-search-status {
+    margin: 0;
+    color: #ced4da;
+    font-size: 0.76rem;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.publication-detail {
+    position: absolute;
+    z-index: 6;
+    right: 1rem;
+    bottom: 1rem;
+    width: min(34rem, calc(100vw - 2rem));
+    max-height: min(31rem, calc(100vh - 2rem));
+    padding: 1rem;
+    overflow-y: auto;
+    color: #101214;
+    background: rgba(255, 255, 255, 0.97);
+    border: 1px solid #495057;
+    border-radius: 0.75rem;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+    user-select: text;
+}
+
+.publication-detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.publication-detail-kicker {
+    margin: 0;
+    color: #5a6268;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.publication-detail-header .btn,
+.publication-detail-link {
+    min-height: 2.75rem;
+}
+
+#publication-detail-title {
+    margin: 0.75rem 0 0.5rem;
+    font-size: clamp(1.15rem, 1.4vw, 1.45rem);
+    line-height: 1.3;
+}
+
+.publication-detail-meta {
+    margin-bottom: 0.75rem;
+    color: #495057;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.publication-detail-citation {
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+
+.publication-detail-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .graph-status {
@@ -54,24 +243,35 @@
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
 }
 
-.colorbar-legend {
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    padding: 0.75rem 0.9rem 1rem;
-    background: rgba(0, 0, 0, 0.75);
-    border-radius: 0.75rem;
-    color: #f8f9fa;
+.graph-legends {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-left: 1rem;
+    border-left: 1px solid rgba(248, 249, 250, 0.18);
+}
+
+.graph-legends > * {
+    min-width: 0;
+}
+
+.colorbar-legend,
+.size-legend {
+    position: static;
+    padding: 0;
+    color: inherit;
     pointer-events: none;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(6px);
 }
 
-.colorbar-legend svg {
+.colorbar-legend svg,
+.size-legend svg {
     display: block;
+    max-width: 100%;
+    height: auto;
 }
 
-.colorbar-legend text {
+.colorbar-legend text,
+.size-legend text {
     font-family: "Helvetica Neue", Arial, sans-serif;
 }
 
@@ -94,18 +294,110 @@
     letter-spacing: 0.02em;
 }
 
+.cluster-label {
+    transition: opacity 120ms ease;
+}
+
+.cluster-label.search-hidden {
+    opacity: 0.12;
+}
+
+@media (max-width: 1000px) {
+    .graph-command-bar {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .graph-legends {
+        grid-column: 1 / -1;
+        justify-content: center;
+        padding-top: 0.55rem;
+        padding-left: 0;
+        border-top: 1px solid rgba(248, 249, 250, 0.18);
+        border-left: 0;
+    }
+}
+
 @media (max-width: 768px) {
-    .colorbar-legend {
-        top: 4.5rem;
+    .graph-command-bar {
+        top: 0.75rem;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 0.65rem;
+        width: calc(100vw - 1.5rem);
+    }
+
+    .graph-command-bar .graph-close {
+        grid-column: 1;
+        grid-row: 1;
+        justify-self: start;
+    }
+
+    .graph-toolbar {
+        grid-column: 2;
+        grid-row: 1;
+        width: 100%;
+    }
+
+    .graph-legends {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        width: 100%;
+    }
+
+    .publication-detail {
         right: 0.75rem;
-        transform: scale(0.85);
-        transform-origin: top right;
+        bottom: 0.75rem;
+        left: 0.75rem;
+        width: auto;
+        max-height: max(6rem, min(48vh, calc(100vh - 13.75rem)));
+    }
+}
+
+@media (max-height: 500px) {
+    .graph-command-bar {
+        top: 0.75rem;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 0.75rem;
+        width: calc(100vw - 1.5rem);
+    }
+
+    .graph-command-bar .graph-close {
+        justify-self: start;
+    }
+
+    .graph-toolbar {
+        width: auto;
+    }
+
+    .graph-legends {
+        display: none;
+    }
+
+    .publication-detail {
+        max-height: calc(100vh - 10rem);
+    }
+}
+
+@media (min-width: 820px) and (max-height: 500px) {
+    .graph-command-bar {
+        grid-template-columns: auto minmax(17rem, 1fr) auto;
+    }
+
+    .graph-legends {
+        display: flex;
+        grid-column: auto;
+        justify-content: flex-start;
+        padding-top: 0;
+        padding-left: 0.75rem;
+        border-top: 0;
+        border-left: 1px solid rgba(248, 249, 250, 0.18);
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .publication-node,
-    .tooltip {
+    .tooltip,
+    .publication-detail,
+    .cluster-label {
         transition: none;
     }
 }

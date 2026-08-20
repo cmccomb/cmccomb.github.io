@@ -129,10 +129,10 @@ test.describe("homepage", () => {
     expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
   });
 
-  test("activates the graph, supports native keyboard links, and restores focus", async ({
+  test("activates the graph, supports keyboard navigation, and restores focus", async ({
     page,
   }) => {
-    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.setViewportSize({ width: 1920, height: 1080 });
     await page.goto("/");
 
     const graph = page.locator("#graph-container");
@@ -140,18 +140,66 @@ test.describe("homepage", () => {
     const close = page.locator("#graph-close");
 
     await expect(explore).toHaveAttribute("aria-expanded", "false");
-    await expect(page.locator("a.publication-link")).not.toHaveCount(0);
+    await expect(page.locator(".publication-link")).not.toHaveCount(0);
 
     await explore.click();
     await expect(graph).toHaveAttribute("aria-hidden", "false");
     await expect(graph).not.toHaveAttribute("inert", "");
     await expect(explore).toHaveAttribute("aria-expanded", "true");
     await expect(close).toBeVisible();
-    await expect(close).toBeFocused();
+    await expect(close).toHaveAttribute("aria-label", "Back to profile");
+    await expect(page.locator("#graph-command-bar")).toBeVisible();
+    const commandBarBounds = await page.locator("#graph-command-bar").boundingBox();
+    const closeBounds = await close.boundingBox();
+    const closeInsets = {
+      left: (closeBounds?.x ?? 0) - (commandBarBounds?.x ?? 0),
+      top: (closeBounds?.y ?? 0) - (commandBarBounds?.y ?? 0),
+      bottom:
+        (commandBarBounds?.y ?? 0)
+        + (commandBarBounds?.height ?? 0)
+        - (closeBounds?.y ?? 0)
+        - (closeBounds?.height ?? 0),
+    };
+    expect(Math.abs(closeInsets.left - closeInsets.top)).toBeLessThan(1);
+    expect(Math.abs(closeInsets.left - closeInsets.bottom)).toBeLessThan(1);
+    const searchBounds = await page.locator("#publication-search").boundingBox();
+    expect(
+      Math.abs(
+        ((searchBounds?.x ?? 0) - (closeBounds?.x ?? 0) - (closeBounds?.width ?? 0))
+        - closeInsets.left,
+      ),
+    ).toBeLessThan(2);
+    await expect(page.locator("#publication-search")).toBeFocused();
+    await expect(page.locator("#publication-search-help")).toHaveCount(0);
+    await expect(page.locator(".colorbar-legend svg")).toBeVisible();
+    await expect(page.locator(".size-legend svg")).toBeVisible();
+    await expect(page.locator(".size-legend")).toHaveAttribute(
+      "aria-label",
+      /citation counts from \d+ to \d+/i,
+    );
+    const citationLegendRadii = await page
+      .locator(".citation-size-key circle")
+      .evaluateAll((circles) => circles.map((circle) => Number(circle.getAttribute("r"))));
+    expect(citationLegendRadii).toHaveLength(3);
+    expect(citationLegendRadii[0]).toBeLessThan(citationLegendRadii[1]);
+    expect(citationLegendRadii[1]).toBeLessThan(citationLegendRadii[2]);
+    expect(citationLegendRadii[2]).toBeLessThanOrEqual(20);
+    const largestCitationKey = page.locator(".citation-size-key").last();
+    const largestCitationCircleBounds = await largestCitationKey
+      .locator("circle")
+      .boundingBox();
+    const largestCitationLabelBounds = await largestCitationKey
+      .locator("text")
+      .boundingBox();
+    expect(
+      (largestCitationLabelBounds?.y ?? 0)
+      - (largestCitationCircleBounds?.y ?? 0)
+      - (largestCitationCircleBounds?.height ?? 0),
+    ).toBeGreaterThanOrEqual(2);
     await expectNoAccessibilityViolations(page);
 
-    const firstPublication = page.locator("a.publication-link").first();
-    const secondPublication = page.locator("a.publication-link").nth(1);
+    const firstPublication = page.locator(".publication-link").first();
+    const secondPublication = page.locator(".publication-link").nth(1);
     await expect(firstPublication).toHaveAttribute("tabindex", "0");
     await expect(secondPublication).toHaveAttribute("tabindex", "-1");
     await firstPublication.focus();
@@ -159,22 +207,42 @@ test.describe("homepage", () => {
 
     await firstPublication.press("ArrowRight");
     await expect(secondPublication).toBeFocused();
-    await expect(secondPublication).toHaveAttribute(
-      "href",
-      SCHOLAR_URL_PATTERN,
-    );
-
+    await expect(secondPublication).toHaveAttribute("role", "button");
+    await expect(secondPublication).not.toHaveAttribute("href", /.+/);
     await page.context().route("https://scholar.google.com/**", async (route) => {
       await route.fulfill({
         contentType: "text/html",
         body: "<title>Google Scholar</title>",
       });
     });
-    const popupPromise = page.waitForEvent("popup");
     await secondPublication.press("Enter");
+    await expect(page).toHaveURL(`${TEST_ORIGIN}/`);
+    await expect(secondPublication).toHaveAttribute("aria-expanded", "true");
+
+    const detail = page.locator("#publication-detail");
+    const detailLink = page.locator("#publication-detail-link");
+    await expect(detail).toBeVisible();
+    await expect(page.locator("#publication-detail-title")).not.toBeEmpty();
+    await expect(detailLink).toHaveAttribute("href", SCHOLAR_URL_PATTERN);
+    await expect(detailLink).toHaveAttribute("target", "_blank");
+    await expect(detailLink).toHaveAttribute("rel", /noopener/);
+    await expectNoAccessibilityViolations(page);
+
+    const popupPromise = page.waitForEvent("popup");
+    await detailLink.click();
     const popup = await popupPromise;
     await expect(popup).toHaveURL(SCHOLAR_URL_PATTERN);
     await popup.close();
+
+    await page.locator("#publication-detail-close").click();
+    await expect(detail).toBeHidden();
+    await expect(secondPublication).toBeFocused();
+
+    await secondPublication.press(" ");
+    await expect(detail).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(detail).toBeHidden();
+    await expect(secondPublication).toBeFocused();
 
     await close.click();
     await expect(graph).toHaveAttribute("aria-hidden", "true");
@@ -183,10 +251,83 @@ test.describe("homepage", () => {
     await expect(explore).toBeFocused();
 
     await explore.click();
-    await expect(close).toBeFocused();
+    await expect(page.locator("#publication-search")).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(graph).toHaveAttribute("aria-hidden", "true");
     await expect(explore).toBeFocused();
+  });
+
+  test("searches publications and uses Escape to unwind map state", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto("/");
+    await page.locator("#exit").click();
+
+    const graph = page.locator("#graph-container");
+    const search = page.locator("#publication-search");
+    const status = page.locator("#publication-search-status");
+    const allPublications = page.locator(".publication-link");
+    const total = await allPublications.count();
+    expect(total).toBeGreaterThan(1);
+    await expect(status).toHaveText(`${total} publications`);
+
+    await search.fill("no-publication-can-match-this-phrase");
+    await expect(status).toHaveText(`0 of ${total} publications`);
+    await expect(page.locator('.publication-link[tabindex="0"]')).toHaveCount(0);
+    await expect(page.locator(".publication-link.search-hidden")).toHaveCount(total);
+    await page.locator("#publication-search-clear").click();
+
+    await search.fill("large language");
+    const matches = page.locator(".publication-link:not(.search-hidden)");
+    const nonmatches = page.locator(".publication-link.search-hidden");
+    const matchCount = await matches.count();
+    expect(matchCount).toBeGreaterThan(1);
+    expect(matchCount).toBeLessThan(total);
+    await expect(status).toHaveText(`${matchCount} of ${total} publications`);
+    await expect(nonmatches.first()).toHaveAttribute("aria-hidden", "true");
+    await expect(nonmatches.first()).toHaveAttribute("tabindex", "-1");
+
+    await search.press("Enter");
+    await expect(matches.first()).toBeFocused();
+    await matches.first().press("ArrowRight");
+    await expect(matches.nth(1)).toBeFocused();
+    await matches.nth(1).press("End");
+    await expect(matches.last()).toBeFocused();
+    await matches.last().press("ArrowRight");
+    await expect(matches.first()).toBeFocused();
+
+    await matches.first().click();
+    await expect(page).toHaveURL(`${TEST_ORIGIN}/`);
+    await expect(page.locator("#publication-detail")).toBeVisible();
+    await expect(page.locator('.publication-link[aria-expanded="true"]')).toHaveCount(1);
+
+    await page.keyboard.press("Escape");
+    await expect(page.locator("#publication-detail")).toBeHidden();
+    await expect(search).toHaveValue("large language");
+    await expect(graph).toHaveAttribute("aria-hidden", "false");
+
+    await page.keyboard.press("Escape");
+    await expect(search).toHaveValue("");
+    await expect(status).toHaveText(`${total} publications`);
+    await expect(nonmatches).toHaveCount(0);
+    await expect(graph).toHaveAttribute("aria-hidden", "false");
+
+    await page.keyboard.press("Escape");
+    await expect(graph).toHaveAttribute("aria-hidden", "true");
+    await expect(page.locator("#exit")).toBeFocused();
+
+    await page.locator("#exit").click();
+    await expect(search).toHaveValue("");
+    await expect(page.locator("#publication-detail")).toBeHidden();
+    await expect(allPublications.first()).toHaveAttribute("tabindex", "0");
+
+    await search.fill("   ");
+    await expect(page.locator("#publication-search-clear")).toBeEnabled();
+    await search.press("Escape");
+    await expect(search).toHaveValue("");
+    await expect(graph).toHaveAttribute("aria-hidden", "false");
+    await expectNoAccessibilityViolations(page);
   });
 
   test("opens and closes the responsive publication map on mobile", async ({
@@ -207,8 +348,8 @@ test.describe("homepage", () => {
     await expect(page).toHaveURL(`${TEST_ORIGIN}/`);
     await expect(graph).toHaveAttribute("aria-hidden", "false");
     await expect(close).toBeVisible();
-    await expect(close).toBeFocused();
-    await expect(page.locator("a.publication-link").first()).toHaveAttribute(
+    await expect(page.locator("#publication-search")).toBeFocused();
+    await expect(page.locator(".publication-link").first()).toHaveAttribute(
       "tabindex",
       "0",
     );
@@ -222,6 +363,12 @@ test.describe("homepage", () => {
       const closeBounds = document
         .getElementById("graph-close")
         ?.getBoundingClientRect();
+      const legendBounds = document
+        .querySelector(".colorbar-legend")
+        ?.getBoundingClientRect();
+      const pointBounds = Array.from(
+        document.querySelectorAll(".publication-node"),
+      ).map((point) => point.getBoundingClientRect());
       const labelsAreInViewport = Array.from(
         document.querySelectorAll(".cluster-label"),
       ).every((label) => {
@@ -246,6 +393,24 @@ test.describe("homepage", () => {
         ),
         hasHorizontalOverflow:
           document.documentElement.scrollWidth > viewportWidth,
+        pointsOverlapLegend: Boolean(
+          legendBounds
+          && pointBounds.some((bounds) => (
+            bounds.left < legendBounds.right
+            && bounds.right > legendBounds.left
+            && bounds.top < legendBounds.bottom
+            && bounds.bottom > legendBounds.top
+          ))
+        ),
+        smallestPointTarget: Math.min(
+          ...pointBounds.map((bounds) => Math.min(bounds.width, bounds.height)),
+        ),
+        pointsAreInViewport: pointBounds.every((bounds) => (
+          bounds.left >= 0
+          && bounds.top >= 0
+          && bounds.right <= viewportWidth
+          && bounds.bottom <= viewportHeight
+        )),
         labelsAreInViewport,
         viewportHeight,
         viewportWidth,
@@ -256,13 +421,110 @@ test.describe("homepage", () => {
     expect(mobileLayout.graphHeight).toBe(mobileLayout.viewportHeight);
     expect(mobileLayout.closeIsInViewport).toBe(true);
     expect(mobileLayout.hasHorizontalOverflow).toBe(false);
+    expect(mobileLayout.pointsOverlapLegend).toBe(false);
+    expect(mobileLayout.smallestPointTarget).toBeGreaterThanOrEqual(24);
+    expect(mobileLayout.pointsAreInViewport).toBe(true);
     expect(mobileLayout.labelsAreInViewport).toBe(true);
+    const searchBounds = await page.locator("#publication-search").boundingBox();
+    const clearBounds = await page.locator("#publication-search-clear").boundingBox();
+    const closeBounds = await close.boundingBox();
+    expect(searchBounds?.height).toBeGreaterThanOrEqual(44);
+    expect(clearBounds?.height).toBeGreaterThanOrEqual(44);
+    expect(closeBounds?.width).toBeGreaterThanOrEqual(64);
+    expect(closeBounds?.height).toBeGreaterThanOrEqual(64);
+    expect(Math.abs((closeBounds?.width ?? 0) - (closeBounds?.height ?? 0)))
+      .toBeLessThan(1);
+    await expectNoAccessibilityViolations(page);
+
+    const search = page.locator("#publication-search");
+    await search.fill("Kevin Ma Daniele Grandi");
+    const mobileMatch = page.locator(".publication-link:not(.search-hidden)").first();
+    await expect(mobileMatch).toBeVisible();
+    await mobileMatch.click();
+    await expect(page).toHaveURL(`${TEST_ORIGIN}/`);
+    await expect(page.locator("#publication-detail")).toBeVisible();
+    await expect(page.locator("#publication-detail-link")).toHaveAttribute(
+      "href",
+      SCHOLAR_URL_PATTERN,
+    );
+    const selectedLayout = await page.evaluate(() => {
+      const commandBar = document
+        .getElementById("graph-command-bar")
+        ?.getBoundingClientRect();
+      const detail = document
+        .getElementById("publication-detail")
+        ?.getBoundingClientRect();
+      return {
+        detailIsInViewport: Boolean(
+          detail
+          && detail.left >= 0
+          && detail.top >= 0
+          && detail.right <= innerWidth
+          && detail.bottom <= innerHeight
+        ),
+        overlapsCommandBar: Boolean(
+          commandBar && detail && commandBar.bottom > detail.top
+        ),
+      };
+    });
+    expect(selectedLayout.detailIsInViewport).toBe(true);
+    expect(selectedLayout.overlapsCommandBar).toBe(false);
     await expectNoAccessibilityViolations(page);
 
     await close.click();
     await expect(graph).toHaveAttribute("aria-hidden", "true");
     await expect(explore).toBeVisible();
     await expect(explore).toBeFocused();
+  });
+
+  test("keeps search and details separate in short landscape", async ({
+    page,
+  }) => {
+    for (const viewport of [
+      { width: 568, height: 320 },
+      { width: 844, height: 390 },
+    ]) {
+      await page.setViewportSize(viewport);
+      await page.goto("/");
+      await page.locator("#exit").click();
+      await page.locator("#publication-search").fill("Kevin Ma Daniele Grandi");
+      await page.locator(".publication-link:not(.search-hidden)").first().click();
+
+      const shortLayout = await page.evaluate(() => {
+        const commandBar = document
+          .getElementById("graph-command-bar")
+          ?.getBoundingClientRect();
+        const detailElement = document.getElementById("publication-detail");
+        const detail = detailElement?.getBoundingClientRect();
+        return {
+          detailIsInViewport: Boolean(
+            detail
+            && detail.left >= 0
+            && detail.top >= 0
+            && detail.right <= innerWidth
+            && detail.bottom <= innerHeight
+          ),
+          detailIsScrollable: Boolean(
+            detailElement
+            && detailElement.scrollHeight > detailElement.clientHeight
+          ),
+          hasHorizontalOverflow:
+            document.documentElement.scrollWidth > document.documentElement.clientWidth,
+          legendIsHidden:
+            getComputedStyle(document.querySelector(".graph-legends") as Element)
+              .display === "none",
+          overlapsCommandBar: Boolean(
+            commandBar && detail && commandBar.bottom > detail.top
+          ),
+        };
+      });
+
+      expect(shortLayout.detailIsInViewport).toBe(true);
+      expect(shortLayout.detailIsScrollable).toBe(true);
+      expect(shortLayout.hasHorizontalOverflow).toBe(false);
+      expect(shortLayout.legendIsHidden).toBe(viewport.width < 820);
+      expect(shortLayout.overlapsCommandBar).toBe(false);
+    }
   });
 });
 

@@ -4,8 +4,19 @@
     const svg = d3.select("#publication-graph");
     const tooltip = d3.select(".tooltip");
     const legendContainer = d3.select(".colorbar-legend");
+    const sizeLegendContainer = d3.select(".size-legend");
     const statusElement = document.getElementById("graph-status");
     const graphContainer = document.getElementById("graph-container");
+    const graphCommandBar = document.getElementById("graph-command-bar");
+    const searchInput = document.getElementById("publication-search");
+    const searchClearButton = document.getElementById("publication-search-clear");
+    const searchStatus = document.getElementById("publication-search-status");
+    const detailPanel = document.getElementById("publication-detail");
+    const detailCloseButton = document.getElementById("publication-detail-close");
+    const detailTitle = document.getElementById("publication-detail-title");
+    const detailMeta = document.getElementById("publication-detail-meta");
+    const detailCitation = document.getElementById("publication-detail-citation");
+    const detailLink = document.getElementById("publication-detail-link");
     const legacyLabelCorrections = new Map([
         ["face to face", "design teams"],
     ]);
@@ -13,6 +24,16 @@
     function showGraphError(error) {
         console.error("Unable to render publication graph", error);
         legendContainer.attr("hidden", true);
+        sizeLegendContainer.attr("hidden", true);
+        if (searchInput) {
+            searchInput.disabled = true;
+        }
+        if (searchClearButton) {
+            searchClearButton.disabled = true;
+        }
+        if (searchStatus) {
+            searchStatus.textContent = "Publication search is unavailable.";
+        }
         if (statusElement) {
             statusElement.textContent = "The publication map is temporarily unavailable. Google Scholar is still available from the profile card.";
             statusElement.hidden = false;
@@ -95,14 +116,18 @@
         const radiusScale = d3.scaleSqrt().domain(radiusExtent);
         const colorScale = d3.scaleSequential(d3.interpolateMagma).domain(yearExtent);
 
-        const legendWidth = 180;
-        const legendHeight = 14;
-        const legendMargins = { top: 20, right: 16, bottom: 30, left: 16 };
+        const legendWidth = 150;
+        const legendHeight = 10;
+        const legendMargins = { top: 18, right: 8, bottom: 24, left: 8 };
         const gradientId = "publication-year-gradient";
         const legendSvg = legendContainer.append("svg")
             .attr("class", "colorbar-svg")
             .attr("width", legendWidth + legendMargins.left + legendMargins.right)
-            .attr("height", legendHeight + legendMargins.top + legendMargins.bottom);
+            .attr("height", legendHeight + legendMargins.top + legendMargins.bottom)
+            .attr(
+                "viewBox",
+                `0 0 ${legendWidth + legendMargins.left + legendMargins.right} ${legendHeight + legendMargins.top + legendMargins.bottom}`
+            );
         const gradient = legendSvg.append("defs")
             .append("linearGradient")
             .attr("id", gradientId)
@@ -129,11 +154,15 @@
             .attr("fill", `url(#${gradientId})`);
 
         const legendScale = d3.scaleLinear().domain(yearExtent).range([0, legendWidth]);
-        const tickCount = yearExtent[0] === yearExtent[1]
-            ? 1
-            : Math.min(6, Math.max(2, yearExtent[1] - yearExtent[0]));
+        const legendTicks = yearExtent[0] === yearExtent[1]
+            ? [yearExtent[0]]
+            : Array.from(
+                new Set(d3.range(4).map(index => Math.round(
+                    yearExtent[0] + index * (yearExtent[1] - yearExtent[0]) / 3
+                )))
+            );
         const legendAxis = d3.axisBottom(legendScale)
-            .ticks(tickCount)
+            .tickValues(legendTicks)
             .tickFormat(d3.format("d"));
         const axisGroup = legendSvg.append("g")
             .attr("transform", `translate(${legendMargins.left}, ${legendMargins.top + legendHeight})`)
@@ -142,6 +171,8 @@
         axisGroup.selectAll("text")
             .attr("fill", "#f8f9fa")
             .attr("font-size", 10);
+        axisGroup.selectAll(".tick:first-of-type text").attr("text-anchor", "start");
+        axisGroup.selectAll(".tick:last-of-type text").attr("text-anchor", "end");
         axisGroup.selectAll("line, path")
             .attr("stroke", "rgba(248, 249, 250, 0.4)");
         legendSvg.append("text")
@@ -150,59 +181,267 @@
             .attr("fill", "#f8f9fa")
             .attr("font-size", 12)
             .attr("font-weight", 600)
-            .text("Publication Year");
+            .text("Year");
 
-        const nodes = records.map((record, index) => ({
-            id: index,
-            x_data: record.x,
-            y_data: record.y,
-            num_citations: record.num_citations,
-            color: colorScale(record.pub_year),
-            title: record.bib_dict.title,
-            citation: String(record.bib_dict.citation || ""),
-            author: String(record.bib_dict.author || ""),
-            link: `https://scholar.google.com/citations?view_op=view_citation&citation_for_view=${encodeURIComponent(record.author_pub_id)}`,
-            cluster_id: record.cluster_id,
-            x: 0,
-            y: 0,
-            x_orig: 0,
-            y_orig: 0,
-            r: 0,
-        }));
+        const sizeLegendWidth = 140;
+        const sizeLegendHeight = 72;
+        const sizeLegendSvg = sizeLegendContainer.append("svg")
+            .attr("class", "size-legend-svg")
+            .attr("width", sizeLegendWidth)
+            .attr("height", sizeLegendHeight)
+            .attr("viewBox", `0 0 ${sizeLegendWidth} ${sizeLegendHeight}`);
+        sizeLegendSvg.append("text")
+            .attr("x", 8)
+            .attr("y", 10)
+            .attr("fill", "#f8f9fa")
+            .attr("font-size", 12)
+            .attr("font-weight", 600)
+            .text("Citations");
 
-        const publicationLinks = svg.selectAll("a.publication-link")
+        function renderSizeLegend() {
+            const values = radiusExtent[0] === radiusExtent[1]
+                ? [radiusExtent[0]]
+                : [
+                    radiusExtent[0],
+                    radiusExtent[0] + (radiusExtent[1] - radiusExtent[0]) / 4,
+                    radiusExtent[1],
+                ];
+            const positions = values.length === 1 ? [70] : [20, 70, 118];
+            const legendEntries = values.map((value, index) => ({
+                value,
+                x: positions[index],
+                radius: radiusScale(value),
+            }));
+            const sizeKeys = sizeLegendSvg.selectAll("g.citation-size-key")
+                .data(legendEntries, entry => entry.value)
+                .join(enter => {
+                    const group = enter.append("g").attr("class", "citation-size-key");
+                    group.append("circle")
+                        .attr("fill", "rgba(248, 249, 250, 0.18)")
+                        .attr("stroke", "#f8f9fa")
+                        .attr("stroke-width", 1.25);
+                    group.append("text")
+                        .attr("fill", "#f8f9fa")
+                        .attr("font-size", 10)
+                        .attr("text-anchor", "middle");
+                    return group;
+                });
+            sizeKeys.attr("transform", entry => `translate(${entry.x}, 32)`);
+            sizeKeys.select("circle").attr("r", entry => entry.radius);
+            sizeKeys.select("text")
+                .attr("y", 34)
+                .text(entry => d3.format(",d")(Math.round(entry.value)));
+            sizeLegendContainer.attr(
+                "aria-label",
+                `Circle sizes represent citation counts from ${Math.round(radiusExtent[0])} to ${Math.round(radiusExtent[1])}.`
+            );
+        }
+
+        const nodes = records.map((record, index) => {
+            const clusterSummary = clusterSummaryById.get(String(record.cluster_id));
+            const clusterLabel = typeof clusterSummary?.label === "string" && clusterSummary.label
+                ? displayClusterLabel(clusterSummary.label)
+                : `Cluster ${record.cluster_id}`;
+            const title = record.bib_dict.title;
+            const citation = String(record.bib_dict.citation || "");
+            const author = String(record.bib_dict.author || "");
+            const abstract = String(record.bib_dict.abstract || "");
+
+            return {
+                id: index,
+                x_data: record.x,
+                y_data: record.y,
+                pub_year: record.pub_year,
+                num_citations: record.num_citations,
+                color: colorScale(record.pub_year),
+                title,
+                citation,
+                author,
+                abstract,
+                link: `https://scholar.google.com/citations?view_op=view_citation&citation_for_view=${encodeURIComponent(record.author_pub_id)}`,
+                cluster_id: record.cluster_id,
+                cluster_label: clusterLabel,
+                search_text: [
+                    title,
+                    author,
+                    citation,
+                    abstract,
+                    record.pub_year,
+                    clusterLabel,
+                ].join(" ").toLowerCase(),
+                x: 0,
+                y: 0,
+                x_orig: 0,
+                y_orig: 0,
+                r: 0,
+            };
+        });
+
+        const publicationControls = svg.selectAll("g.publication-link")
             .data(nodes)
             .enter()
-            .append("a")
+            .append("g")
             .attr("class", "publication-link")
-            .attr("href", node => node.link)
-            .attr("target", "_blank")
-            .attr("rel", "noopener noreferrer")
+            .attr("role", "button")
+            .attr("aria-controls", "publication-detail")
+            .attr("aria-expanded", "false")
             .attr("tabindex", -1)
             .attr("aria-describedby", "publication-tooltip")
             .attr("aria-label", node => (
-                `${node.title}; ${node.num_citations} citation${node.num_citations === 1 ? "" : "s"}`
+                `${node.title}; ${node.pub_year}; ${node.num_citations} citation${node.num_citations === 1 ? "" : "s"}; topic ${node.cluster_label}; show publication details`
             ));
-        const nodeSelection = publicationLinks.append("rect")
+        const nodeSelection = publicationControls.append("rect")
             .attr("class", "publication-node")
             .attr("fill", node => node.color)
             .attr("opacity", 1);
-        const publicationLinkNodes = publicationLinks.nodes();
+        const publicationControlNodes = publicationControls.nodes();
+        let matchingPublicationIndices = nodes.map((_node, index) => index);
         let activePublicationIndex = 0;
+        let selectedPublicationIndex = null;
+        let clusterLabelLayer;
 
         function graphIsActive() {
             return graphContainer?.classList.contains("graph-active") ?? false;
         }
 
         function setRovingIndex(index, shouldFocus = false) {
-            const boundedIndex = Math.max(0, Math.min(publicationLinkNodes.length - 1, index));
-            activePublicationIndex = boundedIndex;
-            publicationLinks.attr("tabindex", (_node, linkIndex) => (
-                graphIsActive() && linkIndex === activePublicationIndex ? 0 : -1
+            if (matchingPublicationIndices.length === 0) {
+                activePublicationIndex = -1;
+                publicationControls.attr("tabindex", -1);
+                return;
+            }
+
+            activePublicationIndex = matchingPublicationIndices.includes(index)
+                ? index
+                : matchingPublicationIndices[0];
+            publicationControls.attr("tabindex", (_node, controlIndex) => (
+                graphIsActive() && controlIndex === activePublicationIndex ? 0 : -1
             ));
 
             if (shouldFocus) {
-                publicationLinkNodes[activePublicationIndex]?.focus({ preventScroll: true });
+                publicationControlNodes[activePublicationIndex]?.focus({ preventScroll: true });
+            }
+        }
+
+        function setDetailVisibility(isVisible) {
+            if (!detailPanel) {
+                return;
+            }
+            detailPanel.hidden = !isVisible;
+            detailPanel.setAttribute("aria-hidden", String(!isVisible));
+            graphContainer?.classList.toggle("detail-active", isVisible);
+        }
+
+        function clearPublicationDetail({ restoreFocus = false } = {}) {
+            const previouslySelectedIndex = selectedPublicationIndex;
+            selectedPublicationIndex = null;
+            publicationControls
+                .classed("selected", false)
+                .attr("aria-expanded", "false");
+            setDetailVisibility(false);
+
+            if (detailTitle) {
+                detailTitle.textContent = "";
+            }
+            if (detailMeta) {
+                detailMeta.textContent = "";
+            }
+            if (detailCitation) {
+                detailCitation.textContent = "";
+            }
+            if (detailLink) {
+                detailLink.setAttribute("href", "#");
+            }
+
+            if (
+                restoreFocus
+                && graphIsActive()
+                && previouslySelectedIndex !== null
+                && matchingPublicationIndices.includes(previouslySelectedIndex)
+            ) {
+                setRovingIndex(previouslySelectedIndex, true);
+            }
+        }
+
+        function showPublicationDetail(index, node) {
+            selectedPublicationIndex = index;
+            publicationControls
+                .classed("selected", (_publication, controlIndex) => controlIndex === index)
+                .attr("aria-expanded", (_publication, controlIndex) => (
+                    controlIndex === index ? "true" : "false"
+                ));
+
+            if (detailTitle) {
+                detailTitle.textContent = node.title;
+            }
+            if (detailMeta) {
+                detailMeta.textContent = `${node.pub_year} · ${node.num_citations} citation${node.num_citations === 1 ? "" : "s"} · Topic: ${node.cluster_label}`;
+            }
+            if (detailCitation) {
+                detailCitation.textContent = [
+                    formatAuthors(node.author),
+                    node.citation,
+                ].filter(Boolean).join(". ");
+            }
+            if (detailLink) {
+                detailLink.setAttribute("href", node.link);
+            }
+
+            hideTooltip();
+            setDetailVisibility(true);
+        }
+
+        function updateClusterLabelVisibility() {
+            if (!clusterLabelLayer) {
+                return;
+            }
+            const visibleClusterIds = new Set(
+                matchingPublicationIndices.map(index => String(nodes[index].cluster_id))
+            );
+            const hasQuery = Boolean(searchInput?.value.trim());
+            clusterLabelLayer.selectAll("g.cluster-label")
+                .classed("search-hidden", label => (
+                    hasQuery && !visibleClusterIds.has(String(label.clusterId))
+                ));
+        }
+
+        function applySearch(query) {
+            const normalizedQuery = String(query || "").trim().toLowerCase();
+            const searchTerms = normalizedQuery.split(/\s+/).filter(Boolean);
+            matchingPublicationIndices = nodes
+                .map((node, index) => ({ node, index }))
+                .filter(({ node }) => searchTerms.every(term => node.search_text.includes(term)))
+                .map(({ index }) => index);
+            const matchingSet = new Set(matchingPublicationIndices);
+            const hasQuery = searchTerms.length > 0;
+
+            publicationControls
+                .classed("search-hidden", (_node, index) => !matchingSet.has(index))
+                .classed("search-match", (_node, index) => hasQuery && matchingSet.has(index))
+                .attr("aria-hidden", (_node, index) => (
+                    matchingSet.has(index) ? null : "true"
+                ));
+
+            if (
+                selectedPublicationIndex !== null
+                && !matchingSet.has(selectedPublicationIndex)
+            ) {
+                clearPublicationDetail();
+            }
+
+            setRovingIndex(activePublicationIndex);
+            updateClusterLabelVisibility();
+
+            if (searchClearButton) {
+                searchClearButton.disabled = String(query || "").length === 0;
+            }
+            if (searchStatus) {
+                if (!hasQuery) {
+                    searchStatus.textContent = `${nodes.length} publications`;
+                } else {
+                    const count = matchingPublicationIndices.length;
+                    searchStatus.textContent = `${count} of ${nodes.length} publications`;
+                }
             }
         }
 
@@ -234,6 +473,9 @@
         }
 
         function showPointerTooltip(event, node) {
+            if (detailPanel && !detailPanel.hidden) {
+                return;
+            }
             tooltip
                 .text(getTooltipText(node))
                 .attr("aria-hidden", "false")
@@ -242,6 +484,9 @@
         }
 
         function showFocusTooltip(event, node) {
+            if (detailPanel && !detailPanel.hidden) {
+                return;
+            }
             const target = event.currentTarget.querySelector(".publication-node")
                 || event.currentTarget;
             const bounds = target.getBoundingClientRect();
@@ -261,8 +506,7 @@
                 .style("opacity", 0);
         }
 
-        publicationLinks
-            .on("mouseenter", showPointerTooltip)
+        publicationControls
             .on("mousemove", showPointerTooltip)
             .on("mouseleave", event => {
                 if (document.activeElement !== event.currentTarget) {
@@ -270,29 +514,63 @@
                 }
             })
             .on("focus", function handlePublicationFocus(event, node) {
-                activePublicationIndex = publicationLinkNodes.indexOf(this);
+                activePublicationIndex = publicationControlNodes.indexOf(this);
                 setRovingIndex(activePublicationIndex);
                 showFocusTooltip(event, node);
             })
             .on("blur", hideTooltip)
-            .on("keydown", event => {
+            .on("click", function handlePublicationClick(event, node) {
+                const isPlainPrimaryClick = (
+                    event.button === 0
+                    && !event.altKey
+                    && !event.ctrlKey
+                    && !event.metaKey
+                    && !event.shiftKey
+                );
+                if (!isPlainPrimaryClick) {
+                    return;
+                }
+
+                event.preventDefault();
+                const index = publicationControlNodes.indexOf(this);
+                setRovingIndex(index);
+                showPublicationDetail(index, node);
+            })
+            .on("keydown", function handlePublicationKeydown(event, node) {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    const index = publicationControlNodes.indexOf(this);
+                    setRovingIndex(index);
+                    showPublicationDetail(index, node);
+                    return;
+                }
+
+                if (matchingPublicationIndices.length === 0) {
+                    return;
+                }
+                const currentPosition = matchingPublicationIndices.indexOf(
+                    activePublicationIndex
+                );
                 let nextIndex;
                 switch (event.key) {
                     case "ArrowRight":
                     case "ArrowDown":
-                        nextIndex = (activePublicationIndex + 1) % publicationLinkNodes.length;
+                        nextIndex = matchingPublicationIndices[
+                            (currentPosition + 1) % matchingPublicationIndices.length
+                        ];
                         break;
                     case "ArrowLeft":
                     case "ArrowUp":
-                        nextIndex = (
-                            activePublicationIndex - 1 + publicationLinkNodes.length
-                        ) % publicationLinkNodes.length;
+                        nextIndex = matchingPublicationIndices[
+                            (currentPosition - 1 + matchingPublicationIndices.length)
+                            % matchingPublicationIndices.length
+                        ];
                         break;
                     case "Home":
-                        nextIndex = 0;
+                        nextIndex = matchingPublicationIndices[0];
                         break;
                     case "End":
-                        nextIndex = publicationLinkNodes.length - 1;
+                        nextIndex = matchingPublicationIndices.at(-1);
                         break;
                     default:
                         return;
@@ -302,18 +580,49 @@
                 setRovingIndex(nextIndex, true);
             });
 
-        setRovingIndex(activePublicationIndex);
-        graphContainer?.addEventListener("publicationgraph:visibilitychange", event => {
-            if (event.detail?.isVisible) {
-                setRovingIndex(activePublicationIndex);
+        searchInput?.addEventListener("input", () => {
+            applySearch(searchInput.value);
+        });
+        searchInput?.addEventListener("keydown", event => {
+            if (event.key !== "Enter") {
                 return;
             }
 
-            publicationLinks.attr("tabindex", -1);
+            event.preventDefault();
+            if (matchingPublicationIndices.length > 0) {
+                setRovingIndex(matchingPublicationIndices[0], true);
+            }
+        });
+        searchClearButton?.addEventListener("click", () => {
+            if (!searchInput) {
+                return;
+            }
+            searchInput.value = "";
+            applySearch("");
+            searchInput.focus({ preventScroll: true });
+        });
+        detailCloseButton?.addEventListener("click", () => {
+            clearPublicationDetail({ restoreFocus: true });
+        });
+
+        graphContainer?.addEventListener("publicationgraph:visibilitychange", event => {
+            if (event.detail?.isVisible) {
+                setRovingIndex(activePublicationIndex);
+                render();
+                return;
+            }
+
+            if (searchInput) {
+                searchInput.value = "";
+            }
+            activePublicationIndex = 0;
+            applySearch("");
+            clearPublicationDetail();
+            publicationControls.attr("tabindex", -1);
             hideTooltip();
         });
 
-        const clusterLabelLayer = svg.append("g")
+        clusterLabelLayer = svg.append("g")
             .attr("class", "cluster-label-layer")
             .attr("aria-hidden", "true");
         let simulation;
@@ -327,10 +636,21 @@
                 .attr("viewBox", `0 0 ${width} ${height}`);
 
             const mapPadding = width <= 768 ? 24 : 40;
+            const commandBarBounds = graphCommandBar && !graphCommandBar.hidden
+                ? graphCommandBar.getBoundingClientRect()
+                : null;
+            const topPadding = commandBarBounds
+                ? Math.min(
+                    height - mapPadding,
+                    Math.max(mapPadding, commandBarBounds.bottom + 16)
+                )
+                : mapPadding;
+            const bottomCoordinate = Math.max(topPadding + 1, height - mapPadding);
             xScale.range([mapPadding, width - mapPadding]);
-            yScale.range([height - mapPadding, mapPadding]);
+            yScale.range([bottomCoordinate, topPadding]);
             const radiusBase = Math.sqrt(width * height);
-            radiusScale.range([radiusBase / 100, radiusBase / 50]);
+            radiusScale.range([12.1, Math.min(20, Math.max(16, radiusBase / 60))]);
+            renderSizeLegend();
             nodes.forEach(node => {
                 node.x_orig = xScale(node.x_data);
                 node.y_orig = yScale(node.y_data);
@@ -350,9 +670,22 @@
                     .force("collide", d3.forceCollide(node => node.r + 1).strength(0.8));
             }
 
-            simulation.alpha(1).restart();
+            simulation.alpha(1).stop();
+            const constrainNodeToMap = node => {
+                const minimumX = node.r;
+                const maximumX = width - node.r;
+                const minimumY = topPadding + node.r;
+                const maximumY = bottomCoordinate - node.r;
+                node.x = minimumX <= maximumX
+                    ? Math.max(minimumX, Math.min(maximumX, node.x))
+                    : width / 2;
+                node.y = minimumY <= maximumY
+                    ? Math.max(minimumY, Math.min(maximumY, node.y))
+                    : (topPadding + bottomCoordinate) / 2;
+            };
             for (let index = 0; index < 200; index += 1) {
                 simulation.tick();
+                nodes.forEach(constrainNodeToMap);
             }
             nodeSelection
                 .attr("x", node => node.x - node.r)
@@ -429,9 +762,14 @@
                     .attr("rx", 8)
                     .attr("ry", 8);
             });
+            updateClusterLabelVisibility();
         }
 
         render();
+        if (searchInput) {
+            searchInput.disabled = false;
+        }
+        applySearch("");
         d3.select(window).on("resize.graph", render);
         window.addEventListener("unload", () => {
             d3.select(window).on("resize.graph", null);

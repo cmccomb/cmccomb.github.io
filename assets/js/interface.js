@@ -4,6 +4,11 @@
     const exploreButton = document.getElementById("exit");
     const graphContainer = document.getElementById("graph-container");
     const graphCloseButton = document.getElementById("graph-close");
+    const graphCommandBar = document.getElementById("graph-command-bar");
+    const publicationDetail = document.getElementById("publication-detail");
+    const publicationDetailClose = document.getElementById("publication-detail-close");
+    const publicationSearch = document.getElementById("publication-search");
+    const publicationSearchClear = document.getElementById("publication-search-clear");
     const profile = document.getElementById("profile");
     const footer = document.getElementById("footer");
 
@@ -11,6 +16,11 @@
         !exploreButton
         || !graphContainer
         || !graphCloseButton
+        || !graphCommandBar
+        || !publicationDetail
+        || !publicationDetailClose
+        || !publicationSearch
+        || !publicationSearchClear
         || !profile
         || !footer
     ) {
@@ -49,9 +59,14 @@
         graphContainer.classList.remove("blur");
         graphContainer.classList.add("graph-active");
         graphCloseButton.hidden = false;
+        setRegionVisibility(graphCommandBar, true);
         exploreButton.setAttribute("aria-expanded", "true");
         announceGraphVisibility(true);
-        graphCloseButton.focus({ preventScroll: true });
+        if (publicationSearch.disabled) {
+            graphCloseButton.focus({ preventScroll: true });
+        } else {
+            publicationSearch.focus({ preventScroll: true });
+        }
     }
 
     function closeGraph() {
@@ -60,6 +75,8 @@
         graphContainer.classList.add("blur");
         graphContainer.setAttribute("aria-hidden", "true");
         graphContainer.inert = true;
+        setRegionVisibility(graphCommandBar, false);
+        setRegionVisibility(publicationDetail, false);
         setRegionVisibility(profile, true);
         setRegionVisibility(footer, true);
         exploreButton.setAttribute("aria-expanded", "false");
@@ -70,9 +87,21 @@
     exploreButton.addEventListener("click", openGraph);
     graphCloseButton.addEventListener("click", closeGraph);
     graphContainer.addEventListener("keydown", event => {
-        if (event.key === "Escape" && graphContainer.classList.contains("graph-active")) {
-            event.preventDefault();
-            closeGraph();
+        if (event.key !== "Escape" || !graphContainer.classList.contains("graph-active")) {
+            return;
         }
+
+        event.preventDefault();
+        if (!publicationDetail.hidden) {
+            publicationDetailClose.click();
+            return;
+        }
+
+        if (publicationSearch.value) {
+            publicationSearchClear.click();
+            return;
+        }
+
+        closeGraph();
     });
 })();

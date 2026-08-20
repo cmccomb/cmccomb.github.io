@@ -19,20 +19,56 @@
 
 <div aria-hidden="true" aria-label="Interactive publication map"
      class="container-fluid blur unselectable p-0" id="graph-container" inert role="region">
-    <button class="btn btn-light graph-close" hidden id="graph-close" type="button">
-        <span aria-hidden="true">&larr;</span>
-        <span>Back to profile</span>
-    </button>
+    <div aria-hidden="true" class="graph-command-bar" hidden id="graph-command-bar">
+        <button aria-label="Back to profile" class="btn graph-close"
+                hidden id="graph-close" title="Back to profile" type="button">
+            <svg aria-hidden="true" class="graph-close-icon" viewBox="0 0 24 24">
+                <path d="M19 12H5M11 18l-6-6 6-6"></path>
+            </svg>
+        </button>
+        <div class="graph-toolbar" id="graph-toolbar">
+            <div class="graph-search-heading">
+                <label class="graph-search-label" for="publication-search">Find a publication</label>
+                <p aria-live="polite" id="publication-search-status" role="status">Loading publications…</p>
+            </div>
+            <div class="graph-search-row">
+                <input aria-describedby="publication-search-status"
+                       autocomplete="off" class="form-control graph-search-input"
+                       disabled id="publication-search" placeholder="Title, author, topic, or year"
+                       type="search">
+                <button class="btn graph-search-clear" disabled
+                        id="publication-search-clear" type="button">Clear</button>
+            </div>
+        </div>
+        <div aria-label="Publication map legends" class="graph-legends" role="group">
+            <div class="colorbar-legend" role="img" aria-label="Color legend for publication years"></div>
+            <div class="size-legend" role="img" aria-label="Circle-size legend for citation counts"></div>
+        </div>
+    </div>
     <svg aria-describedby="publication-graph-description" aria-labelledby="publication-graph-title"
          id="publication-graph" role="group">
         <title id="publication-graph-title">Interactive publication map</title>
         <desc id="publication-graph-description">
-            Publications are grouped by research topic. Use Tab to enter the map and arrow keys to move between publications.
+            Publications are grouped by research topic. Color indicates publication year and circle size indicates citation count. Search by title, author, topic, or year. Use Tab to enter the map and arrow keys to move between publications.
         </desc>
     </svg>
     <div aria-hidden="true" class="tooltip" id="publication-tooltip" role="tooltip"></div>
-    <div class="colorbar-legend" role="img" aria-label="Color legend for publication years"></div>
     <div class="graph-status" id="graph-status" role="status" aria-live="polite" hidden></div>
+    <aside aria-hidden="true" aria-label="Publication details"
+           class="publication-detail" hidden id="publication-detail">
+        <div class="publication-detail-header">
+            <p class="publication-detail-kicker">Selected publication</p>
+            <button aria-label="Close publication details" class="btn btn-light"
+                    id="publication-detail-close" type="button">Close</button>
+        </div>
+        <h2 id="publication-detail-title"></h2>
+        <p class="publication-detail-meta" id="publication-detail-meta"></p>
+        <p class="publication-detail-citation" id="publication-detail-citation"></p>
+        <a class="btn btn-light publication-detail-link" href="#"
+           id="publication-detail-link" rel="noopener noreferrer" target="_blank">
+            Open in Google Scholar
+        </a>
+    </aside>
 </div>
 
 <main aria-hidden="false" class="profile-shell d-flex flex-grow-1 justify-content-center align-items-center"
