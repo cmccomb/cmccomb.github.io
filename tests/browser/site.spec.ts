@@ -141,6 +141,12 @@ test.describe("homepage", () => {
 
     await expect(explore).toHaveAttribute("aria-expanded", "false");
     await expect(page.locator(".publication-link")).not.toHaveCount(0);
+    const nodePositionsBeforeReveal = await page
+      .locator(".publication-node")
+      .evaluateAll((nodes) => nodes.map((node) => ({
+        x: node.getAttribute("x"),
+        y: node.getAttribute("y"),
+      })));
 
     await explore.click();
     await expect(graph).toHaveAttribute("aria-hidden", "false");
@@ -170,6 +176,13 @@ test.describe("homepage", () => {
       ),
     ).toBeLessThan(2);
     await expect(page.locator("#publication-search")).toBeFocused();
+    const nodePositionsAfterReveal = await page
+      .locator(".publication-node")
+      .evaluateAll((nodes) => nodes.map((node) => ({
+        x: node.getAttribute("x"),
+        y: node.getAttribute("y"),
+      })));
+    expect(nodePositionsAfterReveal).toEqual(nodePositionsBeforeReveal);
     await expect(page.locator("#publication-search-help")).toHaveCount(0);
     await expect(page.locator(".colorbar-legend svg")).toBeVisible();
     await expect(page.locator(".size-legend svg")).toBeVisible();
