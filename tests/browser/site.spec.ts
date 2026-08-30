@@ -7,6 +7,7 @@ const SCHOLAR_URL_PATTERN = /^https:\/\/scholar\.google\.com\/citations\?/;
 const HEADSHOT_URL = `${SITE_ORIGIN}/assets/images/headshot_optimized_square.jpg`;
 const CMU_PROFILE_URL =
   "https://meche.engineering.cmu.edu/directory/bios/mccomb-christopher.html";
+const CV_PATH = "/assets/files/Christopher-McComb-CV.pdf";
 
 async function expectNoAccessibilityViolations(page: Page): Promise<void> {
   const results = await new AxeBuilder({ page })
@@ -99,6 +100,31 @@ test.describe("homepage", () => {
     const graph = page.locator("#graph-container");
     await expect(graph).toHaveAttribute("aria-hidden", "true");
     await expect(graph).toHaveAttribute("inert", "");
+
+    const contactLinks = page
+      .getByRole("group", { name: "Contact and profile links" })
+      .getByRole("link");
+    await expect(contactLinks).toHaveCount(5);
+
+    const linkedin = page.getByRole("link", { name: "LinkedIn" });
+    await expect(linkedin.locator("svg")).toHaveClass(/linkedin-icon/);
+
+    const cv = page.getByRole("link", { name: "Curriculum vitae (PDF)" });
+    await expect(cv).toHaveAttribute("href", CV_PATH);
+    await expect(cv).toHaveAttribute("target", "_blank");
+    await expect(cv).toHaveAttribute("rel", /noopener/);
+
+    const contactBounds = await contactLinks.evaluateAll((links) =>
+      links.map((link) => link.getBoundingClientRect().toJSON()),
+    );
+    expect(contactBounds.every((bounds) => bounds.height >= 44)).toBe(true);
+    const contactWidths = contactBounds.map((bounds) => bounds.width);
+    expect(Math.max(...contactWidths) - Math.min(...contactWidths)).toBeLessThan(1);
+
+    const cvResponse = await page.request.get(CV_PATH);
+    expect(cvResponse.ok()).toBe(true);
+    expect(cvResponse.headers()["content-type"]).toMatch(/application\/pdf/i);
+    expect((await cvResponse.body()).subarray(0, 5).toString()).toBe("%PDF-");
 
     await expectNoAccessibilityViolations(page);
   });
