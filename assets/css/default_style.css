@@ -50,8 +50,28 @@ body {
 .btn-group > .btn {
     align-items: center;
     display: inline-flex;
+    flex: 1 1 0;
     justify-content: center;
-    min-height: 2.45rem;
+    min-height: 2.75rem;
+}
+
+.linkedin-icon {
+    width: 1.15rem;
+    height: 1.15rem;
+}
+
+.cv-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.15rem;
+    border: 0.09rem solid currentColor;
+    border-radius: 0.1rem;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
 }
 
 .contact-first {

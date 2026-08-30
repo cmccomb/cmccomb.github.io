@@ -18,6 +18,7 @@ github: cmccomb
 linkedin: ccmcc
 google_scholar: 0P9w_S0AAAAJ
 headshot: "/assets/images/headshot_optimized_square.jpg"
+cv_pdf: "/assets/files/Christopher-McComb-CV.pdf"
 
 exclude:
   - Gemfile
