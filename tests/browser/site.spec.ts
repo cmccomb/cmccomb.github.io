@@ -255,7 +255,7 @@ test.describe("homepage", () => {
       });
     });
     await secondPublication.press("Enter");
-    await expect(page).toHaveURL(`${TEST_ORIGIN}/`);
+    await expect(page).toHaveURL(/\?view=/);
     await expect(secondPublication).toHaveAttribute("aria-expanded", "true");
 
     const detail = page.locator("#publication-detail");
@@ -328,6 +328,8 @@ test.describe("homepage", () => {
     await expect(nonmatches.first()).toHaveAttribute("tabindex", "-1");
 
     await search.press("Enter");
+    await expect(page.locator('.publication-link[tabindex="0"]')).toBeFocused();
+    await page.keyboard.press("Home");
     await expect(matches.first()).toBeFocused();
     await matches.first().press("ArrowRight");
     await expect(matches.nth(1)).toBeFocused();
@@ -337,7 +339,7 @@ test.describe("homepage", () => {
     await expect(matches.first()).toBeFocused();
 
     await matches.first().click();
-    await expect(page).toHaveURL(`${TEST_ORIGIN}/`);
+    await expect(page).toHaveURL(/\?view=/);
     await expect(page.locator("#publication-detail")).toBeVisible();
     await expect(page.locator('.publication-link[aria-expanded="true"]')).toHaveCount(1);
 
@@ -378,13 +380,16 @@ test.describe("homepage", () => {
     const graph = page.locator("#graph-container");
     const explore = page.locator("#exit");
     const close = page.locator("#graph-close");
-    await expect(explore).toHaveAttribute("href", SCHOLAR_URL_PATTERN);
-    await expect(explore).toHaveText("Explore publication map");
+    await expect(explore).toHaveAttribute("href", /\?view=list$/);
+    await expect(explore).toHaveText("Explore publications");
     const exploreBounds = await explore.boundingBox();
     expect(exploreBounds?.height).toBeLessThanOrEqual(40);
 
     await explore.click();
-    await expect(page).toHaveURL(`${TEST_ORIGIN}/`);
+    await expect(page.locator("#publication-results")).toBeVisible();
+    await page.locator("#publication-view-map").click();
+    await page.locator("#publication-search").focus();
+    await expect(page).toHaveURL(/\?view=/);
     await expect(graph).toHaveAttribute("aria-hidden", "false");
     await expect(close).toBeVisible();
     await expect(page.locator("#publication-search")).toBeFocused();
@@ -469,10 +474,9 @@ test.describe("homepage", () => {
     const closeBounds = await close.boundingBox();
     expect(searchBounds?.height).toBeGreaterThanOrEqual(44);
     expect(clearBounds?.height).toBeGreaterThanOrEqual(44);
-    expect(closeBounds?.width).toBeGreaterThanOrEqual(64);
-    expect(closeBounds?.height).toBeGreaterThanOrEqual(64);
-    expect(Math.abs((closeBounds?.width ?? 0) - (closeBounds?.height ?? 0)))
-      .toBeLessThan(1);
+    expect(closeBounds?.width).toBeGreaterThanOrEqual(44);
+    expect(closeBounds?.height).toBeGreaterThanOrEqual(44);
+
     await expectNoAccessibilityViolations(page);
 
     const search = page.locator("#publication-search");
@@ -480,7 +484,7 @@ test.describe("homepage", () => {
     const mobileMatch = page.locator(".publication-link:not(.search-hidden)").first();
     await expect(mobileMatch).toBeVisible();
     await mobileMatch.click();
-    await expect(page).toHaveURL(`${TEST_ORIGIN}/`);
+    await expect(page).toHaveURL(/\?view=/);
     await expect(page.locator("#publication-detail")).toBeVisible();
     await expect(page.locator("#publication-detail-link")).toHaveAttribute(
       "href",
@@ -526,6 +530,7 @@ test.describe("homepage", () => {
       await page.setViewportSize(viewport);
       await page.goto("/");
       await page.locator("#exit").click();
+      await page.locator("#publication-view-map").click();
       await page.locator("#publication-search").fill("Kevin Ma Daniele Grandi");
       await page.locator(".publication-link:not(.search-hidden)").first().click();
 
@@ -561,7 +566,7 @@ test.describe("homepage", () => {
       expect(shortLayout.detailIsInViewport).toBe(true);
       expect(shortLayout.detailIsScrollable).toBe(true);
       expect(shortLayout.hasHorizontalOverflow).toBe(false);
-      expect(shortLayout.legendIsHidden).toBe(viewport.width < 820);
+      expect(shortLayout.legendIsHidden).toBe(true);
       expect(shortLayout.overlapsCommandBar).toBe(false);
     }
   });

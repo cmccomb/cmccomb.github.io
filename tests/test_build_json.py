@@ -307,3 +307,30 @@ def test_build_cluster_text_deduplicates_entries(
     text = build_json.build_cluster_text(citations, max_chars=50)
 
     assert text.count("Repeated abstract") == 1
+
+
+def test_build_payload_preserves_optional_paper_links(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A routine dataset refresh must retain available paper access metadata."""
+    frame = pandas.DataFrame([
+        {"embedding": [1.0, 0.0], "author_pub_id": "a:one", "pub_year": 2026,
+         "num_citations": 1, "bib_dict": {"title": "First paper"},
+         "pub_url": "https://doi.org/10.1234/example", "eprint_url": None},
+        {"embedding": [0.0, 1.0], "author_pub_id": "a:two", "pub_year": 2026,
+         "num_citations": 0, "bib_dict": {"title": "Second paper"},
+         "pub_url": None, "eprint_url": "https://arxiv.org/abs/2601.12345"},
+    ])
+    monkeypatch.setattr(build_json, "compute_projection", lambda *args, **kwargs:
+                        build_json.ProjectionResult(numpy.array([[0.0, 0.0], [1.0, 1.0]]), 1))
+    monkeypatch.setattr(build_json, "cluster_points_from_embeddings", lambda *args, **kwargs:
+                        build_json.ClusteringResult(numpy.array([0, 0]), "test", "test", 1))
+    monkeypatch.setattr(build_json, "ctfidf_labels", lambda *args, **kwargs: {})
+    monkeypatch.setattr(build_json, "summarize_clusters", lambda *args, **kwargs: [])
+    payload = build_json.build_payload(frame)
+    records = payload["records"]
+    assert records[0]["pub_url"] == "https://doi.org/10.1234/example"
+    assert "eprint_url" not in records[0]
+    assert records[1]["eprint_url"] == "https://arxiv.org/abs/2601.12345"
+    assert "pub_url" not in records[1]
+    json.dumps(payload, allow_nan=False)
+    without_links = build_json.build_payload(frame.drop(columns=["pub_url", "eprint_url"]))
+    assert len(without_links["records"]) == 2

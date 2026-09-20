@@ -5,7 +5,8 @@
   "scripts": {
     "test": "npm run test:browser",
     "test:browser": "playwright test",
-    "test:browser:headed": "playwright test --headed"
+    "test:browser:headed": "playwright test --headed",
+    "test:unit": "node --test tests/unit/*.test.cjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.12.1",

@@ -594,17 +594,22 @@ def build_payload(
     ctfidf = ctfidf_labels(citations, label_sequence)
     summaries = summarize_clusters(citations, label_sequence, ctfidf=ctfidf)
 
-    records = citations[
-        [
-            "x",
-            "y",
-            "author_pub_id",
-            "pub_year",
-            "num_citations",
-            "bib_dict",
-            "cluster_id",
-        ]
-    ].to_dict(orient="records")
+    record_columns = [
+        "x",
+        "y",
+        "author_pub_id",
+        "pub_year",
+        "num_citations",
+        "bib_dict",
+        "cluster_id",
+    ]
+    # Preserve source links so each quarterly refresh retains direct paper access.
+    resource_columns = [name for name in ("pub_url", "eprint_url", "doi") if name in citations]
+    records = citations[record_columns + resource_columns].to_dict(orient="records")
+    for record in records:
+        for name in resource_columns:
+            if not isinstance(record.get(name), str) or not record[name].strip():
+                record.pop(name, None)
 
     noise_fraction = float(numpy.mean(labels_array == -1)) if len(labels_array) else 0.0
 
