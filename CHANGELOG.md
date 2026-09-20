@@ -3,6 +3,15 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.3] - 2026-09-20
+
+### Improved
+
+- Replace the favicon with a bold charcoal C on a diagonal mauve-to-peach
+  gradient, matching the publication map palette.
+- Use the icon on the homepage, 404 page, and map download gallery, with
+  versioned URLs so new releases refresh the cached favicon.
+
 ## [0.2.2] - 2026-09-20
 
 ### Improved
