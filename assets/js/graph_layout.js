@@ -6,12 +6,17 @@
     const legendContainer = d3.select(".colorbar-legend");
     const sizeLegendContainer = d3.select(".size-legend");
     const statusElement = document.getElementById("graph-status");
+    const statusMessage = document.getElementById("graph-status-message");
+    const statusDismiss = document.getElementById("graph-status-dismiss");
+    const statusScholar = document.getElementById("graph-status-scholar");
     const graphContainer = document.getElementById("graph-container");
     const graphCommandBar = document.getElementById("graph-command-bar");
     const searchInput = document.getElementById("publication-search");
     const searchClearButton = document.getElementById("publication-search-clear");
     const searchStatus = document.getElementById("publication-search-status");
     const detailPanel = document.getElementById("publication-detail");
+    const detailBody = document.getElementById("publication-detail-body");
+    const mapViewport = document.getElementById("publication-map-viewport");
     const detailCloseButton = document.getElementById("publication-detail-close");
     const detailTitle = document.getElementById("publication-detail-title");
     const detailMeta = document.getElementById("publication-detail-meta");
@@ -34,6 +39,17 @@
         ["face to face", "design teams"],
     ]);
 
+    function updateToolbarGeometry() {
+        const bottom = graphCommandBar.getBoundingClientRect().bottom;
+        graphContainer.style.setProperty("--browser-content-top", `${bottom + 12}px`);
+    }
+    const toolbarObserver = new ResizeObserver(updateToolbarGeometry);
+    toolbarObserver.observe(graphCommandBar);
+    statusDismiss.addEventListener("click", () => {
+        statusElement.hidden = true;
+        searchInput.focus({ preventScroll: true });
+    });
+
     function showGraphError(error) {
         console.error("Unable to render publication graph", error);
         legendContainer.attr("hidden", true);
@@ -48,8 +64,18 @@
             searchStatus.textContent = "Publication search is unavailable.";
         }
         if (statusElement) {
-            statusElement.textContent = "The publication map is temporarily unavailable. Google Scholar is still available from the profile card.";
+            graphContainer.classList.add("data-unavailable");
+            resultsPanel.hidden = true;
+            emptyResults.hidden = true;
+            Object.values(viewButtons).forEach(button => {
+                button.disabled = true;
+                button.setAttribute("aria-pressed", "false");
+            });
+            statusMessage.textContent = "The publication browser is temporarily unavailable.";
+            statusDismiss.hidden = true;
+            statusScholar.hidden = false;
             statusElement.hidden = false;
+            updateToolbarGeometry();
         }
     }
 
@@ -374,13 +400,14 @@
             resultsPanel.querySelector(".publication-results-help").textContent = helpers.normalize(searchInput.value)
                 ? "Best matches first. Select a publication for details and links."
                 : "Newest first. Search to find a title, author, topic, or year.";
+            resultsPanel.querySelector(".publication-results-help").hidden = sorted.length === 0;
         }
 
         function setView(view, { save = true } = {}) {
             currentView = view === "list" ? "list" : "map";
             const layoutChanged = graphContainer.classList.contains("list-view") !== (currentView === "list");
             graphContainer.classList.toggle("list-view", currentView === "list");
-            resultsPanel.hidden = !graphIsActive() || currentView !== "list";
+            resultsPanel.hidden = !graphIsActive() || (currentView !== "list" && matchingPublicationIndices.length > 0);
             svg.attr("aria-hidden", graphIsActive() && currentView === "list" ? "true" : null);
             Object.entries(viewButtons).forEach(([name, button]) => {
                 button.setAttribute("aria-pressed", String(name === currentView));
@@ -407,7 +434,7 @@
                     showPublicationDetail(index, nodes[index]);
                     detailTitle.focus({ preventScroll: true });
                 } else {
-                    statusElement.textContent = "This publication is not in the current collection. Search or browse the publications below.";
+                    statusMessage.textContent = "This publication is not in the current collection. Search or browse the publications below.";
                     statusElement.hidden = false;
                 }
             }
@@ -422,11 +449,15 @@
         }
 
         async function copyText(text, successMessage) {
+            const copiedIndex = selectedPublicationIndex;
             resetCopyFeedback();
             try {
                 await navigator.clipboard.writeText(text);
+                if (selectedPublicationIndex !== copiedIndex) return;
                 copyStatus.textContent = successMessage;
+                copyStatus.scrollIntoView({ block: "nearest" });
             } catch {
+                if (selectedPublicationIndex !== copiedIndex) return;
                 copyStatus.textContent = "Automatic copy is unavailable. Select and copy the text below.";
                 copyFallback.value = text;
                 copyFallback.hidden = false;
@@ -524,6 +555,7 @@
         }
 
         function showPublicationDetail(index, node) {
+            statusElement.hidden = true;
             document.title = `${node.title} — ${profileTitle}`;
             selectedPublicationIndex = index;
             resetCopyFeedback();
@@ -566,6 +598,7 @@
 
             hideTooltip();
             setDetailVisibility(true);
+            detailBody.scrollTop = 0;
             writeLocation();
         }
 
@@ -610,6 +643,9 @@
             updateClusterLabelVisibility();
             renderList();
             emptyResults.hidden = !graphIsActive() || matchingPublicationIndices.length > 0;
+            graphContainer.classList.toggle("empty-results", matchingPublicationIndices.length === 0);
+            resultsPanel.hidden = !graphIsActive() || (currentView !== "list" && matchingPublicationIndices.length > 0);
+            hideTooltip();
 
             if (searchClearButton) {
                 searchClearButton.disabled = String(query || "").length === 0;
@@ -625,11 +661,7 @@
         }
 
         function getTooltipText(node) {
-            return [
-                formatAuthors(node.author),
-                `“${node.title}.”`,
-                node.citation,
-            ].filter(Boolean).join(" ");
+            return `${node.title} (${node.pub_year}). Topic: ${node.cluster_label}.`;
         }
 
         function positionTooltip(clientX, clientY) {
@@ -668,6 +700,14 @@
             }
             const target = event.currentTarget.querySelector(".publication-node")
                 || event.currentTarget;
+            const viewportBounds = mapViewport.getBoundingClientRect();
+            const targetBounds = target.getBoundingClientRect();
+            // Keep arrow-key navigation on the scrollable canvas visible.
+            const delta = (start, end, lower, upper) => start < lower ? start - lower : end > upper ? end - upper : 0;
+            mapViewport.scrollBy({
+                left: delta(targetBounds.left, targetBounds.right, viewportBounds.left + 8, viewportBounds.right - 8),
+                top: delta(targetBounds.top, targetBounds.bottom, viewportBounds.top + 8, viewportBounds.bottom - 8),
+            });
             const bounds = target.getBoundingClientRect();
             tooltip
                 .text(getTooltipText(node))
@@ -684,6 +724,7 @@
                 .attr("aria-hidden", "true")
                 .style("opacity", 0);
         }
+        mapViewport.addEventListener("scroll", hideTooltip);
 
         publicationControls
             .on("mousemove", showPointerTooltip)
@@ -784,6 +825,7 @@
                 return;
             }
             searchInput.value = "";
+            statusElement.hidden = true;
             applySearch("");
             writeLocation({ replace: true });
             searchInput.focus({ preventScroll: true });
@@ -801,26 +843,25 @@
             .attr("class", "cluster-label-layer")
             .attr("aria-hidden", "true");
         let simulation;
+        let renderedDimensions = "";
 
         function render() {
-            const containerBounds = graphContainer?.getBoundingClientRect();
-            const width = Math.max(1, Math.round(containerBounds?.width || window.innerWidth));
-            const height = Math.max(1, Math.round(containerBounds?.height || window.innerHeight));
+            hideTooltip();
+            updateToolbarGeometry();
+            if (!mapViewport.clientWidth || !mapViewport.clientHeight) return;
+            // Preserve readable labels and touch targets instead of squeezing the
+            // entire collection into a phone-sized plot.
+            const width = Math.max(1024, mapViewport.clientWidth);
+            const height = Math.max(720, mapViewport.clientHeight);
+            const dimensions = `${width},${height},${window.innerWidth}`;
+            if (dimensions === renderedDimensions) return;
+            renderedDimensions = dimensions;
             svg.attr("width", width)
                 .attr("height", height)
                 .attr("viewBox", `0 0 ${width} ${height}`);
 
-            const mapPadding = width <= 768 ? 24 : 40;
-            const commandBarBounds = graphCommandBar
-                ? graphCommandBar.getBoundingClientRect()
-                : null;
-            graphContainer.style.setProperty("--browser-content-top", `${(commandBarBounds?.bottom || 100) + 12}px`);
-            const topPadding = commandBarBounds
-                ? Math.min(
-                    height - mapPadding,
-                    Math.max(mapPadding, commandBarBounds.bottom + 16)
-                )
-                : mapPadding;
+            const mapPadding = 40;
+            const topPadding = mapPadding;
             const bottomCoordinate = Math.max(topPadding + 1, height - mapPadding);
             xScale.range([mapPadding, width - mapPadding]);
             yScale.range([bottomCoordinate, topPadding]);
@@ -835,15 +876,15 @@
 
             if (!simulation) {
                 simulation = d3.forceSimulation(nodes)
-                    .force("x", d3.forceX(node => node.x_orig).strength(1))
-                    .force("y", d3.forceY(node => node.y_orig).strength(1))
-                    .force("collide", d3.forceCollide(node => node.r + 1).strength(0.8))
+                    .force("x", d3.forceX(node => node.x_orig).strength(0.15))
+                    .force("y", d3.forceY(node => node.y_orig).strength(0.15))
+                    .force("collide", d3.forceCollide(node => node.r + 1).strength(1).iterations(3))
                     .stop();
             } else {
                 simulation
-                    .force("x", d3.forceX(node => node.x_orig).strength(1))
-                    .force("y", d3.forceY(node => node.y_orig).strength(1))
-                    .force("collide", d3.forceCollide(node => node.r + 1).strength(0.8));
+                    .force("x", d3.forceX(node => node.x_orig).strength(0.15))
+                    .force("y", d3.forceY(node => node.y_orig).strength(0.15))
+                    .force("collide", d3.forceCollide(node => node.r + 1).strength(1).iterations(3));
             }
 
             simulation.alpha(1).stop();
@@ -906,7 +947,8 @@
                         .attr("dominant-baseline", "middle");
                     return group;
                 });
-            mergedLabels.select("text").text(label => label.label);
+            mergedLabels.style("display", null).select("text").text(label => label.label);
+            const placedLabels = [];
             mergedLabels.each(function sizeAndPositionLabel(label) {
                 const group = d3.select(this);
                 const textNode = group.select("text").node();
@@ -923,13 +965,30 @@
                     labelMargin + labelWidth / 2,
                     Math.min(width - labelMargin - labelWidth / 2, label.x)
                 );
-                const clampedY = Math.max(
+                const preferredY = Math.max(
                     labelMargin + labelHeight / 2,
                     Math.min(height - labelMargin - labelHeight / 2, label.y)
                 );
+                // Move nearby labels apart; omit a label if no clear position is
+                // available. Every paper still exposes its topic in its details.
+                const offsets = [0, -1, 1, -2, 2, -3, 3, -4, 4];
+                const candidates = offsets.map(offset => {
+                    const y = preferredY + offset * (labelHeight + 8);
+                    return { left: clampedX - labelWidth / 2, right: clampedX + labelWidth / 2,
+                        top: y - labelHeight / 2, bottom: y + labelHeight / 2, y };
+                });
+                const position = candidates.find(candidate => (
+                    candidate.top >= labelMargin && candidate.bottom <= height - labelMargin
+                    && placedLabels.every(other => candidate.right + 6 <= other.left
+                        || candidate.left >= other.right + 6 || candidate.bottom + 6 <= other.top
+                        || candidate.top >= other.bottom + 6)
+                ));
+                group.style("display", position ? null : "none");
+                if (!position) return;
+                placedLabels.push(position);
 
                 group
-                    .attr("transform", `translate(${clampedX}, ${clampedY})`)
+                    .attr("transform", `translate(${clampedX}, ${position.y})`)
                     .select("rect")
                     .attr("x", boundingBox.x - horizontalPadding / 2)
                     .attr("y", boundingBox.y - verticalPadding / 2)
@@ -946,9 +1005,14 @@
             searchInput.disabled = false;
         }
         restorePublicationLocation();
+        Object.values(viewButtons).forEach(button => { button.disabled = false; });
+        const mapObserver = new ResizeObserver(render);
+        mapObserver.observe(mapViewport);
         d3.select(window).on("resize.graph", render);
         window.addEventListener("unload", () => {
             d3.select(window).on("resize.graph", null);
+            toolbarObserver.disconnect();
+            mapObserver.disconnect();
             simulation?.stop();
         });
     }).catch(showGraphError);

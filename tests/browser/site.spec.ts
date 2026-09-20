@@ -192,7 +192,8 @@ test.describe("homepage", () => {
         - (closeBounds?.y ?? 0)
         - (closeBounds?.height ?? 0),
     };
-    expect(Math.abs(closeInsets.left - closeInsets.top)).toBeLessThan(1);
+    expect(closeBounds?.width).toBe(44);
+    expect(closeBounds?.height).toBe(44);
     expect(Math.abs(closeInsets.left - closeInsets.bottom)).toBeLessThan(1);
     const searchBounds = await page.locator("#publication-search").boundingBox();
     expect(
@@ -413,15 +414,16 @@ test.describe("homepage", () => {
       const pointBounds = Array.from(
         document.querySelectorAll(".publication-node"),
       ).map((point) => point.getBoundingClientRect());
-      const labelsAreInViewport = Array.from(
+      const canvas = document.getElementById("publication-graph")!.getBoundingClientRect();
+      const labelsAreInCanvas = Array.from(
         document.querySelectorAll(".cluster-label"),
-      ).every((label) => {
+      ).filter(label => getComputedStyle(label).display !== "none").every((label) => {
         const bounds = label.getBoundingClientRect();
         return (
-          bounds.left >= 0
-          && bounds.top >= 0
-          && bounds.right <= viewportWidth
-          && bounds.bottom <= viewportHeight
+          bounds.left >= canvas.left
+          && bounds.top >= canvas.top
+          && bounds.right <= canvas.right
+          && bounds.bottom <= canvas.bottom
         );
       });
 
@@ -449,13 +451,13 @@ test.describe("homepage", () => {
         smallestPointTarget: Math.min(
           ...pointBounds.map((bounds) => Math.min(bounds.width, bounds.height)),
         ),
-        pointsAreInViewport: pointBounds.every((bounds) => (
-          bounds.left >= 0
-          && bounds.top >= 0
-          && bounds.right <= viewportWidth
-          && bounds.bottom <= viewportHeight
+        pointsAreInCanvas: pointBounds.every((bounds) => (
+          bounds.left >= canvas.left
+          && bounds.top >= canvas.top
+          && bounds.right <= canvas.right
+          && bounds.bottom <= canvas.bottom
         )),
-        labelsAreInViewport,
+        labelsAreInCanvas,
         viewportHeight,
         viewportWidth,
       };
@@ -467,8 +469,8 @@ test.describe("homepage", () => {
     expect(mobileLayout.hasHorizontalOverflow).toBe(false);
     expect(mobileLayout.pointsOverlapLegend).toBe(false);
     expect(mobileLayout.smallestPointTarget).toBeGreaterThanOrEqual(24);
-    expect(mobileLayout.pointsAreInViewport).toBe(true);
-    expect(mobileLayout.labelsAreInViewport).toBe(true);
+    expect(mobileLayout.pointsAreInCanvas).toBe(true);
+    expect(mobileLayout.labelsAreInCanvas).toBe(true);
     const searchBounds = await page.locator("#publication-search").boundingBox();
     const clearBounds = await page.locator("#publication-search-clear").boundingBox();
     const closeBounds = await close.boundingBox();
@@ -540,6 +542,7 @@ test.describe("homepage", () => {
           ?.getBoundingClientRect();
         const detailElement = document.getElementById("publication-detail");
         const detail = detailElement?.getBoundingClientRect();
+        const detailBody = document.getElementById("publication-detail-body");
         return {
           detailIsInViewport: Boolean(
             detail
@@ -549,8 +552,8 @@ test.describe("homepage", () => {
             && detail.bottom <= innerHeight
           ),
           detailIsScrollable: Boolean(
-            detailElement
-            && detailElement.scrollHeight > detailElement.clientHeight
+            detailBody
+            && detailBody.scrollHeight > detailBody.clientHeight
           ),
           hasHorizontalOverflow:
             document.documentElement.scrollWidth > document.documentElement.clientWidth,
