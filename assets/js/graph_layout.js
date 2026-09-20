@@ -17,6 +17,19 @@
     const detailMeta = document.getElementById("publication-detail-meta");
     const detailCitation = document.getElementById("publication-detail-citation");
     const detailLink = document.getElementById("publication-detail-link");
+    const profileTitle = document.title;
+    const helpers = window.PublicationHelpers;
+    const resultsPanel = document.getElementById("publication-results");
+    const resultsList = document.getElementById("publication-list");
+    const emptyResults = document.getElementById("publication-empty");
+    const viewButtons = {
+        list: document.getElementById("publication-view-list"),
+        map: document.getElementById("publication-view-map"),
+    };
+    const resourcesPanel = document.getElementById("publication-resources");
+    const copyStatus = document.getElementById("publication-copy-status");
+    const copyFallback = document.getElementById("publication-copy-fallback");
+    const copyFallbackLabel = document.getElementById("publication-copy-fallback-label");
     const legacyLabelCorrections = new Map([
         ["face to face", "design teams"],
     ]);
@@ -249,26 +262,28 @@
 
             return {
                 id: index,
+                record,
+                publicationId: record.author_pub_id,
                 x_data: record.x,
                 y_data: record.y,
                 pub_year: record.pub_year,
                 num_citations: record.num_citations,
                 color: colorScale(record.pub_year),
                 title,
-                citation,
+                citation: helpers.venue(record),
                 author,
                 abstract,
                 link: `https://scholar.google.com/citations?view_op=view_citation&citation_for_view=${encodeURIComponent(record.author_pub_id)}`,
                 cluster_id: record.cluster_id,
                 cluster_label: clusterLabel,
-                search_text: [
+                searchIndex: helpers.searchIndex([
                     title,
                     author,
                     citation,
                     abstract,
                     record.pub_year,
                     clusterLabel,
-                ].join(" ").toLowerCase(),
+                ], title),
                 x: 0,
                 y: 0,
                 x_orig: 0,
@@ -299,6 +314,144 @@
         let activePublicationIndex = 0;
         let selectedPublicationIndex = null;
         let clusterLabelLayer;
+        let currentView = window.matchMedia("(max-width: 768px)").matches ? "list" : "map";
+        let restoringLocation = false;
+        const listItems = nodes.map((node, index) => {
+            const item = document.createElement("li");
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "publication-result";
+            button.dataset.publicationId = node.publicationId;
+            button.setAttribute("aria-controls", "publication-detail");
+            button.setAttribute("aria-expanded", "false");
+            const title = document.createElement("span");
+            title.className = "publication-result-title";
+            title.textContent = node.title;
+            const authors = document.createElement("span");
+            authors.className = "publication-result-authors";
+            authors.textContent = formatAuthors(node.author);
+            const meta = document.createElement("span");
+            meta.className = "publication-result-meta";
+            meta.textContent = `${node.pub_year} · ${node.cluster_label} · ${node.num_citations} citation${node.num_citations === 1 ? "" : "s"}`;
+            button.append(title, authors, meta);
+            button.addEventListener("click", () => {
+                setRovingIndex(index);
+                showPublicationDetail(index, node);
+                detailTitle.focus({ preventScroll: true });
+            });
+            item.append(button);
+            return { item, button };
+        });
+
+        function writeLocation({ replace = false } = {}) {
+            if (restoringLocation || !graphIsActive()) return;
+            const url = new URL(window.location.href);
+            url.searchParams.set("view", currentView);
+            if (searchInput.value) url.searchParams.set("q", searchInput.value);
+            else url.searchParams.delete("q");
+            if (selectedPublicationIndex !== null) {
+                url.searchParams.set("paper", nodes[selectedPublicationIndex].publicationId);
+            } else url.searchParams.delete("paper");
+            if (url.href !== window.location.href) {
+                window.history[replace ? "replaceState" : "pushState"](null, "", url);
+            }
+        }
+
+        function renderList() {
+            const visible = new Set(matchingPublicationIndices);
+            listItems.forEach(({ item, button }, index) => {
+                item.hidden = !visible.has(index);
+                button.setAttribute("aria-expanded", String(index === selectedPublicationIndex));
+            });
+            const sorted = [...matchingPublicationIndices].sort((a, b) => (
+                helpers.searchScore(nodes[b].searchIndex, searchInput.value)
+                - helpers.searchScore(nodes[a].searchIndex, searchInput.value)
+                || nodes[b].pub_year - nodes[a].pub_year
+                || nodes[b].num_citations - nodes[a].num_citations
+                || nodes[a].title.localeCompare(nodes[b].title)
+            ));
+            sorted.forEach(index => resultsList.append(listItems[index].item));
+            resultsPanel.querySelector(".publication-results-help").textContent = helpers.normalize(searchInput.value)
+                ? "Best matches first. Select a publication for details and links."
+                : "Newest first. Search to find a title, author, topic, or year.";
+        }
+
+        function setView(view, { save = true } = {}) {
+            currentView = view === "list" ? "list" : "map";
+            const layoutChanged = graphContainer.classList.contains("list-view") !== (currentView === "list");
+            graphContainer.classList.toggle("list-view", currentView === "list");
+            resultsPanel.hidden = !graphIsActive() || currentView !== "list";
+            svg.attr("aria-hidden", graphIsActive() && currentView === "list" ? "true" : null);
+            Object.entries(viewButtons).forEach(([name, button]) => {
+                button.setAttribute("aria-pressed", String(name === currentView));
+            });
+            setRovingIndex(activePublicationIndex);
+            hideTooltip();
+            if (layoutChanged) render();
+            if (save) writeLocation();
+        }
+
+        function restorePublicationLocation() {
+            restoringLocation = true;
+            const params = new URLSearchParams(window.location.search);
+            searchInput.value = graphIsActive() ? (params.get("q") || "") : "";
+            clearPublicationDetail();
+            applySearch(searchInput.value);
+            setView(params.get("view") || (window.matchMedia("(max-width: 768px)").matches ? "list" : "map"), { save: false });
+            const id = params.get("paper");
+            const index = nodes.findIndex(node => node.publicationId === id);
+            statusElement.hidden = true;
+            if (graphIsActive() && id) {
+                if (index >= 0) {
+                    setRovingIndex(index);
+                    showPublicationDetail(index, nodes[index]);
+                    detailTitle.focus({ preventScroll: true });
+                } else {
+                    statusElement.textContent = "This publication is not in the current collection. Search or browse the publications below.";
+                    statusElement.hidden = false;
+                }
+            }
+            restoringLocation = false;
+        }
+
+        function resetCopyFeedback() {
+            copyStatus.textContent = "";
+            copyFallback.hidden = true;
+            copyFallbackLabel.hidden = true;
+            copyFallback.value = "";
+        }
+
+        async function copyText(text, successMessage) {
+            resetCopyFeedback();
+            try {
+                await navigator.clipboard.writeText(text);
+                copyStatus.textContent = successMessage;
+            } catch {
+                copyStatus.textContent = "Automatic copy is unavailable. Select and copy the text below.";
+                copyFallback.value = text;
+                copyFallback.hidden = false;
+                copyFallbackLabel.hidden = false;
+                copyFallback.focus();
+                copyFallback.select();
+            }
+        }
+        document.getElementById("publication-copy-link").addEventListener("click", () => {
+            if (selectedPublicationIndex === null) return;
+            const url = new URL(window.location.pathname, window.location.origin);
+            url.searchParams.set("view", currentView);
+            if (searchInput.value) url.searchParams.set("q", searchInput.value);
+            url.searchParams.set("paper", nodes[selectedPublicationIndex].publicationId);
+            copyText(url.href, "Publication link copied.");
+        });
+        document.getElementById("publication-copy-citation").addEventListener("click", () => {
+            if (selectedPublicationIndex !== null) {
+                copyText(helpers.citation(nodes[selectedPublicationIndex].record), "Citation copied.");
+            }
+        });
+        document.getElementById("publication-empty-clear").addEventListener("click", () => searchClearButton.click());
+        Object.entries(viewButtons).forEach(([view, button]) => {
+            button.addEventListener("click", () => setView(view));
+        });
 
         function graphIsActive() {
             return graphContainer?.classList.contains("graph-active") ?? false;
@@ -315,11 +468,13 @@
                 ? index
                 : matchingPublicationIndices[0];
             publicationControls.attr("tabindex", (_node, controlIndex) => (
-                graphIsActive() && controlIndex === activePublicationIndex ? 0 : -1
+                graphIsActive() && currentView === "map" && controlIndex === activePublicationIndex ? 0 : -1
             ));
 
             if (shouldFocus) {
-                publicationControlNodes[activePublicationIndex]?.focus({ preventScroll: true });
+                const target = currentView === "list" ? listItems[activePublicationIndex]?.button
+                    : publicationControlNodes[activePublicationIndex];
+                target?.focus({ preventScroll: currentView !== "list" });
             }
         }
 
@@ -333,12 +488,16 @@
         }
 
         function clearPublicationDetail({ restoreFocus = false } = {}) {
+            document.title = profileTitle;
             const previouslySelectedIndex = selectedPublicationIndex;
             selectedPublicationIndex = null;
             publicationControls
                 .classed("selected", false)
                 .attr("aria-expanded", "false");
             setDetailVisibility(false);
+            listItems.forEach(({ button }) => button.setAttribute("aria-expanded", "false"));
+            resourcesPanel.replaceChildren();
+            resetCopyFeedback();
 
             if (detailTitle) {
                 detailTitle.textContent = "";
@@ -361,10 +520,28 @@
             ) {
                 setRovingIndex(previouslySelectedIndex, true);
             }
+            if (restoreFocus) writeLocation();
         }
 
         function showPublicationDetail(index, node) {
+            document.title = `${node.title} — ${profileTitle}`;
             selectedPublicationIndex = index;
+            resetCopyFeedback();
+            listItems.forEach(({ button }, itemIndex) => button.setAttribute("aria-expanded", String(itemIndex === index)));
+            const abstract = document.getElementById("publication-abstract");
+            abstract.hidden = !node.abstract;
+            abstract.open = false;
+            document.getElementById("publication-detail-abstract").textContent = node.abstract;
+            resourcesPanel.replaceChildren();
+            helpers.resources(node.record).forEach(({ label, url }) => {
+                const link = document.createElement("a");
+                link.className = "btn btn-light";
+                link.textContent = label;
+                link.href = url;
+                link.target = "_blank";
+                link.rel = "noopener noreferrer";
+                resourcesPanel.append(link);
+            });
             publicationControls
                 .classed("selected", (_publication, controlIndex) => controlIndex === index)
                 .attr("aria-expanded", (_publication, controlIndex) => (
@@ -389,6 +566,7 @@
 
             hideTooltip();
             setDetailVisibility(true);
+            writeLocation();
         }
 
         function updateClusterLabelVisibility() {
@@ -406,11 +584,10 @@
         }
 
         function applySearch(query) {
-            const normalizedQuery = String(query || "").trim().toLowerCase();
-            const searchTerms = normalizedQuery.split(/\s+/).filter(Boolean);
+            const searchTerms = helpers.normalize(query).split(" ").filter(Boolean);
             matchingPublicationIndices = nodes
-                .map((node, index) => ({ node, index }))
-                .filter(({ node }) => searchTerms.every(term => node.search_text.includes(term)))
+                .map((node, index) => ({ node, index, score: helpers.searchScore(node.searchIndex, query) }))
+                .filter(({ score }) => score >= 0)
                 .map(({ index }) => index);
             const matchingSet = new Set(matchingPublicationIndices);
             const hasQuery = searchTerms.length > 0;
@@ -431,6 +608,8 @@
 
             setRovingIndex(activePublicationIndex);
             updateClusterLabelVisibility();
+            renderList();
+            emptyResults.hidden = !graphIsActive() || matchingPublicationIndices.length > 0;
 
             if (searchClearButton) {
                 searchClearButton.disabled = String(query || "").length === 0;
@@ -581,7 +760,9 @@
             });
 
         searchInput?.addEventListener("input", () => {
+            statusElement.hidden = true;
             applySearch(searchInput.value);
+            writeLocation({ replace: true });
         });
         searchInput?.addEventListener("keydown", event => {
             if (event.key !== "Enter") {
@@ -590,7 +771,12 @@
 
             event.preventDefault();
             if (matchingPublicationIndices.length > 0) {
-                setRovingIndex(matchingPublicationIndices[0], true);
+                const best = [...matchingPublicationIndices].sort((a, b) => (
+                    helpers.searchScore(nodes[b].searchIndex, searchInput.value)
+                    - helpers.searchScore(nodes[a].searchIndex, searchInput.value)
+                    || nodes[b].pub_year - nodes[a].pub_year
+                ))[0];
+                setRovingIndex(best, true);
             }
         });
         searchClearButton?.addEventListener("click", () => {
@@ -599,25 +785,15 @@
             }
             searchInput.value = "";
             applySearch("");
+            writeLocation({ replace: true });
             searchInput.focus({ preventScroll: true });
         });
         detailCloseButton?.addEventListener("click", () => {
             clearPublicationDetail({ restoreFocus: true });
         });
 
-        graphContainer?.addEventListener("publicationgraph:visibilitychange", event => {
-            if (event.detail?.isVisible) {
-                setRovingIndex(activePublicationIndex);
-                return;
-            }
-
-            if (searchInput) {
-                searchInput.value = "";
-            }
-            activePublicationIndex = 0;
-            applySearch("");
-            clearPublicationDetail();
-            publicationControls.attr("tabindex", -1);
+        graphContainer?.addEventListener("publicationgraph:visibilitychange", () => {
+            restorePublicationLocation();
             hideTooltip();
         });
 
@@ -638,6 +814,7 @@
             const commandBarBounds = graphCommandBar
                 ? graphCommandBar.getBoundingClientRect()
                 : null;
+            graphContainer.style.setProperty("--browser-content-top", `${(commandBarBounds?.bottom || 100) + 12}px`);
             const topPadding = commandBarBounds
                 ? Math.min(
                     height - mapPadding,
@@ -768,7 +945,7 @@
         if (searchInput) {
             searchInput.disabled = false;
         }
-        applySearch("");
+        restorePublicationLocation();
         d3.select(window).on("resize.graph", render);
         window.addEventListener("unload", () => {
             d3.select(window).on("resize.graph", null);

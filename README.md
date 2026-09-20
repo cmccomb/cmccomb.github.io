@@ -1,7 +1,27 @@
 # cmccomb.com
 
 Source for [cmccomb.com](https://cmccomb.com/), a single-page Jekyll profile
-with an interactive D3 publication map.
+with a searchable publication list and interactive D3 publication map.
+
+## Publication browsing
+
+- Desktop opens the map; phones open a list sorted by newest publication.
+  The List / Map controls preserve the search and selected paper.
+- Search normalizes punctuation, accents, and AI terminology; short terms such
+  as `AI` match whole words. List results prioritize title matches.
+- URLs carry `view`, `q`, and the stable Scholar publication ID in `paper`.
+  They support reload, bookmarks, and browser Back/Forward navigation.
+- Details include the available abstract, full venue metadata, source paper
+  links, Scholar, Copy link, and Copy citation. If clipboard access fails, a
+  selectable text field provides the same content.
+- Paper links are taken from the pinned source dataset, not guessed. The
+  current snapshot retains 230 `pub_url` values from its existing dataset
+  commit. The builder also preserves optional `eprint_url` and `doi` fields
+  when present in future source data. Publications without these fields keep
+  their Scholar link; a publisher URL is not a claim of open access.
+  DOI links are also extracted from known publisher URL formats when the DOI
+  is explicitly present in the source URL. ArXiv and similar preprint sources
+  are labeled separately from publisher pages.
 
 ## Architecture
 
@@ -48,6 +68,7 @@ Install the locked browser test dependencies and Chromium:
 ```bash
 npm ci
 npx playwright install chromium
+npm run test:unit
 npm run test:browser
 ```
 

@@ -59,6 +59,8 @@ jobs:
         run: |
           node --check assets/js/graph_layout.js
           node --check assets/js/interface.js
+          node --check assets/js/publication_helpers.js
+          node --test tests/unit/*.test.cjs
 
   browser:
     name: Browser accessibility
