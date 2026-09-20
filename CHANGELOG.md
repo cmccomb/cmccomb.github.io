@@ -3,6 +3,15 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.1.1] - 2026-09-20
+
+### Maintenance
+
+- Update Playwright to 1.63.0 and axe-core's Playwright integration to 4.13.0.
+- Update NumPy to 2.5.2 and setuptools to 84.0.0.
+- Move Python tooling to 3.12, satisfying NumPy's minimum version, and use one
+  `.python-version` file for CI, publication refreshes, and release publishing.
+
 ## [0.1.0] - 2026-09-20
 
 First release using three-part site versioning. This establishes the current
