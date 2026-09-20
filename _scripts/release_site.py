@@ -46,13 +46,16 @@ def github_json(endpoint: str, *, missing_ok: bool = False) -> dict | None:
     return json.loads(result.stdout)
 
 
-def publish_release(root: Path, repository: str, commit: str) -> None:
+def publish_release(root: Path, repository: str, commit: str, assets: tuple[Path, ...] = ()) -> None:
     """Create one release per version, without changing existing tags/releases."""
     version, notes = release_metadata(root)
     if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository):
         raise ValueError("Repository must use owner/name")
     if not re.fullmatch(r"[0-9a-f]{40}", commit):
         raise ValueError("Release target must be the full deployed commit SHA")
+    for asset in assets:
+        if not asset.is_file() or not asset.stat().st_size:
+            raise ValueError(f"Release asset is missing or empty: {asset}")
     tag = f"v{version}"
     prefix = f"repos/{repository}"
     existing = github_json(f"{prefix}/releases/tags/{tag}", missing_ok=True)
@@ -76,7 +79,8 @@ def publish_release(root: Path, repository: str, commit: str) -> None:
         notes_path = Path(directory) / "notes.md"
         notes_path.write_text(notes + "\n", encoding="utf-8")
         subprocess.run([
-            "gh", "release", "create", tag, "--repo", repository,
+            "gh", "release", "create", tag, *[str(asset.resolve()) for asset in assets],
+            "--repo", repository,
             "--target", commit, "--title", tag, "--notes-file", str(notes_path),
         ], check=True)
 
@@ -86,6 +90,7 @@ def main() -> int:
     parser.add_argument("--check", action="store_true", help="Validate without contacting GitHub")
     parser.add_argument("--repository")
     parser.add_argument("--commit")
+    parser.add_argument("--asset", type=Path, action="append", default=[], help="Attach a file to a new release; repeatable")
     args = parser.parse_args()
     if args.check:
         version, _ = release_metadata(ROOT)
@@ -93,7 +98,7 @@ def main() -> int:
     else:
         if not args.repository or not args.commit:
             parser.error("publishing requires --repository and --commit")
-        publish_release(ROOT, args.repository, args.commit)
+        publish_release(ROOT, args.repository, args.commit, tuple(args.asset))
     return 0
 
 

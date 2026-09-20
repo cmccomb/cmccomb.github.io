@@ -15,7 +15,7 @@ bundle exec jekyll serve
 ```
 
 Open <http://127.0.0.1:4000>. The committed publication data is enough to preview
-the complete site. Node.js and Python are needed only for tests or data work.
+the core site. Node.js also compiles the map downloads; Python handles data work.
 See [Development](docs/development.md) for setup, checks, and troubleshooting.
 
 ## Documentation
@@ -25,6 +25,7 @@ See [Development](docs/development.md) for setup, checks, and troubleshooting.
 | [Development](docs/development.md) | Runtime versions, local preview, test commands, failure reports |
 | [Architecture](docs/architecture.md) | Directory map, rendering, browser state, responsive behavior |
 | [Publication data](docs/publication-data.md) | Sources, JSON structure, provenance, graph regeneration |
+| [Map exports](docs/map-exports.md) | Social and slide formats, local compilation, gallery, release bundles |
 | [Maintenance](docs/maintenance.md) | Routine edits, dependency updates, deployment, rollback |
 | [Changelog](CHANGELOG.md) | Version history and GitHub release notes |
 | [Contributing](CONTRIBUTING.md) | Change and review workflow |
@@ -43,6 +44,7 @@ See [Development](docs/development.md) for setup, checks, and troubleshooting.
 | List, map, and publication details | [graph_layout.js](assets/js/graph_layout.js) |
 | Profile navigation and view preference | [interface.js](assets/js/interface.js) |
 | Publication snapshot | [Data workflow](docs/publication-data.md), then [pubs.json](assets/json/pubs.json) |
+| Downloadable map formats and themes | [map_exports.cjs](_scripts/map_exports.cjs); [live gallery](https://cmccomb.com/assets/maps/) |
 | AI-readable site guide | [llms.txt](llms.txt), published at [/llms.txt](https://cmccomb.com/llms.txt) |
 
 ## Delivery and licensing
@@ -51,8 +53,8 @@ Pull requests run the site build, publication-data checks, and browser tests.
 A successful CI run for a push to `master` triggers deployment of that exact
 commit. Publication refreshes propose changes through pull requests.
 After deployment, a new site version receives a GitHub Release with its changelog
-notes; an existing version's release stays unchanged.
+notes and a map-download ZIP; an existing version's release stays unchanged.
 See [Maintenance](docs/maintenance.md) for the full release path.
 
-The repository uses the [MIT license](LICENSE.md). Vendored browser assets and
-icon attributions are listed in [Third-party notices](THIRD_PARTY_NOTICES.md).
+The repository uses the [MIT license](LICENSE.md). Vendored assets, export fonts,
+and icon attributions are listed in [Third-party notices](THIRD_PARTY_NOTICES.md).
