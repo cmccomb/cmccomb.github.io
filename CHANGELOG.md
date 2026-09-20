@@ -3,6 +3,13 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.2] - 2026-09-20
+
+### Improved
+
+- Give the publication search field and selected List/Map control a muted
+  mauve-to-peach gradient, with readable dark text and a matching focus ring.
+
 ## [0.2.1] - 2026-09-20
 
 ### Improved
