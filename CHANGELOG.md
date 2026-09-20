@@ -3,6 +3,15 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.1] - 2026-09-20
+
+### Improved
+
+- Show the search toolbar in the blurred List background while keeping the
+  preview inert and hidden from assistive technology.
+- Remove the dot between the site version and update date in the shared footer
+  and map download gallery.
+
 ## [0.2.0] - 2026-09-20
 
 ### Added

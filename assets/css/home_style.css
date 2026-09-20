@@ -84,6 +84,11 @@
     display: inline-flex !important;
 }
 
+#graph-container.blur[data-publication-view="list"] .graph-command-bar[hidden] {
+    /* Preview the complete list layout; the parent stays inert and aria-hidden. */
+    visibility: visible;
+}
+
 .graph-command-bar .graph-close {
     position: static;
     display: inline-flex;
