@@ -15,8 +15,14 @@
         || !publicationDetail || !publicationDetailClose || !publicationSearch
         || !publicationSearchClear || !profile || !footer) return;
 
-    const defaultView = () => window.matchMedia("(max-width: 768px)").matches ? "list" : "map";
-    exploreButton.href = `?view=${defaultView()}`;
+    const compactViewport = window.matchMedia("(max-width: 768px)");
+    const defaultView = () => compactViewport.matches ? "list" : "map";
+    let preferredView = null;
+
+    function updateView(view) {
+        graphContainer.dataset.publicationView = view;
+        exploreButton.href = `?view=${view}`;
+    }
 
     function setRegionVisibility(element, isVisible) {
         element.hidden = !isVisible;
@@ -26,6 +32,9 @@
     function restoreLocation({ focus = false } = {}) {
         const params = new URLSearchParams(window.location.search);
         const isVisible = params.has("view") || params.has("paper") || params.has("q");
+        const requestedView = params.get("view");
+        if (requestedView === "list" || requestedView === "map") preferredView = requestedView;
+        updateView(preferredView || defaultView());
         setRegionVisibility(profile, !isVisible);
         setRegionVisibility(footer, !isVisible);
         graphContainer.inert = !isVisible;
@@ -48,7 +57,7 @@
         if (event.button !== 0 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
         event.preventDefault();
         const url = new URL(window.location.href);
-        url.searchParams.set("view", defaultView());
+        url.searchParams.set("view", preferredView || defaultView());
         window.history.pushState(null, "", url);
         restoreLocation({ focus: true });
     });
@@ -66,5 +75,12 @@
         else graphCloseButton.click();
     });
     window.addEventListener("popstate", () => restoreLocation({ focus: true }));
+    graphContainer.addEventListener("publicationgraph:viewchange", event => {
+        preferredView = event.detail.view;
+        updateView(preferredView);
+    });
+    compactViewport.addEventListener("change", () => {
+        if (!preferredView && !graphContainer.classList.contains("graph-active")) restoreLocation();
+    });
     restoreLocation();
 })();

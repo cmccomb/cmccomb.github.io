@@ -351,8 +351,13 @@
 .publication-map { position: absolute; inset: 0; display: flex; flex-direction: column; }
 .publication-map-help { color: #ced4da; font-size: 0.8rem; margin: 0 0 0.5rem; }
 .publication-map-viewport { flex: 1 1 0; min-height: 0; overflow: auto; overscroll-behavior: contain; }
+#graph-container.blur .publication-map-viewport,
+#graph-container.blur .publication-results { overflow: hidden; }
+#graph-container.blur .publication-map-help,
+#graph-container.blur .publication-results-help,
+#graph-container.blur .graph-status { visibility: hidden; }
 #publication-graph { display: block; max-width: none; }
-#graph-container.list-view.graph-active .publication-map,
+#graph-container.list-view .publication-map,
 #graph-container.empty-results.graph-active .publication-map,
 #graph-container.data-unavailable .publication-map,
 #graph-container.list-view .graph-legends,
@@ -383,9 +388,22 @@
 .publication-results-help { color: #ced4da; font-size: 0.85rem; }
 #publication-list { list-style: none; padding: 0; margin: 0; }
 #publication-list li { margin-bottom: 0.75rem; }
-.publication-result { display: block; width: 100%; padding: 1rem 1.1rem; text-align: left; color: #f8f9fa; background: #2b3035; border: 1px solid #6c757d; border-radius: 0.65rem; }
+.publication-result {
+    display: block;
+    width: 100%;
+    padding: 1rem 1.1rem;
+    text-align: left;
+    color: #f8f9fa;
+    background-color: #23282d;
+    background-image: linear-gradient(110deg,
+        rgba(81, 18, 124, 0.45), rgba(183, 55, 121, 0.32) 48%,
+        rgba(252, 137, 97, 0.24) 75%, rgba(252, 253, 191, 0.14));
+    border: 1px solid #6c757d;
+    border-radius: 0.65rem;
+    box-shadow: inset 4px 0 0 var(--publication-accent, #6c757d);
+}
 .publication-result:hover,
-.publication-result[aria-expanded="true"] { background: #383f46; border-color: #f8f9fa; }
+.publication-result[aria-expanded="true"] { background-color: #383f46; border-color: #f8f9fa; }
 .publication-result-title { display: block; font-size: 1.08rem; line-height: 1.4; font-weight: 600; }
 .publication-result-authors,
 .publication-result-meta { display: block; margin-top: 0.4rem; font-size: 0.85rem; line-height: 1.45; color: #ced4da; }
