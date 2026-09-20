@@ -66,12 +66,21 @@ body {
     justify-content: center;
     width: 1.25rem;
     height: 1.15rem;
-    border: 0.09rem solid currentColor;
+    border: 0.09rem solid #212529;
+    background: #212529;
+    color: #fff;
     border-radius: 0.1rem;
     font-size: 0.65rem;
     font-weight: 800;
     letter-spacing: -0.02em;
     line-height: 1;
+}
+
+.btn-outline-dark:hover .cv-icon,
+.btn-outline-dark:focus-visible .cv-icon {
+    border-color: #fff;
+    background: #fff;
+    color: #212529;
 }
 
 .contact-first {
