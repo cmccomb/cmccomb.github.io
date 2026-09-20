@@ -1,0 +1,10 @@
+<footer aria-hidden="false" class="footer mt-auto py-3" id="footer">
+    <div class="container footer-meta">
+        <span>&copy; {{ site.time | date: '%Y' }} {{ site.author | remove: ', Ph.D.' | escape }}</span>
+        <span class="footer-release">
+            <span>v{{ site.data.release.version | escape }}</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Updated <time datetime="{{ site.data.release.last_updated | escape }}">{{ site.data.release.last_updated | date: '%b %-d, %Y' }}</time></span>
+        </span>
+    </div>
+</footer>

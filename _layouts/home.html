@@ -152,11 +152,7 @@
     </div>
 </main>
 
-<footer aria-hidden="false" class="footer mt-auto py-3" id="footer">
-    <div class="container text-center">
-        <span class="text-muted">&copy; {{ site.time | date: '%Y' }} {{ site.author | remove: ', Ph.D.' }}</span>
-    </div>
-</footer>
+{% include footer.html %}
 <script defer src="{{ '/assets/js/interface.js' | relative_url }}"></script>
 
 </body>

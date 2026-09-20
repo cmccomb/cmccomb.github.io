@@ -24,10 +24,6 @@
         </div>
     </section>
 </main>
-<footer class="footer mt-auto py-3" id="footer">
-    <div class="container text-center">
-        <span class="text-muted">&copy; {{ site.time | date: '%Y' }} {{ site.author | remove: ', Ph.D.' | escape }}</span>
-    </div>
-</footer>
+{% include footer.html %}
 </body>
 </html>

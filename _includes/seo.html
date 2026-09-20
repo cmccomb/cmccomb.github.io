@@ -39,6 +39,7 @@
 <meta content="{{ seo_image_url | escape }}" name="twitter:image">
 <meta content="Headshot of {{ site.person_name | default: site.author | escape }}" name="twitter:image:alt">
 {%- unless page.noindex %}
+<link href="{{ '/llms.txt' | relative_url }}" rel="describedby" type="text/plain">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

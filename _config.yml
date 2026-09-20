@@ -21,6 +21,8 @@ headshot: "/assets/images/headshot_optimized_square.jpg"
 cv_pdf: "/assets/files/Christopher-McComb-CV.pdf"
 
 exclude:
+  - CHANGELOG.md
+  - CONTRIBUTING.md
   - Gemfile
   - Gemfile.lock
   - LICENSE.md
@@ -28,6 +30,7 @@ exclude:
   - SECURITY.md
   - THIRD_PARTY_NOTICES.md
   - comb.gemspec
+  - docs
   - node_modules
   - package-lock.json
   - package.json
