@@ -155,12 +155,16 @@ test("profile preview follows the responsive default and reveals the same list",
   await expect(page.locator("#publication-search")).toBeEnabled();
   await expect(page.locator("#publication-graph")).toBeVisible();
   await expect(page.locator("#publication-results")).toBeHidden();
+  await expect(page.locator("#graph-command-bar")).toBeHidden();
 
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator("#exit")).toHaveAttribute("href", /view=list$/);
   await expect(page.locator("#publication-results")).toBeVisible();
   await expect(page.locator("#publication-graph")).toBeHidden();
   await expect(page.locator("#graph-container")).toHaveAttribute("inert", "");
+  await expect(page.locator("#publication-search")).toBeVisible();
+  await expect(page.getByRole("searchbox")).toHaveCount(0);
+  await expect(page.locator("#graph-command-bar")).toHaveAttribute("aria-hidden", "true");
   await expect(page.getByRole("button", { name: /Taylor Series Error Correction/ })).toHaveCount(0);
   const first = page.locator(".publication-result").first();
   const previewBounds = await first.boundingBox();
@@ -184,6 +188,7 @@ test("chosen view persists behind the profile without background scrollbars afte
     await page.setViewportSize(viewport);
     await expect(page.locator("#publication-results")).toHaveCSS("overflow-y", "hidden");
     await expect(page.locator("#exit")).toHaveAttribute("href", /view=list$/);
+    await expect(page.locator("#publication-search")).toBeVisible();
   }
   await page.locator("#exit").click();
   await expect(page.locator("#publication-results")).toHaveCSS("overflow-y", "auto");
@@ -195,6 +200,7 @@ test("chosen view persists behind the profile without background scrollbars afte
     await expect(page.locator("#publication-results")).toBeHidden();
     await expect(page.locator("#publication-map-viewport")).toHaveCSS("overflow", "hidden");
     await expect(page.locator("#exit")).toHaveAttribute("href", /view=map$/);
+    await expect(page.locator("#graph-command-bar")).toBeHidden();
   }
   await page.locator("#exit").click();
   await expect(page.locator("#publication-map-viewport")).toHaveCSS("overflow", "auto");

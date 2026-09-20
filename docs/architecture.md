@@ -78,7 +78,8 @@ when the user chooses a view. The two modules share the current view through
 Before an explicit choice, widths up to 768 px default to List; larger viewports
 default to Map. An explicit choice is remembered during the current page visit,
 including a return to the profile. It is not stored across visits. The blurred
-profile background uses the selected view and remains inert, hidden from
+profile background uses the selected view, including the search toolbar in List,
+and remains inert, hidden from
 assistive technology, and clipped to prevent background scrollbars.
 
 ## Layout and accessibility

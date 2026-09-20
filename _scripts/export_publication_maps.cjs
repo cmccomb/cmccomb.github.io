@@ -30,7 +30,7 @@ ${FORMATS.map(format => `<section aria-labelledby="${format.id}"><h2 id="${forma
         const title = `${theme[0].toUpperCase() + theme.slice(1)} background`;
         return `<article class="variant"><a class="preview" href="${item.files.png.path}"><img src="${item.files.png.path}" width="${format.width}" height="${format.height}" loading="lazy" alt="${xml(format.name)} publication map on a ${theme} background"></a><div class="links"><h3>${title}</h3><nav aria-label="${xml(format.name)} ${theme} downloads"><a href="${item.files.png.path}" download>PNG</a><a href="${item.files.png2x.path}" download>PNG · 2×</a><a href="${item.files.svg.path}" download>SVG</a></nav></div></article>`;
     }).join("")}</div></section>`).join("\n")}
-<footer>Site v${xml(manifest.version)} · Updated ${xml(manifest.updated)} · Publication data from ${xml(manifest.dataBuiltAt.slice(0, 10))}.
+<footer>Site v${xml(manifest.version)} &ensp; Updated ${xml(manifest.updated)} · Publication data from ${xml(manifest.dataBuiltAt.slice(0, 10))}.
 <p>Color shows publication year; circle size shows citations. Layouts adapt to each aspect ratio. <a href="README.txt">Usage and data notes</a> · <a href="manifest.json">Export details</a></p></footer>
 </main></body></html>\n`;
 }
