@@ -148,3 +148,55 @@ test("unsafe resource metadata cannot become an executable link", async ({ page 
   await expect(page.locator("#publication-resources a")).toHaveCount(0);
   await expect(page.locator("#publication-detail-link")).toHaveAttribute("href", /^https:\/\/scholar.google.com/);
 });
+
+test("profile preview follows the responsive default and reveals the same list", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await expect(page.locator("#publication-search")).toBeEnabled();
+  await expect(page.locator("#publication-graph")).toBeVisible();
+  await expect(page.locator("#publication-results")).toBeHidden();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.locator("#exit")).toHaveAttribute("href", /view=list$/);
+  await expect(page.locator("#publication-results")).toBeVisible();
+  await expect(page.locator("#publication-graph")).toBeHidden();
+  await expect(page.locator("#graph-container")).toHaveAttribute("inert", "");
+  await expect(page.getByRole("button", { name: /Taylor Series Error Correction/ })).toHaveCount(0);
+  const first = page.locator(".publication-result").first();
+  const previewBounds = await first.boundingBox();
+  const previewID = await first.getAttribute("data-publication-id");
+  await page.locator("#exit").click();
+  await expect(page.locator("#publication-view-list")).toHaveAttribute("aria-pressed", "true");
+  expect(await first.getAttribute("data-publication-id")).toBe(previewID);
+  const revealedBounds = await first.boundingBox();
+  expect(Math.abs(revealedBounds!.y - previewBounds!.y)).toBeLessThan(1);
+  await noAxeViolations(page);
+});
+
+test("chosen view persists behind the profile without background scrollbars after resizing", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/?view=list");
+  await expect(page.locator("#publication-results")).toBeVisible();
+  await page.locator("#graph-close").click();
+  await expect(page.locator("#publication-results")).toBeVisible();
+  await expect(page.locator("#publication-graph")).toBeHidden();
+  for (const viewport of [{ width: 390, height: 844 }, { width: 1024, height: 500 }]) {
+    await page.setViewportSize(viewport);
+    await expect(page.locator("#publication-results")).toHaveCSS("overflow-y", "hidden");
+    await expect(page.locator("#exit")).toHaveAttribute("href", /view=list$/);
+  }
+  await page.locator("#exit").click();
+  await expect(page.locator("#publication-results")).toHaveCSS("overflow-y", "auto");
+  await page.locator("#publication-view-map").click();
+  await page.locator("#graph-close").click();
+  for (const viewport of [{ width: 390, height: 340 }, { width: 820, height: 1180 }, { width: 1280, height: 360 }]) {
+    await page.setViewportSize(viewport);
+    await expect(page.locator("#publication-graph")).toBeVisible();
+    await expect(page.locator("#publication-results")).toBeHidden();
+    await expect(page.locator("#publication-map-viewport")).toHaveCSS("overflow", "hidden");
+    await expect(page.locator("#exit")).toHaveAttribute("href", /view=map$/);
+  }
+  await page.locator("#exit").click();
+  await expect(page.locator("#publication-map-viewport")).toHaveCSS("overflow", "auto");
+  await expect(page.locator("#publication-view-map")).toHaveAttribute("aria-pressed", "true");
+});

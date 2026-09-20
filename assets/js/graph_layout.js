@@ -348,6 +348,7 @@
             button.type = "button";
             button.className = "publication-result";
             button.dataset.publicationId = node.publicationId;
+            button.style.setProperty("--publication-accent", node.color);
             button.setAttribute("aria-controls", "publication-detail");
             button.setAttribute("aria-expanded", "false");
             const title = document.createElement("span");
@@ -407,15 +408,20 @@
             currentView = view === "list" ? "list" : "map";
             const layoutChanged = graphContainer.classList.contains("list-view") !== (currentView === "list");
             graphContainer.classList.toggle("list-view", currentView === "list");
-            resultsPanel.hidden = !graphIsActive() || (currentView !== "list" && matchingPublicationIndices.length > 0);
-            svg.attr("aria-hidden", graphIsActive() && currentView === "list" ? "true" : null);
+            resultsPanel.hidden = currentView !== "list" && (!graphIsActive() || matchingPublicationIndices.length > 0);
+            svg.attr("aria-hidden", currentView === "list" ? "true" : null);
             Object.entries(viewButtons).forEach(([name, button]) => {
                 button.setAttribute("aria-pressed", String(name === currentView));
             });
             setRovingIndex(activePublicationIndex);
             hideTooltip();
             if (layoutChanged) render();
-            if (save) writeLocation();
+            if (save) {
+                graphContainer.dispatchEvent(new CustomEvent("publicationgraph:viewchange", {
+                    detail: { view: currentView },
+                }));
+                writeLocation();
+            }
         }
 
         function restorePublicationLocation() {
@@ -424,7 +430,7 @@
             searchInput.value = graphIsActive() ? (params.get("q") || "") : "";
             clearPublicationDetail();
             applySearch(searchInput.value);
-            setView(params.get("view") || (window.matchMedia("(max-width: 768px)").matches ? "list" : "map"), { save: false });
+            setView(graphContainer.dataset.publicationView || (window.matchMedia("(max-width: 768px)").matches ? "list" : "map"), { save: false });
             const id = params.get("paper");
             const index = nodes.findIndex(node => node.publicationId === id);
             statusElement.hidden = true;
@@ -644,7 +650,7 @@
             renderList();
             emptyResults.hidden = !graphIsActive() || matchingPublicationIndices.length > 0;
             graphContainer.classList.toggle("empty-results", matchingPublicationIndices.length === 0);
-            resultsPanel.hidden = !graphIsActive() || (currentView !== "list" && matchingPublicationIndices.length > 0);
+            resultsPanel.hidden = currentView !== "list" && (!graphIsActive() || matchingPublicationIndices.length > 0);
             hideTooltip();
 
             if (searchClearButton) {
