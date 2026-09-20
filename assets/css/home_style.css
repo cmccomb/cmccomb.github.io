@@ -54,6 +54,7 @@
 }
 
 .graph-command-bar {
+    --publication-control-fill: linear-gradient(110deg, #e4b7d8 0%, #f6bdb0 55%, #fbd39c 100%);
     position: absolute;
     z-index: 7;
     top: 1rem;
@@ -163,6 +164,30 @@
 
 .graph-search-input {
     min-width: 0;
+    color: #212529;
+    caret-color: #212529;
+    background: var(--publication-control-fill);
+    border-color: #c7a4b6;
+}
+
+.graph-search-input::placeholder {
+    color: #534553;
+    opacity: 1;
+}
+
+.graph-search-input:focus {
+    color: #212529;
+    background: var(--publication-control-fill);
+    border-color: #f4b4dc;
+    box-shadow: 0 0 0 0.2rem rgba(232, 133, 181, 0.32);
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+
+.graph-search-input:focus-visible { outline-color: #f4b4dc; }
+
+@media (forced-colors: active) {
+    .graph-search-input:focus { outline-color: Highlight; }
 }
 
 .graph-search-clear {
@@ -375,7 +400,7 @@
     box-shadow: inset 0 0 0 1px #6c757d;
 }
 .publication-view-controls .btn { min-height: 2.75rem; color: #f8f9fa; }
-.publication-view-controls .btn[aria-pressed="true"] { color: #101214; background: #f8f9fa; }
+.publication-view-controls .btn[aria-pressed="true"] { color: #212529; background: var(--publication-control-fill); }
 .graph-command-bar .btn:focus-visible,
 .publication-result:focus-visible { outline: 3px solid #a9ceff; outline-offset: 2px; box-shadow: none; }
 #publication-results[hidden],
