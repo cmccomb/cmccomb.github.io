@@ -35,9 +35,6 @@
     const copyStatus = document.getElementById("publication-copy-status");
     const copyFallback = document.getElementById("publication-copy-fallback");
     const copyFallbackLabel = document.getElementById("publication-copy-fallback-label");
-    const legacyLabelCorrections = new Map([
-        ["face to face", "design teams"],
-    ]);
 
     function updateToolbarGeometry() {
         const bottom = graphCommandBar.getBoundingClientRect().bottom;
@@ -94,8 +91,7 @@
     }
 
     function displayClusterLabel(label) {
-        const value = String(label || "").trim();
-        return legacyLabelCorrections.get(value.toLowerCase()) || value;
+        return helpers.displayClusterLabel(label);
     }
 
     d3.json("assets/json/pubs.json").then(rawPayload => {

@@ -62,7 +62,6 @@ jobs:
           node --check assets/js/graph_layout.js
           node --check assets/js/interface.js
           node --check assets/js/publication_helpers.js
-          node --test tests/unit/*.test.cjs
 
   browser:
     name: Browser accessibility
@@ -82,14 +81,23 @@ jobs:
         with:
           node-version: "24"
           cache: npm
-      - name: Install browser test dependencies
+      - name: Install JavaScript dependencies
         run: npm ci
-      - name: Audit browser test dependencies
+      - name: Audit JavaScript dependencies
         run: npm audit --audit-level=moderate
+      - name: Test JavaScript helpers and map exports
+        run: npm run test:unit
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run browser accessibility tests
         run: npm run test:browser
+      - name: Upload map previews for review
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: publication-map-previews
+          path: _site/assets/maps/publication-maps.zip
+          if-no-files-found: error
+          retention-days: 7
       - name: Upload browser failure report
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

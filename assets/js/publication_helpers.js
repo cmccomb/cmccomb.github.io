@@ -12,6 +12,11 @@
             .trim().replace(/\s+/g, " ");
     }
 
+    function displayClusterLabel(label) {
+        const value = String(label || "").trim();
+        return value.toLowerCase() === "face to face" ? "design teams" : value;
+    }
+
     function termsMatch(words, term) {
         return words.some(word => word === term || (term.length >= 4 && word.startsWith(term)));
     }
@@ -113,7 +118,7 @@
         ].filter(Boolean).join(" ");
     }
 
-    const helpers = { normalize, searchIndex, searchScore, safeURL, doiURL, publisherDOI, resources, authors, venue, citation };
+    const helpers = { normalize, displayClusterLabel, searchIndex, searchScore, safeURL, doiURL, publisherDOI, resources, authors, venue, citation };
     if (typeof module !== "undefined" && module.exports) module.exports = helpers;
     else root.PublicationHelpers = helpers;
 })(typeof window !== "undefined" ? window : globalThis);

@@ -71,6 +71,35 @@ def test_existing_release_is_unchanged_on_later_deploy(release_root, monkeypatch
     mutation.assert_not_called()
 
 
+def test_new_release_attaches_the_deployed_map_archive(release_root, monkeypatch):
+    asset = release_root / "publication-maps.zip"
+    asset.write_bytes(b"archive")
+    monkeypatch.setattr(release_site, "github_json", Mock(return_value=None))
+    mutation = Mock()
+    monkeypatch.setattr(release_site.subprocess, "run", mutation)
+    release_site.publish_release(release_root, "example/site", COMMIT, (asset,))
+    assert str(asset.resolve()) in mutation.call_args.args[0]
+
+
+def test_missing_release_asset_fails_before_any_github_request(release_root, monkeypatch):
+    api = Mock()
+    monkeypatch.setattr(release_site, "github_json", api)
+    with pytest.raises(ValueError, match="missing or empty"):
+        release_site.publish_release(release_root, "example/site", COMMIT,
+                                     (release_root / "missing.zip",))
+    api.assert_not_called()
+
+
+def test_existing_release_assets_are_not_replaced(release_root, monkeypatch):
+    asset = release_root / "publication-maps.zip"
+    asset.write_bytes(b"new archive")
+    monkeypatch.setattr(release_site, "github_json", Mock(return_value={"draft": False}))
+    mutation = Mock()
+    monkeypatch.setattr(release_site.subprocess, "run", mutation)
+    release_site.publish_release(release_root, "example/site", COMMIT, (asset,))
+    mutation.assert_not_called()
+
+
 def test_existing_draft_is_not_silently_treated_as_published(release_root, monkeypatch):
     monkeypatch.setattr(release_site, "github_json", Mock(return_value={"draft": True}))
     with pytest.raises(RuntimeError, match="draft release"):

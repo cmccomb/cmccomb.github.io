@@ -7,6 +7,8 @@ The site has three stages: Python prepares a committed publication snapshot,
 Jekyll builds static files, and JavaScript renders the publication browser.
 There is no application server or browser-side model inference. Bootstrap CSS
 and D3 are vendored, so the page does not fetch them from a CDN.
+During deployment, Node also compiles the publication snapshot into downloadable
+images and a gallery, then adds them to the static output after Jekyll.
 
 ## Repository map
 
@@ -22,14 +24,14 @@ and D3 are vendored, so the page does not fetch them from a CDN.
 | `assets/json/pubs.json` | Committed publication records, clusters, and build provenance |
 | `assets/images/`, `assets/files/` | Profile images, icons, and the public CV PDF |
 | `assets/vendor/` | Browser dependencies and their licenses |
-| `_scripts/` | Graph builder, snapshot validator, release publisher, Python requirements, and preview helper |
+| `_scripts/` | Graph builder, snapshot validator, map exports and vendored font, release publisher, Python requirements, and preview helper |
 | `tests/` | Python fixtures/tests, JavaScript unit tests, and Playwright browser tests |
 | `.github/` | CI, deployment, publication refresh, dependency updates, PR template |
 | `docs/`, `CONTRIBUTING.md` | Repository guides, excluded from the built website |
 | `llms.txt`, `robots.txt`, `sitemap.xml` | Public discovery files rendered by Jekyll |
 | `Gemfile`, `comb.gemspec`, `Gemfile.lock` | Ruby dependencies; the gemspec retains the site's original theme packaging |
 
-`_site/`, `.venv/`, `node_modules/`, and test reports are local generated output.
+`_site/`, `_map_exports/`, `.venv/`, `node_modules/`, and test reports are local generated output.
 Jekyll exclusions in `_config.yml` and Git ignores have different jobs:
 excluding a file from Git does not, by itself, exclude it from the built site.
 
@@ -42,7 +44,7 @@ profile/navigation behavior.
 
 | Module | Owns |
 | --- | --- |
-| [`publication_helpers.js`](../assets/js/publication_helpers.js) | Search normalization/ranking, citation formatting, source link validation; also loaded by Node unit tests |
+| [`publication_helpers.js`](../assets/js/publication_helpers.js) | Search normalization/ranking, topic-label corrections, citation formatting, source link validation; shared with Node tests and exports |
 | [`graph_layout.js`](../assets/js/graph_layout.js) | Snapshot loading, map/list rendering, search, selection, details, clipboard behavior, legends, keyboard movement, resizing |
 | [`interface.js`](../assets/js/interface.js) | Profile visibility, navigation history, focus restoration, Escape behavior, responsive default and remembered view |
 

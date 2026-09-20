@@ -59,7 +59,8 @@ the same release path as a normal code change.
    check the relevant profile, List, Map, search, and detail states. For
    `llms.txt`, fetch the deployed text and verify its links and rendered values.
    For a new version, also verify the release notes and tag's target commit on
-   [GitHub Releases](https://github.com/cmccomb/cmccomb.github.io/releases).
+   [GitHub Releases](https://github.com/cmccomb/cmccomb.github.io/releases), including
+   its map ZIP. For map changes, inspect the [download gallery](https://cmccomb.com/assets/maps/).
 
 The [Actions history](https://github.com/cmccomb/cmccomb.github.io/actions)
 records CI and deployment results. Match the deployed workflow's head SHA to
@@ -94,7 +95,9 @@ For each new site version:
 After Pages deploys successfully, its release job checks out the same tested
 commit and runs [`release_site.py`](../_scripts/release_site.py). A version
 without a release gets a GitHub Release and tag targeting that commit. Its notes
-come only from the matching changelog entry. A later deployment with the same
+come only from the matching changelog entry. The publisher also attaches the
+map ZIP produced by that deployment's build job; it does not regenerate the
+archive in the release job. See [Map exports](map-exports.md). A later deployment with the same
 version leaves the existing release unchanged. Older tags/releases, including
 the legacy `v0.1`, remain untouched.
 
@@ -107,7 +110,7 @@ The `--check` mode is read-only; invoking the script with `--repository` and
 
 ## Dependencies
 
-Ruby dependencies are locked in `Gemfile.lock`, browser test dependencies in
+Ruby dependencies are locked in `Gemfile.lock`, browser test and map export dependencies in
 `package-lock.json`, and Python versions in `_scripts/requirements*.txt`.
 The supported Python runtime lives in `.python-version`; CI, graph refreshes,
 and release publishing all read that file.

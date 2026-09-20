@@ -48,7 +48,7 @@ npm run test:browser
 
 On a Linux machine that also needs browser system libraries, use
 `npx playwright install --with-deps chromium` for the browser installation step.
-Playwright performs a strict production build and starts its own server at
+Playwright performs a strict production build, compiles the map downloads, and starts its own server at
 `127.0.0.1:4173`. Keep that port free; the suite intentionally does not reuse an
 existing server. Ruby and Bundler must be available in the same shell.
 
@@ -62,7 +62,7 @@ npm run test:browser:headed
 ```
 
 `npm test` runs the browser suite; run `npm run test:unit` separately for the
-pure JavaScript helpers. Local failures retain screenshots and traces in
+JavaScript helpers and map exports. Local failures retain screenshots and traces in
 `test-results/`. CI also uploads an HTML `playwright-report` artifact on failure.
 After downloading and extracting that artifact, open it with
 `npx playwright show-report playwright-report`.
@@ -100,6 +100,7 @@ calls and never create tags or releases.
 | Search, citation formatting, resource URLs | JavaScript unit tests and publication-browser tests |
 | Builder, schema, or publication snapshot | Python tests, snapshot validator, and browser suite for changed data |
 | Dependencies or workflows | Affected local checks plus the complete PR CI run |
+| Map exports or download gallery | JavaScript unit tests, gallery browser tests, and visual inspection of PNGs; see [Map exports](map-exports.md) |
 
 CI runs the full configured checks regardless of which local checks are selected.
 For a complete local pass, use the build, JavaScript, browser, and Python commands

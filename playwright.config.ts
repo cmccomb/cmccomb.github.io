@@ -26,7 +26,7 @@ export default defineConfig({
   ],
   webServer: {
     command:
-      "JEKYLL_ENV=production bundle exec jekyll build --strict_front_matter --disable-disk-cache && exec bundle exec jekyll serve --skip-initial-build --no-watch --disable-disk-cache --host 127.0.0.1 --port 4173",
+      "JEKYLL_ENV=production bundle exec jekyll build --strict_front_matter --disable-disk-cache && npm run export:maps -- --output _site/assets/maps && exec bundle exec jekyll serve --skip-initial-build --no-watch --disable-disk-cache --host 127.0.0.1 --port 4173",
     url: "http://127.0.0.1:4173",
     reuseExistingServer: false,
     timeout: 120_000,

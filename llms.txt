@@ -21,6 +21,7 @@ The publication collection is a committed snapshot. Its JSON contains `records` 
 
 - [Publication metadata]({{ '/assets/json/pubs.json' | absolute_url }}): Structured publication records, available abstracts and source links, citation counts, map coordinates, and provenance.
 - [Publication browser]({{ '/?view=list' | absolute_url }}): Searchable list with paper details and links; also offers an interactive topic map.
+- [Map downloads]({{ '/assets/maps/' | absolute_url }}): Publication maps sized for social media and slides, with PNGs, scalable SVGs, and snapshot provenance.
 - [Google Scholar](https://scholar.google.com/citations?user={{ site.google_scholar }}): Scholar profile and publication records.
 - [Source dataset](https://huggingface.co/datasets/ccm/publications): Upstream publication metadata and embeddings used to build the site's snapshot.
 

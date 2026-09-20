@@ -3,6 +3,20 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.0] - 2026-09-20
+
+### Added
+
+- Automatically compile publication maps for LinkedIn profile banners, landscape,
+  square and portrait social posts, and 16:9 and 4:3 slides.
+- Include dark and light themes, native and 2× PNGs, and scalable SVGs with
+  outlined typography. Each layout preserves every paper and topic, avoids
+  overlaps, and uses the live map's year palette and topic labels.
+- Publish a [map download gallery](https://cmccomb.com/assets/maps/) and ZIP bundle
+  on each deployment; attach that deployment's bundle to each new GitHub Release.
+- Record snapshot provenance, dimensions, and checksums alongside the exports,
+  with automated geometry, bundle, and gallery accessibility checks.
+
 ## [0.1.1] - 2026-09-20
 
 ### Maintenance
