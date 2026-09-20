@@ -114,12 +114,29 @@ body {
 }
 
 #footer {
+    color: #8c969f;
+    font-size: 0.75rem;
+    line-height: 1.5;
     position: relative;
+    text-align: center;
     z-index: 1;
 }
 
-#footer .text-muted {
-    color: #adb5bd !important;
+.footer-meta,
+.footer-release {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.75rem;
+    justify-content: center;
+}
+
+.footer-release {
+    gap: 0.35rem;
+}
+
+.footer-release > span:last-child {
+    white-space: nowrap;
 }
 
 p {
