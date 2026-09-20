@@ -349,11 +349,9 @@
 .publication-content { position: relative; flex: 1 1 0; min-height: 0; margin: 0 var(--browser-gutter); }
 .list-view .publication-content { margin-inline: var(--browser-inset); }
 .publication-map { position: absolute; inset: 0; display: flex; flex-direction: column; }
-.publication-map-help { color: #ced4da; font-size: 0.8rem; margin: 0 0 0.5rem; }
 .publication-map-viewport { flex: 1 1 0; min-height: 0; overflow: auto; overscroll-behavior: contain; }
 #graph-container.blur .publication-map-viewport,
 #graph-container.blur .publication-results { overflow: hidden; }
-#graph-container.blur .publication-map-help,
 #graph-container.blur .publication-results-help,
 #graph-container.blur .graph-status { visibility: hidden; }
 #publication-graph { display: block; max-width: none; }
