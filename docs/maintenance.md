@@ -109,6 +109,8 @@ The `--check` mode is read-only; invoking the script with `--repository` and
 
 Ruby dependencies are locked in `Gemfile.lock`, browser test dependencies in
 `package-lock.json`, and Python versions in `_scripts/requirements*.txt`.
+The supported Python runtime lives in `.python-version`; CI, graph refreshes,
+and release publishing all read that file.
 External Actions use immutable SHAs. Keep release comments next to those SHAs
 accurate when updating them.
 

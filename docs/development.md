@@ -4,7 +4,8 @@
 [Publication data](publication-data.md) · [Maintenance](maintenance.md)
 
 Run commands below from the repository root. The versions used in CI are
-Ruby 3.3 (from [`.ruby-version`](../.ruby-version)), Node.js 24, and Python 3.11.
+Ruby 3.3 (from [`.ruby-version`](../.ruby-version)), Node.js 24, and Python 3.12
+(from [`.python-version`](../.python-version)).
 The lockfile was generated with Bundler 2.6.9; use Bundler 2.6 for the documented setup.
 Use the committed lockfiles and pinned Python requirements.
 
@@ -68,10 +69,12 @@ After downloading and extracting that artifact, open it with
 
 ## Python checks
 
-Create a Python 3.11 environment for graph development and tests:
+Create a Python 3.12 environment for graph development and tests. NumPy 2.5
+requires Python 3.12 or newer; recreate an existing 3.11 environment before
+installing the updated requirements.
 
 ```bash
-python3.11 -m venv .venv
+python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install --requirement _scripts/requirements-dev.txt
 python -m pytest
