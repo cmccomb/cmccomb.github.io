@@ -146,7 +146,7 @@ test("tooltip is dismissed on resize and fits the new viewport when reopened", a
 
 test("data failure disables unavailable views and offers Google Scholar directly", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 256 });
-  await page.route("**/assets/json/pubs.json", route => route.abort());
+  await page.route("**/assets/json/pubs.json**", route => route.abort());
   await page.goto("/?view=list");
   await expect(page.locator("#graph-status-message")).toContainText("temporarily unavailable");
   await expect(page.locator("#publication-view-list")).toBeDisabled();

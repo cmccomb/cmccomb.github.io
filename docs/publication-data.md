@@ -35,6 +35,10 @@ K-means in reduced embedding space, refines clusters in projection space, and
 labels them with coverage-aware class-based TF-IDF. It writes the snapshot
 atomically. The browser adjusts positions for its viewport and avoids label
 collisions; stored coordinates are the input to that layout.
+Generated labels with incomplete grammatical edges are rejected. A reviewed
+label applies only to an exact cluster membership, so it cannot silently follow
+a different group after the next scrape. Inspect every proposed topic in the
+quarterly refresh PR; grammatical checks cannot establish topical accuracy.
 
 ## Snapshot structure
 
@@ -81,7 +85,9 @@ so do not expect a byte-identical JSON file.
 Before committing the snapshot, inspect its record count, source commit,
 available links, topic labels, and visual map/list behavior. Run the browser
 suite when publishing changed data. Commit the generated JSON alongside any
-builder/schema changes so the site and tests use the same contract.
+builder/schema changes so the site and tests use the same contract. A changed
+snapshot also needs a new site version, update date, and changelog entry; the
+quarterly workflow prepares these in its PR and CI enforces the version bump.
 
 ## Validation and freshness
 

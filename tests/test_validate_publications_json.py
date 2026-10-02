@@ -58,3 +58,13 @@ def test_nonfinite_coordinate_fails() -> None:
 
     with pytest.raises(SnapshotValidationError, match="invalid x coordinate"):
         validate_payload(payload)
+
+
+def test_incomplete_topic_label_fails() -> None:
+    """A fragment must not be published as a map topic."""
+
+    payload = valid_payload()
+    payload["clusters"][0]["label"] = "market in"  # type: ignore[index]
+
+    with pytest.raises(SnapshotValidationError, match="incomplete topic label"):
+        validate_payload(payload)

@@ -33,6 +33,11 @@ from sklearn.decomposition import PCA  # type: ignore[import-untyped]
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer  # type: ignore[import-untyped]
 from sklearn.manifold import TSNE  # type: ignore[import-untyped]
 
+if __package__:
+    from .topic_labels import curated_label, suitable_label
+else:  # pragma: no cover - direct script execution
+    from topic_labels import curated_label, suitable_label
+
 LOGGER = logging.getLogger(__name__)
 
 DEFAULT_RANDOM_STATE = 42
@@ -333,19 +338,30 @@ def ctfidf_labels(
 
     labels_out: Dict[int, str] = {}
     for index, cluster_id in enumerate(cluster_ids):
+        cluster_records = df[df["cluster_id"] == cluster_id]
+        reviewed = curated_label(cluster_records["author_pub_id"])
+        if reviewed is not None:
+            labels_out[cluster_id] = reviewed
+            continue
+
         row = tfidf_matrix[index].toarray().ravel()
         if row.sum() == 0:
             continue
-        cluster_records = df[df["cluster_id"] == cluster_id]
         minimum_coverage = _minimum_label_coverage(len(cluster_records))
         ranked_indices = row.argsort()[::-1]
         for candidate_index in ranked_indices:
             candidate = vocabulary[candidate_index]
-            if _phrase_document_coverage(candidate, cluster_records) >= minimum_coverage:
+            if (
+                suitable_label(candidate)
+                and _phrase_document_coverage(candidate, cluster_records)
+                >= minimum_coverage
+            ):
                 labels_out[cluster_id] = candidate
                 break
         else:
-            labels_out[cluster_id] = vocabulary[ranked_indices[0]]
+            raise ValueError(
+                f"Cluster {cluster_id} has no suitable, sufficiently supported topic label"
+            )
 
     return labels_out
 
