@@ -94,7 +94,9 @@
         return helpers.displayClusterLabel(label);
     }
 
-    d3.json("assets/json/pubs.json").then(rawPayload => {
+    const publicationURL = new URL("assets/json/pubs.json", document.baseURI);
+    publicationURL.searchParams.set("v", graphContainer.dataset.siteVersion);
+    d3.json(publicationURL.toString()).then(rawPayload => {
         const rawRecords = Array.isArray(rawPayload?.records)
             ? rawPayload.records
             : Array.isArray(rawPayload)

@@ -3,6 +3,22 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.4] - 2026-10-02
+
+### Data
+
+- Publish the October quarterly graph refresh with 262 publications.
+- Replace the incomplete “market in” topic with the reviewed “design decisions” label.
+
+### Maintenance
+
+- Advance the site release with future publication data refreshes, and require
+  a new version whenever the committed graph changes.
+- Reject incomplete generated topic phrases before they reach the site.
+- Load publication data with a release-versioned URL so refreshed pages bypass
+  cached copies of an older graph.
+- Refresh the pinned Python and GitHub Actions dependencies.
+
 ## [0.2.3] - 2026-09-20
 
 ### Improved

@@ -40,6 +40,7 @@ jobs:
       - name: Check out tested revision
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 0
           persist-credentials: false
       - name: Set up Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -53,6 +54,13 @@ jobs:
         run: python -m pytest
       - name: Validate site version and release notes
         run: python _scripts/release_site.py --check
+      - name: Require a release for changed publication data
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [[ -n "$BASE_SHA" && "$BASE_SHA" != "0000000000000000000000000000000000000000" ]]; then
+            python _scripts/data_release.py check --base "$BASE_SHA"
+          fi
       - name: Audit Python dependencies
         run: python -m pip_audit --local
       - name: Validate committed publication snapshot

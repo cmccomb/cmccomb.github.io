@@ -3,6 +3,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 
 const snapshot = JSON.parse(readFileSync("assets/json/pubs.json", "utf8"));
+const release = JSON.parse(readFileSync("_data/release.json", "utf8"));
 const paper = snapshot.records[0];
 const paperQuery = "Conceptual Design Generation";
 const deepURL = `/?view=list&q=${encodeURIComponent(paperQuery)}&paper=${encodeURIComponent(paper.author_pub_id)}`;
@@ -18,7 +19,9 @@ async function noAxeViolations(page: Page) {
 }
 
 test("list and map retain search, normalize punctuation, and rank titles first", async ({ page }) => {
+  const dataRequest = page.waitForRequest(request => new URL(request.url()).pathname.endsWith("/assets/json/pubs.json"));
   await page.goto("/");
+  expect(new URL((await dataRequest).url()).searchParams.get("v")).toBe(release.version);
   await page.locator("#exit").click();
   await expect(page.locator("#publication-view-map")).toHaveAttribute("aria-pressed", "true");
   await page.locator("#publication-view-list").click();
@@ -79,7 +82,7 @@ for (const viewport of [{ width: 390, height: 844 }, { width: 320, height: 568 }
 }
 
 test("deep links survive refresh, dataset reordering, and back/forward", async ({ page }) => {
-  await page.route("**/assets/json/pubs.json", route => route.fulfill({ json: {
+  await page.route("**/assets/json/pubs.json**", route => route.fulfill({ json: {
     ...snapshot, records: [...snapshot.records].reverse(),
   } }));
   await page.goto(deepURL);
@@ -140,7 +143,7 @@ test("copy failure has a selectable fallback and invalid paper URLs are recovera
 });
 
 test("unsafe resource metadata cannot become an executable link", async ({ page }) => {
-  await page.route("**/assets/json/pubs.json", route => route.fulfill({ json: {
+  await page.route("**/assets/json/pubs.json**", route => route.fulfill({ json: {
     ...snapshot, records: [{ ...paper, pub_url: "javascript:alert(1)", eprint_url: "data:text/html,<script>alert(1)</script>" }],
   } }));
   await page.goto(deepURL);

@@ -15,6 +15,7 @@ from sklearn.cluster import KMeans  # type: ignore[import-untyped]
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from _scripts import build_json
+from _scripts.topic_labels import curated_label, suitable_label
 
 
 @pytest.fixture(scope="session")
@@ -237,6 +238,21 @@ def test_ctfidf_labels_prioritises_cluster_wide_phrases() -> None:
     phrases = build_json.ctfidf_labels(citations, labels.tolist())
 
     assert phrases[0] == "design teams"
+
+
+def test_reviewed_october_topic_survives_regeneration() -> None:
+    """Keep the reviewed label while this cluster has the same publications."""
+
+    snapshot_path = Path(__file__).resolve().parents[1] / "assets/json/pubs.json"
+    snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
+    records = pandas.DataFrame(snapshot["records"])
+    labels = records["cluster_id"].tolist()
+    cluster_records = records[records["cluster_id"] == 10]
+
+    assert curated_label(cluster_records["author_pub_id"]) == "design decisions"
+    assert build_json.ctfidf_labels(records, labels)[10] == "design decisions"
+    assert not suitable_label("market in")
+    assert not suitable_label("work we")
 
 
 def test_summarize_clusters_uses_ctfidf_labels(

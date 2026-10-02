@@ -9,6 +9,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+if __package__:
+    from .topic_labels import suitable_label
+else:  # pragma: no cover - direct script execution
+    from topic_labels import suitable_label
+
 
 class SnapshotValidationError(ValueError):
     """Raised when the publication snapshot is unsafe or incomplete."""
@@ -34,6 +39,21 @@ def validate_payload(payload: Any, *, max_age_days: int | None = None) -> None:
         metadata.get("record_count") == len(records),
         "Metadata record count does not match snapshot",
     )
+
+    cluster_ids: set[int] = set()
+    for index, cluster in enumerate(clusters):
+        _require(isinstance(cluster, dict), f"Cluster {index} is not an object")
+        cluster_id = cluster.get("id")
+        label = cluster.get("label")
+        _require(
+            isinstance(cluster_id, int) and cluster_id not in cluster_ids,
+            f"Cluster {index} has an invalid or duplicate id",
+        )
+        _require(
+            isinstance(label, str) and suitable_label(label),
+            f"Cluster {index} has an incomplete topic label",
+        )
+        cluster_ids.add(cluster_id)
 
     publication_ids: set[str] = set()
     for index, record in enumerate(records):

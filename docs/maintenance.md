@@ -44,9 +44,11 @@ published accidentally.
 | [Dependabot](../.github/dependabot.yml) | Monthly Ruby, Python, npm, and GitHub Actions update proposals |
 
 The refresh proposal job updates its controlled automation branch, opens or
-updates the PR, and explicitly dispatches CI for that branch. Review its data
-diff as described in [Publication data](publication-data.md). Merging it follows
-the same release path as a normal code change.
+updates the PR, and explicitly dispatches CI for that branch. It also advances
+the patch version and adds dated changelog notes when the graph changes. Review
+the data, topic labels, and release notes as described in
+[Publication data](publication-data.md). Merging it follows the same release
+path as a normal code change.
 
 ## Release and verify
 
@@ -91,6 +93,12 @@ For each new site version:
    the changes since the prior version. Keep older entries intact.
 3. Run `python _scripts/release_site.py --check` and the relevant site checks.
 4. Follow the release and verification steps above.
+
+The quarterly graph workflow prepares the patch bump and changelog entry in
+its data PR. CI rejects a publication JSON change without a newer site version
+or with an update date older than the graph build. Curate the proposed notes and
+topic labels before merging. The footer date changes only after that PR reaches
+the deployed `master` revision.
 
 After Pages deploys successfully, its release job checks out the same tested
 commit and runs [`release_site.py`](../_scripts/release_site.py). A version

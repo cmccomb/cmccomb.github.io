@@ -14,12 +14,13 @@
     <link href="{{ '/assets/css/home_style.css' | relative_url }}" rel="stylesheet">
     <script defer src="{{ '/assets/vendor/d3/d3.v7.9.0.min.js' | relative_url }}"></script>
     <script defer src="{{ '/assets/js/publication_helpers.js' | relative_url }}"></script>
-    <script defer src="{{ '/assets/js/graph_layout.js' | relative_url }}"></script>
+    <script defer src="{{ '/assets/js/graph_layout.js' | relative_url }}?v={{ site.data.release.version | escape }}"></script>
 </head>
 <body class="bg-dark d-flex flex-column">
 
 <div aria-hidden="true" aria-label="Publication browser"
-     class="container-fluid blur unselectable p-0" id="graph-container" inert role="region">
+     class="container-fluid blur unselectable p-0" data-site-version="{{ site.data.release.version | escape }}"
+     id="graph-container" inert role="region">
     <div aria-hidden="true" class="graph-command-bar" hidden id="graph-command-bar">
         <button aria-label="Back to profile" class="btn graph-close"
                 hidden id="graph-close" title="Back to profile" type="button">
