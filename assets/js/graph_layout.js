@@ -243,11 +243,21 @@
                     radiusExtent[0] + (radiusExtent[1] - radiusExtent[0]) / 4,
                     radiusExtent[1],
                 ];
-            const positions = values.length === 1 ? [70] : [20, 70, 116];
+            const radii = values.map(value => radiusScale(value));
+            const firstCenter = 20;
+            const lastCenter = 116;
+            const positions = values.length === 1
+                ? [sizeLegendWidth / 2]
+                : [
+                    firstCenter,
+                    // Match the gaps between circle edges as the radii change.
+                    (firstCenter + radii[0] + lastCenter - radii[2]) / 2,
+                    lastCenter,
+                ];
             const legendEntries = values.map((value, index) => ({
                 value,
                 x: positions[index],
-                radius: radiusScale(value),
+                radius: radii[index],
             }));
             const sizeKeys = sizeLegendSvg.selectAll("g.citation-size-key")
                 .data(legendEntries, entry => entry.value)
