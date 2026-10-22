@@ -266,7 +266,7 @@
             sizeKeys.attr("transform", entry => `translate(${entry.x}, 35)`);
             sizeKeys.select("circle").attr("r", entry => entry.radius);
             sizeKeys.select("text")
-                .attr("y", 33)
+                .attr("y", 34)
                 .text(entry => d3.format(",d")(Math.round(entry.value)));
             sizeLegendContainer.attr(
                 "aria-label",
