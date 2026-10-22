@@ -126,18 +126,23 @@ test("map labels and circles do not overlap, and keyboard focus scrolls into vie
 test("tooltip is dismissed on resize and fits the new viewport when reopened", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/?view=map");
-  await page.locator(".publication-link").first().focus();
-  await expect(page.locator("#publication-tooltip")).toHaveAttribute("aria-hidden", "false");
+  const firstPaper = snapshot.records[0];
+  const firstPublication = page.locator(".publication-link").first();
+  const tooltip = page.locator("#publication-tooltip");
+  await firstPublication.focus();
+  await expect(tooltip).toHaveAttribute("aria-hidden", "false");
+  await expect(tooltip).toHaveText(`${firstPaper.bib_dict.title} (${firstPaper.pub_year}).`);
+  await expect(firstPublication).toHaveAttribute("aria-label", /; topic .+; show publication details/i);
   await page.setViewportSize({ width: 320, height: 568 });
-  await expect(page.locator("#publication-tooltip")).toHaveAttribute("aria-hidden", "true");
+  await expect(tooltip).toHaveAttribute("aria-hidden", "true");
   await page.locator("#publication-search").focus();
-  await page.locator(".publication-link").first().focus();
+  await firstPublication.focus();
   // Focusing an off-screen paper scrolls the canvas; refocus after that scroll.
-  await expect(page.locator(".publication-link").first()).toBeInViewport();
+  await expect(firstPublication).toBeInViewport();
   await page.locator("#publication-search").focus();
-  await page.locator(".publication-link").first().focus();
-  await expect(page.locator("#publication-tooltip")).toHaveAttribute("aria-hidden", "false");
-  const box = await page.locator("#publication-tooltip").boundingBox();
+  await firstPublication.focus();
+  await expect(tooltip).toHaveAttribute("aria-hidden", "false");
+  const box = await tooltip.boundingBox();
   expect(box!.width).toBeGreaterThan(250);
   expect(box!.x).toBeGreaterThanOrEqual(0);
   expect(box!.x + box!.width).toBeLessThanOrEqual(320);

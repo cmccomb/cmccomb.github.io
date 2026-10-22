@@ -255,6 +255,45 @@ def test_reviewed_october_topic_survives_regeneration() -> None:
     assert not suitable_label("work we")
 
 
+def test_reviewed_design_methods_topic_resolves_october_duplicate() -> None:
+    """Keep AM on the stronger cluster and preserve the reviewed broad topic."""
+
+    snapshot_path = Path(__file__).resolve().parents[1] / "assets/json/pubs.json"
+    snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
+    records = pandas.DataFrame(snapshot["records"])
+    labels = records["cluster_id"].tolist()
+    cluster_records = records[records["cluster_id"] == 0]
+
+    assert curated_label(cluster_records["author_pub_id"]) == "design methods"
+    generated = build_json.ctfidf_labels(records, labels)
+    assert generated[0] == "design methods"
+    assert generated[5] == "additive manufacturing"
+    assert len(set(generated.values())) == len(generated)
+
+
+def test_ctfidf_labels_rejects_duplicate_topics(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A future duplicate must require review before graph publication."""
+
+    citations = pandas.DataFrame([
+        {"author_pub_id": "a", "bib_dict": {"title": "Lattice design methods"}},
+        {"author_pub_id": "b", "bib_dict": {"title": "Manufacturing processes"}},
+    ])
+    monkeypatch.setattr(
+        build_json,
+        "curated_label",
+        lambda publication_ids: (
+            "Additive-Manufacturing"
+            if "a" in set(publication_ids)
+            else "additive manufacturing"
+        ),
+    )
+
+    with pytest.raises(ValueError, match="Duplicate topic label"):
+        build_json.ctfidf_labels(citations, [0, 1])
+
+
 def test_summarize_clusters_uses_ctfidf_labels(
     fixture_records: List[Dict[str, object]],
 ) -> None:

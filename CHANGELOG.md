@@ -3,6 +3,23 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.5] - 2026-10-22
+
+### Fixed
+
+- Give the mixed design-methods publication group a distinct reviewed topic,
+  leaving “additive manufacturing” on the group where it is more representative.
+- Reject duplicate topic names during graph generation and snapshot validation
+  so a future refresh requires review before publication.
+
+### Improved
+
+- Show each publication's title and year in map tooltips without repeating its
+  topic; keep topics available in map labels, accessible names, list, details,
+  and search.
+- Make highly cited publications modestly larger in the interactive map and
+  downloadable figures while preserving the existing minimum circle size.
+
 ## [0.2.4] - 2026-10-02
 
 ### Data

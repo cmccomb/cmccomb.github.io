@@ -243,7 +243,7 @@
                     radiusExtent[0] + (radiusExtent[1] - radiusExtent[0]) / 4,
                     radiusExtent[1],
                 ];
-            const positions = values.length === 1 ? [70] : [20, 70, 118];
+            const positions = values.length === 1 ? [70] : [20, 70, 116];
             const legendEntries = values.map((value, index) => ({
                 value,
                 x: positions[index],
@@ -263,7 +263,7 @@
                         .attr("text-anchor", "middle");
                     return group;
                 });
-            sizeKeys.attr("transform", entry => `translate(${entry.x}, 32)`);
+            sizeKeys.attr("transform", entry => `translate(${entry.x}, 35)`);
             sizeKeys.select("circle").attr("r", entry => entry.radius);
             sizeKeys.select("text")
                 .attr("y", 34)
@@ -665,7 +665,7 @@
         }
 
         function getTooltipText(node) {
-            return `${node.title} (${node.pub_year}). Topic: ${node.cluster_label}.`;
+            return `${node.title} (${node.pub_year}).`;
         }
 
         function positionTooltip(clientX, clientY) {
@@ -870,7 +870,8 @@
             xScale.range([mapPadding, width - mapPadding]);
             yScale.range([bottomCoordinate, topPadding]);
             const radiusBase = Math.sqrt(width * height);
-            radiusScale.range([12.1, Math.min(20, Math.max(16, radiusBase / 60))]);
+            const maxRadius = Math.min(20, Math.max(16, radiusBase / 60)) * 1.1;
+            radiusScale.range([12.1, maxRadius]);
             renderSizeLegend();
             nodes.forEach(node => {
                 node.x_orig = xScale(node.x_data);

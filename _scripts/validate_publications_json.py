@@ -10,9 +10,9 @@ from pathlib import Path
 from typing import Any
 
 if __package__:
-    from .topic_labels import suitable_label
+    from .topic_labels import normalise_topic_label, suitable_label
 else:  # pragma: no cover - direct script execution
-    from topic_labels import suitable_label
+    from topic_labels import normalise_topic_label, suitable_label
 
 
 class SnapshotValidationError(ValueError):
@@ -41,6 +41,7 @@ def validate_payload(payload: Any, *, max_age_days: int | None = None) -> None:
     )
 
     cluster_ids: set[int] = set()
+    topic_labels: dict[str, int] = {}
     for index, cluster in enumerate(clusters):
         _require(isinstance(cluster, dict), f"Cluster {index} is not an object")
         cluster_id = cluster.get("id")
@@ -53,7 +54,14 @@ def validate_payload(payload: Any, *, max_age_days: int | None = None) -> None:
             isinstance(label, str) and suitable_label(label),
             f"Cluster {index} has an incomplete topic label",
         )
+        normalized_label = normalise_topic_label(label)
+        first_index = topic_labels.get(normalized_label)
+        _require(
+            first_index is None,
+            f"Cluster {index} has a duplicate topic label (cluster {first_index})",
+        )
         cluster_ids.add(cluster_id)
+        topic_labels[normalized_label] = index
 
     publication_ids: set[str] = set()
     for index, record in enumerate(records):
