@@ -68,3 +68,15 @@ def test_incomplete_topic_label_fails() -> None:
 
     with pytest.raises(SnapshotValidationError, match="incomplete topic label"):
         validate_payload(payload)
+
+
+def test_normalized_duplicate_topic_labels_fail() -> None:
+    """Two clusters cannot publish the same topic with cosmetic label differences."""
+
+    payload = valid_payload()
+    payload["clusters"].append(  # type: ignore[union-attr]
+        {"id": 1, "label": " Design-Research "}
+    )
+
+    with pytest.raises(SnapshotValidationError, match="duplicate topic label"):
+        validate_payload(payload)

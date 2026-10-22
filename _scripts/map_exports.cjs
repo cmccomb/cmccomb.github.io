@@ -14,6 +14,7 @@ const FORMATS = [
     { id: "slides-16x9", name: "Widescreen slides · 16:9", width: 1920, height: 1080, font: 30, radius: 16 },
     { id: "slides-4x3", name: "Standard slides · 4:3", width: 1600, height: 1200, font: 30, radius: 16 },
 ];
+const MAX_CITATION_RADIUS_FACTOR = 1.6;
 const THEMES = {
     dark: { background: "#212529", text: "#eef0f2", muted: "#b9bfc5", border: "#dce1e6", label: "#f7f8f9", labelText: "#212529" },
     light: { background: "#ffffff", text: "#212529", muted: "#58616a", border: "#545b62", label: "#f3f4f5", labelText: "#212529" },
@@ -99,7 +100,7 @@ function layoutMap(data, format) {
     const years = d3.extent(data.records, d => d.pub_year);
     const citations = d3.extent(data.records, d => d.num_citations);
     const color = d3.scaleSequential(d3.interpolateMagma).domain(years);
-    const size = d3.scaleSqrt().domain(citations).range([radius * .7, radius * 1.45]);
+    const size = d3.scaleSqrt().domain(citations).range([radius * .7, radius * MAX_CITATION_RADIUS_FACTOR]);
     const nodes = data.records.map(d => ({
         id: d.author_pub_id, cluster: String(d.cluster_id), year: d.pub_year, citations: d.num_citations,
         x: x(d.x), y: y(d.y), targetX: x(d.x), targetY: y(d.y), r: size(d.num_citations), color: color(d.pub_year),
@@ -201,7 +202,7 @@ function mapSVG(layout, themeName) {
     const barX = legend.x + font * .4, barY = legend.y + font * 1.4;
     const barW = font * 10, barH = font * .43;
     const sizeX = barX + font * 12;
-    const size = d3.scaleSqrt().domain(citations).range([radius * .7, radius * 1.45]);
+    const size = d3.scaleSqrt().domain(citations).range([radius * .7, radius * MAX_CITATION_RADIUS_FACTOR]);
     const largestRadius = size(citations[1]);
     const sizes = [...new Set([citations[0], Math.round(citations[1] / 4), citations[1]])];
     const description = `${nodes.length} publications, ${labels.length} research topics. Color represents publication year (${years.join("–")}); circle radius scales with the square root of citations. Positions adapt the website's embedding to ${name.toLowerCase()}.`;

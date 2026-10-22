@@ -223,7 +223,9 @@ test.describe("homepage", () => {
     expect(citationLegendRadii).toHaveLength(3);
     expect(citationLegendRadii[0]).toBeLessThan(citationLegendRadii[1]);
     expect(citationLegendRadii[1]).toBeLessThan(citationLegendRadii[2]);
-    expect(citationLegendRadii[2]).toBeLessThanOrEqual(20);
+    expect(citationLegendRadii[0]).toBe(12.1);
+    expect(citationLegendRadii[2]).toBeGreaterThan(20);
+    expect(citationLegendRadii[2]).toBeLessThanOrEqual(22);
     const largestCitationKey = page.locator(".citation-size-key").last();
     const largestCitationCircleBounds = await largestCitationKey
       .locator("circle")

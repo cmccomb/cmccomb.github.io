@@ -37,8 +37,12 @@ atomically. The browser adjusts positions for its viewport and avoids label
 collisions; stored coordinates are the input to that layout.
 Generated labels with incomplete grammatical edges are rejected. A reviewed
 label applies only to an exact cluster membership, so it cannot silently follow
-a different group after the next scrape. Inspect every proposed topic in the
-quarterly refresh PR; grammatical checks cannot establish topical accuracy.
+a different group after the next scrape. Generation and snapshot validation
+also reject duplicate topic names after normalizing case and punctuation.
+When a refresh produces a duplicate, review the groups and curate a distinct
+label in `_scripts/topic_labels.py` for the appropriate exact membership.
+Inspect every proposed topic in the quarterly refresh PR; these checks cannot
+establish topical accuracy.
 
 ## Snapshot structure
 
@@ -93,7 +97,8 @@ quarterly workflow prepares these in its PR and CI enforces the version bump.
 
 [`validate_publications_json.py`](../_scripts/validate_publications_json.py)
 checks the top-level structure, matching record count, unique nonempty IDs,
-finite coordinates, nonnegative citation counts, and nonempty titles.
+distinct topic names, finite coordinates, nonnegative citation counts, and
+nonempty titles.
 `--max-age-days` additionally checks the build timestamp. It does not verify
 the correctness of each bibliographic claim or availability of external URLs.
 

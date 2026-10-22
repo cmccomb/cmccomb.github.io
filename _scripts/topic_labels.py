@@ -9,6 +9,27 @@ from collections.abc import Iterable
 # Exact membership keeps a reviewed label from following a re-formed cluster.
 CURATED_LABELS = {
     frozenset({
+        "0P9w_S0AAAAJ:1yQoGdGgb4wC",
+        "0P9w_S0AAAAJ:2P1L_qKh6hAC",
+        "0P9w_S0AAAAJ:8d8msizDQcsC",
+        "0P9w_S0AAAAJ:B3FOqHPlNUQC",
+        "0P9w_S0AAAAJ:BJbdYPG6LGMC",
+        "0P9w_S0AAAAJ:HIFyuExEbWQC",
+        "0P9w_S0AAAAJ:LO7wyVUgiFcC",
+        "0P9w_S0AAAAJ:QD3KBmkZPeQC",
+        "0P9w_S0AAAAJ:SeFeTyx0c_EC",
+        "0P9w_S0AAAAJ:WJVC3Jt7v1AC",
+        "0P9w_S0AAAAJ:Z5m8FVwuT1cC",
+        "0P9w_S0AAAAJ:bKqednn6t2AC",
+        "0P9w_S0AAAAJ:buQ7SEKw-1sC",
+        "0P9w_S0AAAAJ:fFSKOagxvKUC",
+        "0P9w_S0AAAAJ:nVrZBo8bIpAC",
+        "0P9w_S0AAAAJ:p__nRnzSRKYC",
+        "0P9w_S0AAAAJ:uDGL6kOW6j0C",
+        "0P9w_S0AAAAJ:vDijr-p_gm4C",
+        "0P9w_S0AAAAJ:vbGhcppDl1QC",
+    }): "design methods",
+    frozenset({
         "0P9w_S0AAAAJ:70eg2SAEIzsC",
         "0P9w_S0AAAAJ:BrmTIyaxlBUC",
         "0P9w_S0AAAAJ:K3LRdlH-MEoC",
@@ -36,10 +57,16 @@ def curated_label(publication_ids: Iterable[str]) -> str | None:
     return CURATED_LABELS.get(frozenset(publication_ids))
 
 
+def normalise_topic_label(label: str) -> str:
+    """Use one comparison key for generated and committed topic labels."""
+
+    return " ".join(re.findall(r"[a-z0-9]+", label.casefold()))
+
+
 def suitable_label(label: str) -> bool:
     """Reject incomplete phrases such as ``market in`` and ``work we``."""
 
-    words = re.findall(r"[a-z0-9]+", label.lower())
+    words = normalise_topic_label(label).split()
     return (
         len(words) >= 2
         and words[0] not in BAD_START_WORDS

@@ -16,7 +16,6 @@ import logging
 import os
 import platform
 import random
-import re
 import tempfile
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -34,9 +33,9 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer  #
 from sklearn.manifold import TSNE  # type: ignore[import-untyped]
 
 if __package__:
-    from .topic_labels import curated_label, suitable_label
+    from .topic_labels import curated_label, normalise_topic_label, suitable_label
 else:  # pragma: no cover - direct script execution
-    from topic_labels import curated_label, suitable_label
+    from topic_labels import curated_label, normalise_topic_label, suitable_label
 
 LOGGER = logging.getLogger(__name__)
 
@@ -255,16 +254,10 @@ def _cluster_id_series(labels: Sequence[int]) -> pandas.Series:
     )
 
 
-def _normalise_label_text(value: str) -> str:
-    """Normalise text so c-TF-IDF phrases can be matched across records."""
-
-    return " ".join(re.findall(r"[a-z0-9]+", value.lower()))
-
-
 def _phrase_document_coverage(phrase: str, records: pandas.DataFrame) -> int:
     """Count records whose title or abstract contains a candidate phrase."""
 
-    normalised_phrase = _normalise_label_text(phrase)
+    normalised_phrase = normalise_topic_label(phrase)
     if not normalised_phrase:
         return 0
 
@@ -272,7 +265,7 @@ def _phrase_document_coverage(phrase: str, records: pandas.DataFrame) -> int:
     matching_records = 0
     for bib_entry in records["bib_dict"]:
         fragments = _bib_dict_to_fragments(bib_entry)
-        document = f" {_normalise_label_text(' '.join(fragments))} "
+        document = f" {normalise_topic_label(' '.join(fragments))} "
         if needle in document:
             matching_records += 1
     return matching_records
@@ -362,6 +355,17 @@ def ctfidf_labels(
             raise ValueError(
                 f"Cluster {cluster_id} has no suitable, sufficiently supported topic label"
             )
+
+    label_owners: Dict[str, int] = {}
+    for cluster_id, label in labels_out.items():
+        normalised_label = normalise_topic_label(label)
+        if normalised_label in label_owners:
+            previous_id = label_owners[normalised_label]
+            raise ValueError(
+                f"Duplicate topic label {label!r} for clusters "
+                f"{previous_id} and {cluster_id}; review and curate one cluster"
+            )
+        label_owners[normalised_label] = cluster_id
 
     return labels_out
 
