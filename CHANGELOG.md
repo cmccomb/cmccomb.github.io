@@ -3,6 +3,13 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.6] - 2026-10-22
+
+### Fixed
+
+- Space the citation legend circles evenly between their outlines, including
+  when the map resizes.
+
 ## [0.2.5] - 2026-10-22
 
 ### Fixed

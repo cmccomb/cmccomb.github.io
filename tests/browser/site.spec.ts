@@ -226,6 +226,16 @@ test.describe("homepage", () => {
     expect(citationLegendRadii[0]).toBe(12.1);
     expect(citationLegendRadii[2]).toBeGreaterThan(20);
     expect(citationLegendRadii[2]).toBeLessThanOrEqual(22);
+    const citationLegendBounds = await page
+      .locator(".citation-size-key circle")
+      .evaluateAll((circles) => circles.map((circle) => {
+        const bounds = circle.getBoundingClientRect();
+        return { left: bounds.left, right: bounds.right };
+      }));
+    const firstGap = citationLegendBounds[1].left - citationLegendBounds[0].right;
+    const secondGap = citationLegendBounds[2].left - citationLegendBounds[1].right;
+    expect(firstGap).toBeGreaterThan(0);
+    expect(Math.abs(firstGap - secondGap)).toBeLessThan(1);
     const largestCitationKey = page.locator(".citation-size-key").last();
     const largestCitationCircleBounds = await largestCitationKey
       .locator("circle")
