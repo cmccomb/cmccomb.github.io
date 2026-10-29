@@ -919,13 +919,6 @@
                 simulation.tick();
                 nodes.forEach(constrainNodeToMap);
             }
-            nodeSelection
-                .attr("x", node => node.x - node.r)
-                .attr("y", node => node.y - node.r)
-                .attr("rx", node => node.r)
-                .attr("width", node => 2 * node.r)
-                .attr("height", node => 2 * node.r);
-
             const clusteredNodes = nodes.filter(node => (
                 node.cluster_id !== null
                 && node.cluster_id !== undefined
@@ -943,6 +936,7 @@
                     const summary = clusterSummaryById.get(String(clusterId));
                     return {
                         clusterId,
+                        count: members.length,
                         label: typeof summary?.label === "string" && summary.label
                             ? displayClusterLabel(summary.label)
                             : `Cluster ${clusterId}`,
@@ -950,7 +944,7 @@
                         y: d3.mean(members, member => member.y) ?? 0,
                     };
                 }
-            );
+            ).sort((a, b) => b.count - a.count || String(a.clusterId).localeCompare(String(b.clusterId)));
             const mergedLabels = clusterLabelLayer.selectAll("g.cluster-label")
                 .data(labelData, label => label.clusterId)
                 .join(enter => {
@@ -964,54 +958,139 @@
                 });
             mergedLabels.style("display", null).select("text").text(label => label.label);
             const placedLabels = [];
+            const circleHitsLabel = (node, rect, gap = 4) => {
+                const dx = node.x - Math.max(rect.x, Math.min(node.x, rect.x + rect.width));
+                const dy = node.y - Math.max(rect.y, Math.min(node.y, rect.y + rect.height));
+                return dx * dx + dy * dy < (node.r + gap) ** 2;
+            };
+            const labelsOverlap = (a, b) => (
+                a.x < b.x + b.width + 8 && a.x + a.width + 8 > b.x
+                && a.y < b.y + b.height + 8 && a.y + a.height + 8 > b.y
+            );
             mergedLabels.each(function sizeAndPositionLabel(label) {
                 const group = d3.select(this);
-                const textNode = group.select("text").node();
-                if (!textNode) {
-                    return;
+                const boundingBox = group.select("text").node().getBBox();
+                const localX = boundingBox.x - 6;
+                const localY = boundingBox.y - 4;
+                const labelWidth = boundingBox.width + 12;
+                const labelHeight = boundingBox.height + 8;
+                const margin = 8;
+                if (labelWidth > width - 2 * margin || labelHeight > height - 2 * margin) {
+                    throw new Error("Publication topic label exceeds the map bounds");
                 }
-                const boundingBox = textNode.getBBox();
-                const horizontalPadding = 12;
-                const verticalPadding = 8;
-                const labelWidth = boundingBox.width + horizontalPadding;
-                const labelHeight = boundingBox.height + verticalPadding;
-                const labelMargin = 8;
-                const clampedX = Math.max(
-                    labelMargin + labelWidth / 2,
-                    Math.min(width - labelMargin - labelWidth / 2, label.x)
-                );
-                const preferredY = Math.max(
-                    labelMargin + labelHeight / 2,
-                    Math.min(height - labelMargin - labelHeight / 2, label.y)
-                );
-                // Move nearby labels apart; omit a label if no clear position is
-                // available. Every paper still exposes its topic in its details.
-                const offsets = [0, -1, 1, -2, 2, -3, 3, -4, 4];
-                const candidates = offsets.map(offset => {
-                    const y = preferredY + offset * (labelHeight + 8);
-                    return { left: clampedX - labelWidth / 2, right: clampedX + labelWidth / 2,
-                        top: y - labelHeight / 2, bottom: y + labelHeight / 2, y };
-                });
-                const position = candidates.find(candidate => (
-                    candidate.top >= labelMargin && candidate.bottom <= height - labelMargin
-                    && placedLabels.every(other => candidate.right + 6 <= other.left
-                        || candidate.left >= other.right + 6 || candidate.bottom + 6 <= other.top
-                        || candidate.top >= other.bottom + 6)
-                ));
-                group.style("display", position ? null : "none");
-                if (!position) return;
+                const candidates = [];
+                const step = 14;
+                // Stay near the topic, preferring gaps that need fewer bubbles
+                // moved. Larger rings are only needed if other labels fill the area.
+                for (let ring = 0; ring <= Math.ceil(Math.hypot(width, height) / step); ring += 1) {
+                    if (ring > 12 && candidates.length) break;
+                    const angles = ring ? 24 : 1;
+                    for (let angle = 0; angle < angles; angle += 1) {
+                        const radians = angle * 2 * Math.PI / angles;
+                        const rect = {
+                            x: Math.max(margin, Math.min(width - margin - labelWidth,
+                                label.x + Math.cos(radians) * ring * step - labelWidth / 2)),
+                            y: Math.max(margin, Math.min(height - margin - labelHeight,
+                                label.y + Math.sin(radians) * ring * step - labelHeight / 2)),
+                            width: labelWidth,
+                            height: labelHeight,
+                        };
+                        if (placedLabels.some(other => labelsOverlap(rect, other))) continue;
+                        rect.score = Math.hypot(rect.x + labelWidth / 2 - label.x,
+                            rect.y + labelHeight / 2 - label.y)
+                            + nodes.filter(node => circleHitsLabel(node, rect)).length * labelHeight * .5;
+                        candidates.push(rect);
+                    }
+                }
+                candidates.sort((a, b) => a.score - b.score || a.x - b.x || a.y - b.y);
+                const position = candidates[0];
+                if (!position) throw new Error("No room for publication topic labels");
                 placedLabels.push(position);
-
-                group
-                    .attr("transform", `translate(${clampedX}, ${position.y})`)
+                // Use the actual text bounds rather than assuming its baseline
+                // centers the padded rectangle around the group's origin.
+                group.attr("transform", `translate(${position.x - localX}, ${position.y - localY})`)
                     .select("rect")
-                    .attr("x", boundingBox.x - horizontalPadding / 2)
-                    .attr("y", boundingBox.y - verticalPadding / 2)
+                    .attr("x", localX)
+                    .attr("y", localY)
                     .attr("width", labelWidth)
                     .attr("height", labelHeight)
                     .attr("rx", 8)
                     .attr("ry", 8);
             });
+
+            const keepClearOfLabels = node => {
+                constrainNodeToMap(node);
+                if (!placedLabels.some(rect => circleHitsLabel(node, rect))) return;
+                const gap = 4.01;
+                const choices = placedLabels.flatMap(rect => {
+                    const left = rect.x - node.r - gap;
+                    const right = rect.x + rect.width + node.r + gap;
+                    const top = rect.y - node.r - gap;
+                    const bottom = rect.y + rect.height + node.r + gap;
+                    return [
+                        { x: left, y: node.y }, { x: right, y: node.y },
+                        { x: node.x, y: top }, { x: node.x, y: bottom },
+                        { x: left, y: top }, { x: right, y: top },
+                        { x: left, y: bottom }, { x: right, y: bottom },
+                    ];
+                }).filter(point => (
+                    point.x >= node.r && point.x <= width - node.r
+                    && point.y >= topPadding + node.r && point.y <= bottomCoordinate - node.r
+                    && !placedLabels.some(rect => circleHitsLabel({ ...point, r: node.r }, rect))
+                ));
+                choices.sort((a, b) => Math.hypot(a.x - node.x, a.y - node.y)
+                    - Math.hypot(b.x - node.x, b.y - node.y));
+                if (!choices.length) throw new Error("No clear position for publication bubble");
+                node.x = choices[0].x;
+                node.y = choices[0].y;
+                node.vx = 0;
+                node.vy = 0;
+            };
+            // Labels are fixed obstacles in the second pass. This reserves a
+            // small gap around every label while retaining the projection forces.
+            simulation.alpha(.45).stop();
+            for (let index = 0; index < 180; index += 1) {
+                simulation.tick();
+                nodes.forEach(keepClearOfLabels);
+            }
+            // Resolve contacts introduced by clamping a bubble out of a label.
+            for (let iteration = 0; iteration < 600; iteration += 1) {
+                let overlap = 0;
+                for (let i = 0; i < nodes.length; i += 1) {
+                    for (let j = i + 1; j < nodes.length; j += 1) {
+                        const a = nodes[i];
+                        const b = nodes[j];
+                        const dx = b.x - a.x;
+                        const dy = b.y - a.y;
+                        const distance = Math.hypot(dx, dy);
+                        const penetration = a.r + b.r + 1 - distance;
+                        if (penetration <= 0) continue;
+                        overlap = Math.max(overlap, penetration);
+                        const ux = distance ? dx / distance : 1;
+                        const uy = distance ? dy / distance : 0;
+                        a.x -= ux * penetration / 2;
+                        a.y -= uy * penetration / 2;
+                        b.x += ux * penetration / 2;
+                        b.y += uy * penetration / 2;
+                    }
+                }
+                nodes.forEach(keepClearOfLabels);
+                if (overlap < .05) break;
+            }
+            if (nodes.some((node, index) => (
+                placedLabels.some(rect => circleHitsLabel(node, rect, 0))
+                || nodes.slice(index + 1).some(other => (
+                    Math.hypot(node.x - other.x, node.y - other.y) < node.r + other.r - .1
+                ))
+            ))) {
+                throw new Error("Could not settle publication map without overlaps");
+            }
+            nodeSelection
+                .attr("x", node => node.x - node.r)
+                .attr("y", node => node.y - node.r)
+                .attr("rx", node => node.r)
+                .attr("width", node => 2 * node.r)
+                .attr("height", node => 2 * node.r);
             updateClusterLabelVisibility();
         }
 
