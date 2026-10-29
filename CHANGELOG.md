@@ -3,6 +3,18 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.10] - 2026-10-29
+
+### Improved
+
+- Derive complete publication topic titles automatically from paper-level
+  title and abstract evidence, preserving hyphenated terms and pooling word
+  variants without allowing repeated mentions to dominate.
+- Prefer supported complete phrases and assign distinct titles using their
+  relative scores. Regenerate all twelve topics with this method.
+- Remove manual topic overrides and display aliases, record title provenance,
+  and verify that committed titles can be reproduced automatically.
+
 ## [0.2.9] - 2026-10-29
 
 ### Fixed

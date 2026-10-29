@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import sys
 from pathlib import Path
@@ -15,12 +16,7 @@ from sklearn.cluster import KMeans  # type: ignore[import-untyped]
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from _scripts import build_json
-from _scripts.topic_labels import (
-    CURATED_LABELS,
-    curated_label,
-    normalise_topic_label,
-    suitable_label,
-)
+from _scripts.derive_topic_labels import complete_terms
 
 
 @pytest.fixture(scope="session")
@@ -245,61 +241,101 @@ def test_ctfidf_labels_prioritises_cluster_wide_phrases() -> None:
     assert phrases[0] == "design teams"
 
 
-def test_reviewed_topics_apply_only_to_exact_membership() -> None:
-    """Reviewed names outrank generated phrases until cluster membership changes."""
-
-    memberships = {label: ids for ids, label in CURATED_LABELS.items()}
-    rows = [
-        {"author_pub_id": publication_id, "bib_dict": {"title": title}}
-        for label, title in (
-            ("design methods", "Lattice manufacturing systems"),
-            ("design decisions", "Robot teamwork process"),
-        )
-        for publication_id in sorted(memberships[label])
-    ]
-    labels = (
-        [0] * len(memberships["design methods"])
-        + [1] * len(memberships["design decisions"])
-    )
-    rows.extend([
-        {"author_pub_id": "other-1", "bib_dict": {"title": "Coastal erosion study"}},
-        {"author_pub_id": "other-2", "bib_dict": {"title": "Coastal erosion data"}},
-    ])
-    labels.extend([2, 2])
-
-    assert build_json.ctfidf_labels(pandas.DataFrame(rows), labels) == {
-        0: "design methods",
-        1: "design decisions",
-        2: "coastal erosion",
-    }
-    assert curated_label([*memberships["design methods"], "new-publication"]) is None
-    assert not suitable_label("market in")
-    assert not suitable_label("work we")
-
-
-def test_ctfidf_labels_resolves_duplicate_reviewed_topics(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """Even conflicting reviewed names should fall back to distinct phrases."""
+def test_ctfidf_labels_keeps_complete_hyphenated_model_terms() -> None:
+    """Singular and plural evidence should support a complete technical term."""
 
     citations = pandas.DataFrame([
-        {"author_pub_id": "a", "bib_dict": {"title": "Lattice design methods"}},
-        {"author_pub_id": "b", "bib_dict": {"title": "Manufacturing processes"}},
+        {"author_pub_id": "a1", "bib_dict": {
+            "title": "Vision-language model benchmarks",
+            "abstract": "A vision-language model supports simulation analysis.",
+        }},
+        {"author_pub_id": "a2", "bib_dict": {
+            "title": "Vision-language models assess images",
+            "abstract": "Vision-language models solve visual tasks.",
+        }},
+        {"author_pub_id": "b1", "bib_dict": {"title": "Coastal erosion measurements"}},
+        {"author_pub_id": "b2", "bib_dict": {"title": "Coastal erosion assessment"}},
     ])
-    monkeypatch.setattr(
-        build_json,
-        "curated_label",
-        lambda publication_ids: (
-            "Additive-Manufacturing"
-            if "a" in set(publication_ids)
-            else "additive manufacturing"
-        ),
-    )
 
-    generated = build_json.ctfidf_labels(citations, [0, 1])
-    normalised = [normalise_topic_label(label) for label in generated.values()]
-    assert len(set(normalised)) == 2
-    assert normalised.count("additive manufacturing") == 1
+    generated = build_json.ctfidf_labels(citations, [0, 0, 1, 1])
+
+    assert generated[0] in {"vision-language model", "vision-language models"}
+
+
+def test_ctfidf_labels_limits_each_papers_influence() -> None:
+    """Repeated abstract wording should not outweigh a theme shared by papers."""
+
+    citations = pandas.DataFrame([
+        {"author_pub_id": "a1", "bib_dict": {
+            "title": "Measurement workflow for visual studies",
+            "abstract": "Niche sensor experiments. " * 200,
+        }},
+        {"author_pub_id": "a2", "bib_dict": {
+            "title": "Calibration protocol for optical analysis",
+            "abstract": "Niche sensor experiments.",
+        }},
+        {"author_pub_id": "a3", "bib_dict": {
+            "title": "Design teams coordinate concepts",
+            "abstract": "Design teams compare choices.",
+        }},
+        {"author_pub_id": "a4", "bib_dict": {
+            "title": "Design teams select ideas",
+            "abstract": "Design teams refine layouts.",
+        }},
+        {"author_pub_id": "a5", "bib_dict": {
+            "title": "Design teams improve collaboration",
+            "abstract": "Design teams review alternatives.",
+        }},
+        {"author_pub_id": "b1", "bib_dict": {"title": "Coastal erosion measurements"}},
+        {"author_pub_id": "b2", "bib_dict": {"title": "Coastal erosion assessment"}},
+    ])
+
+    generated = build_json.ctfidf_labels(citations, [0, 0, 0, 0, 0, 1, 1])
+
+    assert generated[0] == "design teams"
+
+
+def test_ctfidf_labels_preserves_standalone_hyphenated_topics() -> None:
+    """A complete compound noun remains eligible without additional words."""
+
+    citations = pandas.DataFrame([
+        {"author_pub_id": "a1", "bib_dict": {"title": "Super-resolution methods for flow"}},
+        {"author_pub_id": "a2", "bib_dict": {"title": "Super-resolution evaluation improves fields"}},
+        {"author_pub_id": "b1", "bib_dict": {"title": "Coastal erosion measurements"}},
+        {"author_pub_id": "b2", "bib_dict": {"title": "Coastal erosion assessment"}},
+    ])
+
+    assert build_json.ctfidf_labels(citations, [0, 0, 1, 1])[0] == "super-resolution"
+
+
+def test_phrase_completion_does_not_cascade_into_a_narrower_subtopic() -> None:
+    """Successive extensions must not erase the well-supported intermediate term."""
+
+    retained = complete_terms({
+        "alpha beta": set(range(10)),
+        "alpha beta gamma": set(range(8)),
+        "alpha beta gamma delta": set(range(7)),
+        "alpha beta gamma delta epsilon": set(range(6)),
+    })
+
+    assert "alpha beta gamma" in retained
+
+
+def test_ctfidf_labels_are_independent_of_record_order() -> None:
+    """Reordering unchanged papers should not rename their topics."""
+
+    citations = pandas.DataFrame([
+        {"author_pub_id": "a1", "bib_dict": {"title": "Vision-language model benchmarks"}},
+        {"author_pub_id": "a2", "bib_dict": {"title": "Vision-language models assess images"}},
+        {"author_pub_id": "b1", "bib_dict": {"title": "Coastal erosion measurements"}},
+        {"author_pub_id": "b2", "bib_dict": {"title": "Coastal erosion assessment"}},
+    ])
+    labels = [0, 0, 1, 1]
+    order = [3, 1, 0, 2]
+
+    assert build_json.ctfidf_labels(citations, labels) == build_json.ctfidf_labels(
+        citations.iloc[order].reset_index(drop=True), [labels[index] for index in order]
+    )
 
 
 def test_unique_topic_assignment_chooses_supported_alternative() -> None:
@@ -307,13 +343,12 @@ def test_unique_topic_assignment_chooses_supported_alternative() -> None:
 
     chosen = build_json._assign_unique_topic_labels(
         {
-            3: ["language models", "design methods"],
-            11: ["language models", "large language models"],
+            3: [("language model", 9.0), ("design methods", 8.0)],
+            11: [("language models", 10.0), ("large language models", 1.0)],
         },
-        {3: "language models"},
     )
 
-    assert chosen == {3: "language models", 11: "large language models"}
+    assert chosen == {3: "design methods", 11: "language models"}
 
 
 def test_unique_topic_assignment_avoids_cascading_collisions() -> None:
@@ -321,11 +356,10 @@ def test_unique_topic_assignment_avoids_cascading_collisions() -> None:
 
     chosen = build_json._assign_unique_topic_labels(
         {
-            0: ["shared topic", "first alternative"],
-            1: ["shared topic", "second choice"],
-            2: ["second choice", "third choice"],
+            0: [("shared topic", 10.0), ("first alternative", 9.0)],
+            1: [("shared topic", 10.0), ("second choice", 5.0)],
+            2: [("second choice", 10.0), ("third choice", 1.0)],
         },
-        {},
     )
 
     assert chosen == {
@@ -340,7 +374,7 @@ def test_unique_topic_assignment_fails_without_distinct_candidates() -> None:
 
     with pytest.raises(ValueError, match="No distinct supported topic labels"):
         build_json._assign_unique_topic_labels(
-            {3: ["language models"], 11: ["language models"]}, {}
+            {3: [("language models", 1.0)], 11: [("language models", 1.0)]}
         )
 
 
@@ -372,6 +406,71 @@ def test_missing_publication_year_uses_current_year() -> None:
     assert build_json._extract_pub_year({}) == build_json.datetime.now(
         build_json.timezone.utc
     ).year
+
+
+def test_relabel_payload_preserves_snapshot_evidence(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Relabeling changes topic names and their provenance without rebuilding data."""
+
+    payload = {
+        "meta": {
+            "built_at_utc": "2026-10-01T12:00:00+00:00",
+            "dataset_commit": "a" * 40,
+            "projection": {"method": "tsne+pca", "perplexity": 30},
+            "labeling": {"method": "old"},
+        },
+        "records": [
+            {"author_pub_id": "a1", "cluster_id": 0, "x": 1.25, "y": -2.5,
+             "pub_year": 2024, "num_citations": 17,
+             "bib_dict": {"title": "Robot teamwork coordination", "abstract": "Source abstract."},
+             "pub_url": "https://example.com/paper"},
+            {"author_pub_id": "b1", "cluster_id": 1, "x": 3.0, "y": 4.0,
+             "pub_year": 2025, "num_citations": 3,
+             "bib_dict": {"title": "Coastal erosion measurements"}},
+        ],
+        "clusters": [
+            {"id": 0, "label": "old robot topic", "centroid": {"x": 1.25, "y": -2.5}},
+            {"id": 1, "label": "old coastal topic", "centroid": {"x": 3.0, "y": 4.0}},
+        ],
+    }
+    original = copy.deepcopy(payload)
+    monkeypatch.setattr(
+        build_json, "derive_labels",
+        lambda citations, labels: {0: "robot teamwork", 1: "coastal erosion"},
+    )
+
+    relabeled = build_json.relabel_payload(payload)
+
+    assert payload == original
+    assert relabeled["records"] == original["records"]
+    assert {
+        key: value for key, value in relabeled["meta"].items() if key != "labeling"
+    } == {
+        key: value for key, value in original["meta"].items() if key != "labeling"
+    }
+    assert relabeled["meta"]["labeling"] != original["meta"]["labeling"]
+    expected_clusters = copy.deepcopy(original["clusters"])
+    expected_clusters[0]["label"] = "robot teamwork"
+    expected_clusters[1]["label"] = "coastal erosion"
+    assert relabeled["clusters"] == expected_clusters
+    relabeled["records"][0]["bib_dict"]["title"] = "Changed result"
+    assert payload == original
+
+
+def test_committed_topic_names_are_automatically_reproducible() -> None:
+    """Published titles must come from the generator rather than snapshot edits."""
+
+    snapshot_path = Path(__file__).resolve().parents[1] / "assets/json/pubs.json"
+    payload = json.loads(snapshot_path.read_text(encoding="utf-8"))
+
+    regenerated = build_json.relabel_payload(payload)
+
+    assert {
+        cluster["id"]: cluster["label"] for cluster in payload["clusters"]
+    } == {
+        cluster["id"]: cluster["label"] for cluster in regenerated["clusters"]
+    }, "Regenerate the snapshot's topic names with the automatic labeling command."
 
 
 def test_dump_payload_skips_identical_payload(tmp_path: Path) -> None:

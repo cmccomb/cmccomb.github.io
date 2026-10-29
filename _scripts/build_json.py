@@ -10,6 +10,7 @@ observe partial writes.
 from __future__ import annotations
 
 import argparse
+from copy import deepcopy
 import hashlib
 import json
 import logging
@@ -27,16 +28,14 @@ import numpy
 import pandas  # type: ignore[import-untyped]
 from huggingface_hub import HfApi
 from numpy.typing import NDArray
-from scipy.optimize import linear_sum_assignment  # type: ignore[import-untyped]
 from sklearn.cluster import KMeans  # type: ignore[import-untyped]
 from sklearn.decomposition import PCA  # type: ignore[import-untyped]
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer  # type: ignore[import-untyped]
 from sklearn.manifold import TSNE  # type: ignore[import-untyped]
 
 if __package__:
-    from .topic_labels import curated_label, normalise_topic_label, suitable_label
+    from .derive_topic_labels import derive_labels, labeling_metadata, assign_unique_labels as _assign_unique_topic_labels
 else:  # pragma: no cover - direct script execution
-    from topic_labels import curated_label, normalise_topic_label, suitable_label
+    from derive_topic_labels import derive_labels, labeling_metadata, assign_unique_labels as _assign_unique_topic_labels
 
 LOGGER = logging.getLogger(__name__)
 
@@ -44,9 +43,6 @@ DEFAULT_RANDOM_STATE = 42
 DEFAULT_DATASET_ID = "ccm/publications"
 DEFAULT_DATASET_REVISION = "main"
 DEFAULT_KMEANS_CLUSTERS = 12
-STOP_WORDS = ["of", "and", "selection"]
-MIN_LABEL_COVERAGE = 0.20
-MIN_LABEL_RECORDS = 2
 
 
 @dataclass(frozen=True)
@@ -255,162 +251,24 @@ def _cluster_id_series(labels: Sequence[int]) -> pandas.Series:
     )
 
 
-def _phrase_document_coverage(phrase: str, documents: Sequence[str]) -> int:
-    """Count records whose title or abstract contains a candidate phrase."""
+def ctfidf_labels(citations: pandas.DataFrame, labels: Sequence[int]) -> Dict[int, str]:
+    """Derive complete topic phrases using paper-level title/abstract evidence."""
 
-    normalised_phrase = normalise_topic_label(phrase)
-    if not normalised_phrase:
-        return 0
-
-    needle = f" {normalised_phrase} "
-    return sum(needle in document for document in documents)
+    return derive_labels(citations.to_dict(orient="records"), [int(label) for label in labels])
 
 
-def _minimum_label_coverage(record_count: int) -> int:
-    """Return the minimum number of records that should support a label."""
+def relabel_payload(payload: Dict[str, object]) -> Dict[str, object]:
+    """Regenerate titles from an existing snapshot, preserving its paper layout."""
 
-    if record_count <= 0:
-        return 0
-    return min(
-        record_count,
-        max(MIN_LABEL_RECORDS, int(numpy.ceil(record_count * MIN_LABEL_COVERAGE))),
-    )
-
-
-def _assign_unique_topic_labels(
-    candidates: Dict[int, List[str]], reviewed: Dict[int, str]
-) -> Dict[int, str]:
-    """Choose the best distinct labels, preferring exact-membership curation."""
-
-    label_keys = sorted(
-        {
-            normalise_topic_label(label)
-            for labels in candidates.values()
-            for label in labels
-        }
-        | {normalise_topic_label(label) for label in reviewed.values()}
-    )
-    if len(label_keys) < len(candidates):
-        raise ValueError("No distinct supported topic labels for all clusters")
-
-    cluster_ids = sorted(candidates)
-    key_columns = {key: index for index, key in enumerate(label_keys)}
-    costs = numpy.full((len(cluster_ids), len(label_keys)), numpy.inf)
-    display_labels: Dict[tuple[int, str], str] = {}
-    for row, cluster_id in enumerate(cluster_ids):
-        for rank, label in enumerate(candidates[cluster_id]):
-            key = normalise_topic_label(label)
-            column = key_columns[key]
-            if not numpy.isfinite(costs[row, column]):
-                costs[row, column] = 1 - 1 / (rank + 1)
-                display_labels[cluster_id, key] = label
-        if cluster_id in reviewed:
-            label = reviewed[cluster_id]
-            key = normalise_topic_label(label)
-            costs[row, key_columns[key]] = -(len(cluster_ids) + 1)
-            display_labels[cluster_id, key] = label
-
-    try:
-        rows, columns = linear_sum_assignment(costs)
-    except ValueError as exc:
-        raise ValueError("No distinct supported topic labels for all clusters") from exc
-    if not numpy.isfinite(costs[rows, columns]).all():
-        raise ValueError("No distinct supported topic labels for all clusters")
-
-    chosen = {
-        cluster_ids[row]: display_labels[cluster_ids[row], label_keys[column]]
-        for row, column in zip(rows, columns)
-    }
-    for cluster_id, label in chosen.items():
-        preferred = reviewed.get(cluster_id) or candidates[cluster_id][0]
-        if normalise_topic_label(label) != normalise_topic_label(preferred):
-            LOGGER.info(
-                "Resolved topic collision for cluster %s: %r -> %r",
-                cluster_id,
-                preferred,
-                label,
-            )
-    return chosen
-
-
-def ctfidf_labels(
-    citations: pandas.DataFrame, labels: Sequence[int]
-) -> Dict[int, str]:
-    """Generate representative cluster labels using coverage-aware c-TF-IDF."""
-
-    label_list = [int(label) for label in labels]
-    df = citations.copy()
-    df["cluster_id"] = _cluster_id_series(label_list)
-    cluster_ids = sorted({label for label in label_list if label != -1})
-    if not cluster_ids:
-        return {}
-
-    docs: List[str] = []
-    for cluster_id in cluster_ids:
-        cluster_records = df[df["cluster_id"] == cluster_id]
-        titles: List[str] = []
-        abstracts: List[str] = []
-        for bib_entry in cluster_records["bib_dict"]:
-            if isinstance(bib_entry, dict):
-                title = bib_entry.get("title")
-                abstract = bib_entry.get("abstract")
-                if isinstance(title, str):
-                    titles.append(title)
-                if isinstance(abstract, str):
-                    abstracts.append(abstract)
-        text = ((". ".join(titles) + ". ") * 2) + ". ".join(abstracts)
-        docs.append(text)
-
-    if not docs:
-        return {}
-
-    vectorizer = CountVectorizer(
-        ngram_range=(2, 3),
-        stop_words=STOP_WORDS,
-        min_df=1,
-        max_df=0.9,
-    )
-
-    try:
-        term_matrix = vectorizer.fit_transform(docs)
-    except ValueError:
-        return {}
-
-    tfidf = TfidfTransformer(norm=None, use_idf=True, smooth_idf=True)
-    tfidf_matrix = tfidf.fit_transform(term_matrix)
-    vocabulary = numpy.array(vectorizer.get_feature_names_out())
-
-    candidates: Dict[int, List[str]] = {}
-    reviewed: Dict[int, str] = {}
-    for index, cluster_id in enumerate(cluster_ids):
-        cluster_records = df[df["cluster_id"] == cluster_id]
-        curated = curated_label(cluster_records["author_pub_id"])
-        if curated is not None:
-            reviewed[cluster_id] = curated
-
-        row = tfidf_matrix[index].toarray().ravel()
-        minimum_coverage = _minimum_label_coverage(len(cluster_records))
-        ranked_indices = row.argsort()[::-1]
-        documents = [
-            f" {normalise_topic_label(' '.join(_bib_dict_to_fragments(bib_entry)))} "
-            for bib_entry in cluster_records["bib_dict"]
-        ]
-        eligible: List[str] = []
-        for candidate_index in ranked_indices:
-            candidate = vocabulary[candidate_index]
-            if (
-                suitable_label(candidate)
-                and _phrase_document_coverage(candidate, documents)
-                >= minimum_coverage
-            ):
-                eligible.append(candidate)
-        if not eligible and curated is None:
-            raise ValueError(
-                f"Cluster {cluster_id} has no suitable, sufficiently supported topic label"
-            )
-        candidates[cluster_id] = eligible
-
-    return _assign_unique_topic_labels(candidates, reviewed)
+    updated = deepcopy(payload)
+    records = updated["records"]
+    labels = [int(record["cluster_id"]) if record.get("cluster_id") is not None else -1
+              for record in records]
+    titles = derive_labels(records, labels)
+    for cluster in updated["clusters"]:
+        cluster["label"] = titles[cluster["id"]]
+    updated["meta"]["labeling"] = labeling_metadata()
+    return updated
 
 
 @dataclass
@@ -603,6 +461,7 @@ def curation_metadata(
 
     return {
         "built_at_utc": datetime.now(timezone.utc).isoformat(),
+        "labeling": labeling_metadata(),
         "random_state": random_state,
         "dataset_id": dataset_id,
         "dataset_revision": dataset_revision,
@@ -701,6 +560,8 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--revision", default=DEFAULT_DATASET_REVISION)
     parser.add_argument("--seed", type=int, default=DEFAULT_RANDOM_STATE)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--relabel-only", action="store_true",
+                        help="Regenerate titles from the committed snapshot without fetching or reclustering")
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--verbose", action="store_true")
     return parser.parse_args()
@@ -714,6 +575,14 @@ def main() -> int:
         level=logging.DEBUG if args.verbose else logging.INFO,
         format="%(asctime)s %(levelname)s %(name)s: %(message)s",
     )
+
+    if args.relabel_only:
+        workspace = Path(os.environ.get("GITHUB_WORKSPACE", Path(__file__).resolve().parents[1]))
+        path = workspace / "assets/json/pubs.json"
+        payload = relabel_payload(json.loads(path.read_text(encoding="utf-8")))
+        if not args.dry_run:
+            dump_payload(payload, force=args.force)
+        return 0
 
     random.seed(args.seed)
     numpy.random.seed(args.seed)

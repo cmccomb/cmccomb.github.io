@@ -1,60 +1,15 @@
-"""Editorial topic labels and basic checks for generated phrases."""
+"""Shared normalization and basic checks for automatically derived phrases."""
 
 from __future__ import annotations
 
 import re
-from collections.abc import Iterable
 
-
-# Exact membership keeps a reviewed label from following a re-formed cluster.
-CURATED_LABELS = {
-    frozenset({
-        "0P9w_S0AAAAJ:1yQoGdGgb4wC",
-        "0P9w_S0AAAAJ:2P1L_qKh6hAC",
-        "0P9w_S0AAAAJ:8d8msizDQcsC",
-        "0P9w_S0AAAAJ:B3FOqHPlNUQC",
-        "0P9w_S0AAAAJ:BJbdYPG6LGMC",
-        "0P9w_S0AAAAJ:HIFyuExEbWQC",
-        "0P9w_S0AAAAJ:LO7wyVUgiFcC",
-        "0P9w_S0AAAAJ:QD3KBmkZPeQC",
-        "0P9w_S0AAAAJ:SeFeTyx0c_EC",
-        "0P9w_S0AAAAJ:WJVC3Jt7v1AC",
-        "0P9w_S0AAAAJ:Z5m8FVwuT1cC",
-        "0P9w_S0AAAAJ:bKqednn6t2AC",
-        "0P9w_S0AAAAJ:buQ7SEKw-1sC",
-        "0P9w_S0AAAAJ:fFSKOagxvKUC",
-        "0P9w_S0AAAAJ:nVrZBo8bIpAC",
-        "0P9w_S0AAAAJ:p__nRnzSRKYC",
-        "0P9w_S0AAAAJ:uDGL6kOW6j0C",
-        "0P9w_S0AAAAJ:vDijr-p_gm4C",
-        "0P9w_S0AAAAJ:vbGhcppDl1QC",
-    }): "design methods",
-    frozenset({
-        "0P9w_S0AAAAJ:70eg2SAEIzsC",
-        "0P9w_S0AAAAJ:BrmTIyaxlBUC",
-        "0P9w_S0AAAAJ:K3LRdlH-MEoC",
-        "0P9w_S0AAAAJ:OU6Ihb5iCvQC",
-        "0P9w_S0AAAAJ:RGFaLdJalmkC",
-        "0P9w_S0AAAAJ:SP6oXDckpogC",
-        "0P9w_S0AAAAJ:XiVPGOgt02cC",
-        "0P9w_S0AAAAJ:bEWYMUwI8FkC",
-        "0P9w_S0AAAAJ:bz8QjSJIRt4C",
-        "0P9w_S0AAAAJ:tOudhMTPpwUC",
-        "0P9w_S0AAAAJ:yD5IFk8b50cC",
-    }): "design decisions",
-}
 
 BAD_START_WORDS = frozenset({
     "a", "an", "and", "as", "at", "by", "for", "from", "in", "into",
     "is", "of", "on", "or", "our", "to", "via", "we", "with",
 })
 BAD_END_WORDS = BAD_START_WORDS | {"the", "this", "these", "those"}
-
-
-def curated_label(publication_ids: Iterable[str]) -> str | None:
-    """Return a human-reviewed label for an unchanged cluster membership."""
-
-    return CURATED_LABELS.get(frozenset(publication_ids))
 
 
 def normalise_topic_label(label: str) -> str:
