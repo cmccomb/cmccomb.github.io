@@ -8,7 +8,7 @@ const { displayClusterLabel } = require("../assets/js/publication_helpers.js");
 
 const FORMATS = [
     { id: "linkedin-banner", name: "LinkedIn profile banner", width: 1584, height: 396, font: 18, radius: 7.5, banner: true },
-    { id: "social-landscape", name: "Social landscape", width: 1200, height: 627, font: 20, radius: 10 },
+    { id: "social-landscape", name: "Social landscape", width: 1200, height: 627, font: 20, radius: 10, showLegend: false },
     { id: "social-square", name: "Social square", width: 1080, height: 1080, font: 24, radius: 13 },
     { id: "social-portrait", name: "Social portrait", width: 1080, height: 1350, font: 25, radius: 14 },
     { id: "slides-16x9", name: "Widescreen slides · 16:9", width: 1920, height: 1080, font: 30, radius: 16 },
@@ -92,8 +92,9 @@ function layoutMap(data, format) {
     validateData(data);
     const { width, height, font, radius, banner } = format;
     const margin = banner ? 20 : Math.round(width * .025);
-    const legend = { x: width - margin - font * 21, y: margin, width: font * 21, height: font * 4.5 };
-    const reserved = [legend];
+    const legend = format.showLegend === false ? null
+        : { x: width - margin - font * 21, y: margin, width: font * 21, height: font * 4.5 };
+    const reserved = legend ? [legend] : [];
     if (banner) reserved.push({ x: 0, y: height * .56, width: width * .23, height: height * .44 });
     const x = d3.scaleLinear().domain(d3.extent(data.records, d => d.x)).range([margin + radius * 2, width - margin - radius * 2]);
     const y = d3.scaleLinear().domain(d3.extent(data.records, d => d.y)).range([height - margin - radius * 2, margin + radius * 2]);
@@ -198,27 +199,31 @@ function mapSVG(layout, themeName) {
     const theme = THEMES[themeName];
     if (!theme) throw new Error(`Unknown theme: ${themeName}`);
     const { format: { width, height, font, radius, name }, nodes, labels, years, citations, legend } = layout;
-    const lFont = font * .67;
-    const barX = legend.x + font * .4, barY = legend.y + font * 1.4;
-    const barW = font * 10, barH = font * .43;
-    const sizeX = barX + font * 12;
-    const size = d3.scaleSqrt().domain(citations).range([radius * .7, radius * MAX_CITATION_RADIUS_FACTOR]);
-    const largestRadius = size(citations[1]);
-    const sizes = [...new Set([citations[0], Math.round(citations[1] / 4), citations[1]])];
-    const description = `${nodes.length} publications, ${labels.length} research topics. Color represents publication year (${years.join("–")}); circle radius scales with the square root of citations. Positions adapt the website's embedding to ${name.toLowerCase()}.`;
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title description">
-<title id="title">Chris McComb · publication map</title><desc id="description">${xml(description)}</desc>
-<defs><linearGradient id="years">${d3.range(41).map(i => `<stop offset="${i / 40}" stop-color="${d3.interpolateMagma(i / 40)}"/>`).join("")}</linearGradient></defs>
-<rect width="${width}" height="${height}" fill="${theme.background}"/>
-<g stroke="${theme.border}" stroke-width="${round(font * .026)}" stroke-opacity=".45">${nodes.map(n => `<circle cx="${round(n.x)}" cy="${round(n.y)}" r="${round(n.r)}" fill="${n.color}"/>`).join("")}</g>
-<g font-family="Inter" font-size="${font}" font-weight="600">${labels.map(l => `<rect x="${round(l.x)}" y="${round(l.y)}" width="${l.width}" height="${l.height}" rx="${round(font * .27)}" fill="${theme.label}"/><text x="${round(l.x + l.width / 2)}" y="${round(l.y + l.height / 2 + font * .35)}" text-anchor="middle" fill="${theme.labelText}">${xml(l.text)}</text>`).join("")}</g>
-<g font-family="Inter" font-size="${lFont}" fill="${theme.text}">
+    let legendSVG = "";
+    if (legend) {
+        const lFont = font * .67;
+        const barX = legend.x + font * .4, barY = legend.y + font * 1.4;
+        const barW = font * 10, barH = font * .43;
+        const sizeX = barX + font * 12;
+        const size = d3.scaleSqrt().domain(citations).range([radius * .7, radius * MAX_CITATION_RADIUS_FACTOR]);
+        const largestRadius = size(citations[1]);
+        const sizes = [...new Set([citations[0], Math.round(citations[1] / 4), citations[1]])];
+        legendSVG = `<g font-family="Inter" font-size="${lFont}" fill="${theme.text}">
 <text x="${barX}" y="${legend.y + lFont}" font-weight="600">Publication year</text>
 <rect x="${barX}" y="${barY}" width="${barW}" height="${barH}" rx="${barH / 2}" fill="url(#years)" stroke="${theme.muted}" stroke-width=".5"/>
 ${[years[0], Math.round((years[0] + years[1]) / 2), years[1]].map((year, i) => `<text x="${barX + i * barW / 2}" y="${barY + font * 1.23}" text-anchor="${i === 0 ? "start" : i === 2 ? "end" : "middle"}" fill="${theme.muted}">${year}</text>`).join("")}
 <text x="${sizeX}" y="${legend.y + lFont}" font-weight="600">Citations</text>
 ${sizes.map((n, i) => `<circle cx="${sizeX + font * .8 + i * font * 2.7}" cy="${barY + largestRadius * 2 - size(n)}" r="${size(n)}" fill="none" stroke="${theme.muted}" stroke-width="1"/><text x="${sizeX + font * .8 + i * font * 2.7}" y="${barY + largestRadius * 2 + lFont * 1.6}" text-anchor="middle" fill="${theme.muted}">${n}</text>`).join("")}
-</g></svg>`;
+</g>`;
+    }
+    const description = `${nodes.length} publications, ${labels.length} research topics. Color represents publication year (${years.join("–")}); circle radius scales with the square root of citations. Positions adapt the website's embedding to ${name.toLowerCase()}.`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title description">
+<title id="title">Chris McComb · publication map</title><desc id="description">${xml(description)}</desc>
+${legend ? `<defs><linearGradient id="years">${d3.range(41).map(i => `<stop offset="${i / 40}" stop-color="${d3.interpolateMagma(i / 40)}"/>`).join("")}</linearGradient></defs>` : ""}
+<rect width="${width}" height="${height}" fill="${theme.background}"/>
+<g stroke="${theme.border}" stroke-width="${round(font * .026)}" stroke-opacity=".45">${nodes.map(n => `<circle cx="${round(n.x)}" cy="${round(n.y)}" r="${round(n.r)}" fill="${n.color}"/>`).join("")}</g>
+<g font-family="Inter" font-size="${font}" font-weight="600">${labels.map(l => `<rect x="${round(l.x)}" y="${round(l.y)}" width="${l.width}" height="${l.height}" rx="${round(font * .27)}" fill="${theme.label}"/><text x="${round(l.x + l.width / 2)}" y="${round(l.y + l.height / 2 + font * .35)}" text-anchor="middle" fill="${theme.labelText}">${xml(l.text)}</text>`).join("")}</g>
+${legendSVG}</svg>`;
     // Outlined text keeps SVGs portable in slide software with no font install.
     const outlined = new Resvg(svg, { font: FONT_OPTIONS }).toString();
     return outlined.replace(/(<svg\b[^>]*>)/, `$1\n<title>Chris McComb · publication map</title><desc>${xml(description)}</desc>`);
