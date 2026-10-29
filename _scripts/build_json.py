@@ -1,7 +1,7 @@
 """Build and persist publication embeddings, clusters, and labels.
 
 This module loads the publications dataset, projects the embeddings for
-visualisation, clusters the items in a stable high-dimensional space, and
+visualisation, seeds semantic topics with size-bounded local splits, and
 produces descriptive labels per cluster. The resulting payload is persisted to
 ``assets/json/pubs.json`` in an atomic manner so downstream consumers never
 observe partial writes.
@@ -28,6 +28,7 @@ import numpy
 import pandas  # type: ignore[import-untyped]
 from huggingface_hub import HfApi
 from numpy.typing import NDArray
+from scipy.optimize import linear_sum_assignment
 from sklearn.cluster import KMeans  # type: ignore[import-untyped]
 from sklearn.decomposition import PCA  # type: ignore[import-untyped]
 from sklearn.preprocessing import normalize
@@ -46,6 +47,9 @@ DEFAULT_DATASET_ID = "ccm/publications"
 DEFAULT_DATASET_REVISION = "main"
 DEFAULT_KMEANS_CLUSTERS = 10
 DEFAULT_KMEANS_N_INIT = 100
+DEFAULT_MAX_CLUSTER_FRACTION = 1 / 8
+DEFAULT_SPLIT_SPATIAL_WEIGHT = .25
+DEFAULT_SPLIT_N_INIT = 20
 DEFAULT_PERPLEXITY = 40
 DEFAULT_TSNE_ITERATIONS = 2000
 
@@ -77,6 +81,9 @@ class ClusteringResult:
     space: str
     algorithm: str
     n_clusters: int
+    base_n_clusters: int | None = None
+    size_limit: int | None = None
+    spatial_weight: float = 0.0
 
 
 def _datasets_offline() -> bool:
@@ -147,12 +154,92 @@ def reduce_for_clustering(
     return ReducedSpace(matrix=reduced, descriptor=f"pca{components}")
 
 
+def _unit_variance_block(points: numpy.ndarray) -> numpy.ndarray:
+    centered = points - points.mean(axis=0)
+    scale = float(numpy.sqrt(numpy.mean(numpy.sum(centered * centered, axis=1))))
+    return centered / scale if scale > 0 else numpy.zeros_like(centered)
+
+
+def _bounded_kmeans(points: numpy.ndarray, children: int, limit: int, seed: int) -> numpy.ndarray:
+    """Fit local groups with upper capacities and a small-group guard."""
+
+    minimum = max(1, len(points) // (2 * children))
+    slots = numpy.repeat(numpy.arange(children), limit)
+    reserved = numpy.tile(numpy.arange(limit) < minimum, children)
+    best_score = numpy.inf
+    best_labels = None
+    for start in range(DEFAULT_SPLIT_N_INIT):
+        centers = KMeans(n_clusters=children, n_init=1, random_state=seed + start).fit(points).cluster_centers_
+        previous = None
+        for _ in range(100):
+            cost = pairwise_distances(points, centers, metric="sqeuclidean")[:, slots]
+            # Reserved slots give every child at least half its average share.
+            # The reward exceeds any possible total distance-cost difference,
+            # so capacity assignment fills them before optional slots.
+            cost[:, reserved] -= (float(cost.max()) + 1) * len(points)
+            rows, columns = linear_sum_assignment(cost)
+            labels = numpy.empty(len(points), dtype=int)
+            labels[rows] = slots[columns]
+            centers = numpy.array([points[labels == group].mean(axis=0) for group in range(children)])
+            if previous is not None and numpy.array_equal(previous, labels):
+                break
+            previous = labels.copy()
+        score = float(numpy.sum((points - centers[labels]) ** 2))
+        if score < best_score:
+            best_score, best_labels = score, labels.copy()
+    counts = numpy.bincount(best_labels, minlength=children)
+    if counts.min() < minimum or counts.max() > limit:
+        raise ValueError("Could not satisfy cluster size bounds")
+    return best_labels
+
+
+def cap_cluster_sizes(
+    points: numpy.ndarray,
+    labels: numpy.ndarray,
+    projection: numpy.ndarray | None = None,
+    *,
+    random_state: int = DEFAULT_RANDOM_STATE,
+) -> numpy.ndarray:
+    """Split oversized parents, retaining semantic and visual neighborhood context."""
+
+    points = numpy.asarray(points, dtype=numpy.float64)
+    labels = numpy.asarray(labels, dtype=int)
+    if len(points) != len(labels):
+        raise ValueError("Every paper must have a parent cluster")
+    parents = numpy.unique(labels)
+    limit = max(1, int(numpy.floor(len(points) * DEFAULT_MAX_CLUSTER_FRACTION)))
+    space = _unit_variance_block(points)
+    if projection is not None:
+        projection = numpy.asarray(projection, dtype=numpy.float64)
+        if projection.shape != (len(points), 2) or not numpy.isfinite(projection).all():
+            raise ValueError("Projection must contain one finite 2D coordinate per paper")
+        space = numpy.column_stack([
+            space * numpy.sqrt(1 - DEFAULT_SPLIT_SPATIAL_WEIGHT),
+            _unit_variance_block(projection) * numpy.sqrt(DEFAULT_SPLIT_SPATIAL_WEIGHT),
+        ])
+    # Normalize parent IDs; allocate new IDs only for additional child groups.
+    result = numpy.searchsorted(parents, labels)
+    next_id = len(parents)
+    for parent_id, parent in enumerate(parents):
+        members = numpy.flatnonzero(labels == parent)
+        if len(members) <= limit:
+            continue
+        children = int(numpy.ceil(len(members) / limit))
+        child_labels = _bounded_kmeans(space[members], children, limit, random_state)
+        child_ids = [parent_id, *range(next_id, next_id + children - 1)]
+        next_id += children - 1
+        for child, identifier in enumerate(child_ids):
+            result[members[child_labels == child]] = identifier
+    return result
+
+
 def cluster_points_from_embeddings(
     embeddings: numpy.ndarray,
+    projection: numpy.ndarray | None = None,
     *,
     random_state: int = DEFAULT_RANDOM_STATE,
 ) -> ClusteringResult:
-    """Group papers in semantic space, independently of the t-SNE display."""
+    """Seed semantic topics, then split large groups with spatial regularization."""
 
     reduced = reduce_for_clustering(embeddings, random_state)
     clusterer = KMeans(
@@ -160,12 +247,18 @@ def cluster_points_from_embeddings(
         n_init=DEFAULT_KMEANS_N_INIT,
         random_state=random_state,
     )
-    labels = clusterer.fit_predict(reduced.matrix)
+    base_labels = clusterer.fit_predict(reduced.matrix)
+    labels = cap_cluster_sizes(reduced.matrix, base_labels, projection, random_state=random_state)
+    split = len(numpy.unique(labels)) > clusterer.n_clusters
+    spatial_weight = DEFAULT_SPLIT_SPATIAL_WEIGHT if split and projection is not None else 0.0
     return ClusteringResult(
-        labels=numpy.asarray(labels, dtype=int),
-        space=reduced.descriptor,
-        algorithm="kmeans",
-        n_clusters=int(clusterer.n_clusters),
+        labels=labels,
+        space=reduced.descriptor + ("+spatial-bounded-splits" if spatial_weight else "+bounded-splits" if split else ""),
+        algorithm="kmeans+bounded-splits" if split else "kmeans",
+        n_clusters=len(numpy.unique(labels)),
+        base_n_clusters=int(clusterer.n_clusters),
+        size_limit=max(1, int(numpy.floor(len(embeddings) * DEFAULT_MAX_CLUSTER_FRACTION))),
+        spatial_weight=spatial_weight,
     )
 
 
@@ -470,7 +563,13 @@ def curation_metadata(
             "algorithm": clustering.algorithm,
             "n_clusters": int(clustering.n_clusters),
             "n_init": DEFAULT_KMEANS_N_INIT,
-            "projection_refinement": False,
+            "projection_refinement": clustering.spatial_weight > 0,
+            "base_n_clusters": clustering.base_n_clusters,
+            "max_cluster_fraction": DEFAULT_MAX_CLUSTER_FRACTION,
+            "size_limit": clustering.size_limit,
+            "split_spatial_weight": clustering.spatial_weight,
+            "split_n_init": DEFAULT_SPLIT_N_INIT,
+            "minimum_child_size": "floor(parent_size / (2 * children)), at least one",
         },
         "noise_fraction": noise_fraction,
         "record_count": record_count,
@@ -498,6 +597,7 @@ def build_payload(
     projection = compute_projection(embeddings, random_state=random_state)
     clustering = cluster_points_from_embeddings(
         embeddings,
+        projection.coordinates,
         random_state=random_state,
     )
 

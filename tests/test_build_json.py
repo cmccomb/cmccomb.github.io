@@ -82,10 +82,10 @@ def test_projection_preserves_clear_semantic_neighborhoods() -> None:
     ) > .9
 
 
-def test_build_payload_keeps_membership_independent_of_map_coordinates(
+def test_build_payload_keeps_nonoversized_topics_independent_of_map_coordinates(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Changing the map projection must not change a paper's semantic topic."""
+    """Projection changes must leave topics already under the size cap intact."""
 
     rng = numpy.random.default_rng(29)
     n_clusters = build_json.DEFAULT_KMEANS_CLUSTERS
@@ -125,8 +125,100 @@ def test_build_payload_keeps_membership_independent_of_map_coordinates(
         (row["x"], row["y"]) for row in second["records"]
     ]
     assert "tsne" not in first["meta"]["clustering"]["space"]
+    assert max(numpy.unique(
+        [row["cluster_id"] for row in first["records"]], return_counts=True
+    )[1]) <= len(frame) // 8
     assert first["meta"]["clustering"]["projection_refinement"] is False
     assert first["meta"]["clustering"]["n_init"] == build_json.DEFAULT_KMEANS_N_INIT
+
+
+def test_size_cap_splits_only_oversized_parent_topics() -> None:
+    """Capped children retain their semantic parent without merging other topics."""
+
+    rng = numpy.random.default_rng(19)
+    parents = numpy.repeat(numpy.arange(7), [25, 18, 9, 8, 7, 6, 7])
+    points = numpy.eye(8)[parents] * 10 + rng.normal(scale=.5, size=(80, 8))
+    projection = rng.normal(size=(80, 2))
+
+    labels = build_json.cap_cluster_sizes(points, parents, projection, random_state=42)
+
+    ids, counts = numpy.unique(labels, return_counts=True)
+    numpy.testing.assert_array_equal(ids, numpy.arange(len(ids)))
+    assert len(labels) == len(parents)
+    assert 0 < counts.min() <= counts.max() <= len(parents) // 8
+    for child in ids:
+        assert len(numpy.unique(parents[labels == child])) == 1
+    assert len(numpy.unique(labels[parents == 0])) == 3
+    assert len(numpy.unique(labels[parents == 1])) == 2
+    for parent in range(2, 7):
+        assert len(numpy.unique(labels[parents == parent])) == 1
+
+
+def test_size_cap_handles_threshold_and_repeats_deterministically() -> None:
+    """A topic exactly at the limit stays whole while larger ones split reliably."""
+
+    rng = numpy.random.default_rng(23)
+    parents = numpy.repeat([10, 30, 50], [8, 9, 47])
+    points = rng.normal(size=(64, 6))
+    projection = rng.normal(size=(64, 2))
+
+    first = build_json.cap_cluster_sizes(points, parents, projection, random_state=42)
+    second = build_json.cap_cluster_sizes(points, parents, projection, random_state=42)
+
+    numpy.testing.assert_array_equal(first, second)
+    ids, counts = numpy.unique(first, return_counts=True)
+    numpy.testing.assert_array_equal(ids, numpy.arange(len(ids)))
+    assert counts.min() > 0 and counts.max() <= 8
+    assert len(numpy.unique(first[parents == 10])) == 1
+    assert len(numpy.unique(first[parents == 30])) == 2
+    assert len(numpy.unique(first[parents == 50])) == 6
+
+
+def test_size_cap_supports_collections_smaller_than_eight_papers() -> None:
+    """The minimum cap of one still assigns every paper to a nonempty topic."""
+
+    points = numpy.random.default_rng(31).normal(size=(5, 3))
+
+    labels = build_json.cap_cluster_sizes(points, numpy.zeros(5, dtype=int), random_state=42)
+
+    ids, counts = numpy.unique(labels, return_counts=True)
+    numpy.testing.assert_array_equal(ids, numpy.arange(5))
+    numpy.testing.assert_array_equal(counts, numpy.ones(5, dtype=int))
+
+
+def test_size_cap_does_not_peel_off_a_single_outlier_child() -> None:
+    """A capped split should retain usable child sizes around a strong outlier."""
+
+    parents = numpy.repeat(numpy.arange(8), [11, 10, 10, 10, 10, 10, 10, 9])
+    points = numpy.eye(8)[parents] * 10
+    points[10] = numpy.ones(8) * 100
+
+    labels = build_json.cap_cluster_sizes(points, parents, random_state=42)
+
+    children, counts = numpy.unique(labels[parents == 0], return_counts=True)
+    assert len(children) == 2
+    assert counts.min() >= 2
+    assert counts.max() <= 10
+
+
+def test_oversized_semantically_tied_topic_respects_separate_visual_regions() -> None:
+    """When semantics tie, local splitting should retain clear display islands."""
+
+    rng = numpy.random.default_rng(37)
+    parents = numpy.repeat(numpy.arange(7), [20, 10, 10, 10, 10, 10, 10])
+    points = numpy.eye(8)[parents] * 10
+    projection = rng.normal(scale=.1, size=(80, 2))
+    projection[:10, 0] -= 100
+    projection[10:20, 0] += 100
+
+    labels = build_json.cap_cluster_sizes(points, parents, projection, random_state=42)
+
+    assert len(numpy.unique(labels[:10])) == 1
+    assert len(numpy.unique(labels[10:20])) == 1
+    assert labels[0] != labels[10]
+    assert numpy.unique(labels, return_counts=True)[1].max() <= 10
+    for parent in range(1, 7):
+        assert len(numpy.unique(labels[parents == parent])) == 1
 
 
 def test_ctfidf_labels_produces_multiword_phrases() -> None:
