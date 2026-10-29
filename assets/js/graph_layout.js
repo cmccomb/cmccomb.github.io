@@ -971,46 +971,54 @@
                     return;
                 }
                 const boundingBox = textNode.getBBox();
-                const horizontalPadding = 12;
-                const verticalPadding = 8;
+                const horizontalPadding = 8;
+                const verticalPadding = 4;
                 const labelWidth = boundingBox.width + horizontalPadding;
                 const labelHeight = boundingBox.height + verticalPadding;
                 const labelMargin = 8;
-                const clampedX = Math.max(
-                    labelMargin + labelWidth / 2,
-                    Math.min(width - labelMargin - labelWidth / 2, label.x)
-                );
-                const preferredY = Math.max(
-                    labelMargin + labelHeight / 2,
-                    Math.min(height - labelMargin - labelHeight / 2, label.y)
-                );
-                // Move nearby labels apart; omit a label if no clear position is
-                // available. Every paper still exposes its topic in its details.
-                const offsets = [0, -1, 1, -2, 2, -3, 3, -4, 4];
-                const candidates = offsets.map(offset => {
-                    const y = preferredY + offset * (labelHeight + 8);
-                    return { left: clampedX - labelWidth / 2, right: clampedX + labelWidth / 2,
-                        top: y - labelHeight / 2, bottom: y + labelHeight / 2, y };
+                // Prefer clear space just below the topic. A label should not
+                // obscure a publication or another label.
+                const offsets = [];
+                for (let y = -216; y <= 216; y += 18) {
+                    for (let x = -216; x <= 216; x += 18) {
+                        if (x * x + y * y <= 216 ** 2) offsets.push([x, y]);
+                    }
+                }
+                offsets.sort((a, b) => (a[0] ** 2 + a[1] ** 2) - (b[0] ** 2 + b[1] ** 2)
+                    || b[1] - a[1] || Math.abs(a[0]) - Math.abs(b[0]));
+                const candidates = offsets.map(([xOffset, yOffset]) => {
+                    const x = Math.max(labelMargin + labelWidth / 2,
+                        Math.min(width - labelMargin - labelWidth / 2,
+                            label.x + xOffset));
+                    const y = label.y + yOffset;
+                    return { left: x - labelWidth / 2, right: x + labelWidth / 2,
+                        top: y - labelHeight / 2, bottom: y + labelHeight / 2, x, y };
                 });
                 const position = candidates.find(candidate => (
-                    candidate.top >= labelMargin && candidate.bottom <= height - labelMargin
+                    candidate.left >= labelMargin && candidate.right <= width - labelMargin
+                    && candidate.top >= labelMargin && candidate.bottom <= height - labelMargin
                     && placedLabels.every(other => candidate.right + 6 <= other.left
                         || candidate.left >= other.right + 6 || candidate.bottom + 6 <= other.top
                         || candidate.top >= other.bottom + 6)
+                    && clusteredNodes.every(node => {
+                        const dx = node.x - Math.max(candidate.left, Math.min(node.x, candidate.right));
+                        const dy = node.y - Math.max(candidate.top, Math.min(node.y, candidate.bottom));
+                        return dx * dx + dy * dy >= (node.r + 3) ** 2;
+                    })
                 ));
                 group.style("display", position ? null : "none");
                 if (!position) return;
                 placedLabels.push(position);
 
                 group
-                    .attr("transform", `translate(${clampedX}, ${position.y})`)
+                    .attr("transform", `translate(${position.x}, ${position.y})`)
                     .select("rect")
                     .attr("x", boundingBox.x - horizontalPadding / 2)
                     .attr("y", boundingBox.y - verticalPadding / 2)
                     .attr("width", labelWidth)
                     .attr("height", labelHeight)
-                    .attr("rx", 8)
-                    .attr("ry", 8);
+                    .attr("rx", 5)
+                    .attr("ry", 5);
             });
             updateClusterLabelVisibility();
         }

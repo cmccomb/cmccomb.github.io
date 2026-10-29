@@ -3,6 +3,13 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.8] - 2026-10-29
+
+### Improved
+
+- Make publication topic labels smaller and subtler, place them clear of map
+  circles, and display “Vision + language” for the vision-language topic.
+
 ## [0.2.7] - 2026-10-29
 
 ### Fixed

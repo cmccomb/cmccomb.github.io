@@ -14,7 +14,9 @@
 
     function displayClusterLabel(label) {
         const value = String(label || "").trim();
-        return value.toLowerCase() === "face to face" ? "design teams" : value;
+        if (value.toLowerCase() === "face to face") return "design teams";
+        if (value.toLowerCase() === "vision language") return "Vision + language";
+        return value;
     }
 
     function termsMatch(words, term) {
