@@ -32,19 +32,32 @@ or model download is needed.
 
 The builder projects embeddings using t-SNE followed by PCA, clusters with
 K-means in reduced embedding space, refines clusters in projection space, and
-labels them with coverage-aware class-based TF-IDF. It writes the snapshot
+labels them with paper-supported class-based TF-IDF. It writes the snapshot
 atomically. The browser adjusts positions for its viewport and avoids label
 collisions; stored coordinates are the input to that layout.
-Generated labels with incomplete grammatical edges are rejected. A reviewed
-label applies only to an exact cluster membership, so it cannot silently follow
-a different group after the next scrape. For other clusters, the builder
-selects distinct labels from suitable phrases that meet the minimum publication
-coverage. It gives reviewed labels priority, then uses each cluster's
-highest-ranked c-TF-IDF phrases and logs replacements when first choices
-collide. The build still fails if there are too few supported phrases for
-unique names. Snapshot validation independently rejects duplicate names after
-normalizing case and punctuation. Inspect every proposed topic in the quarterly
-refresh PR; these checks cannot establish topical accuracy.
+[`derive_topic_labels.py`](../_scripts/derive_topic_labels.py) extracts contiguous
+phrases of up to five words from titles and abstracts, preserving hyphenated
+terms and sentence boundaries. Snowball stemming pools singular/plural and
+inflected variants into term families for scoring and coverage; the displayed wording is an actual source
+phrase, with title evidence preferred when variants have equal paper support.
+Each paper contributes at most once per field, with title evidence weighted
+twice as strongly as abstract evidence. Repeating a phrase in one abstract
+cannot inflate its support. Candidates must occur in at least 20% of the
+cluster's papers (and at least two papers, unless the cluster has only one).
+
+The scorer prefers a longer phrase over a nested fragment when the longer term
+retains at least 80% of the fragment's supporting papers. This lets complete
+terms such as “vision-language models” and “hidden Markov models” outrank their
+truncated prefixes. TF-IDF rewards phrases that distinguish the cluster from
+the rest of the collection. Distinct title assignment minimizes relative score
+loss across clusters, with deterministic ties resolved by paper and title
+support. The build fails when the source cannot support distinct names.
+
+All topic names are derived automatically. There are no publication-ID
+overrides or browser display aliases. `meta.labeling` records the algorithm,
+parameters, and stemmer version; CI re-derives the committed titles to catch
+manual drift. Inspect every proposed topic in the quarterly refresh PR:
+extractive titles can still emphasize a subtopic in a mixed cluster.
 
 ## Snapshot structure
 
@@ -72,6 +85,18 @@ a publisher link does not establish open access. The helper tests cover URL
 validation and link labeling.
 
 ## Regenerate intentionally
+
+To regenerate only the titles from the committed papers and cluster assignments:
+
+```bash
+python _scripts/build_json.py --relabel-only
+```
+
+This preserves all publication records, coordinates, cluster membership,
+centroids, and original dataset/build provenance. It updates cluster titles and
+`meta.labeling`, and makes no dataset or model API requests. A second run with
+the same inputs writes no changes. Use this path when improving the title
+scorer; it still requires a site release and the checks below.
 
 Set up the Python environment using [Development](development.md#python-checks).
 Then run:
