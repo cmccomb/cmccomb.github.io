@@ -36,16 +36,20 @@ test("layouts and self-contained SVGs are reproducible and retain accessible des
     assert.match(svg, /<path/);
 });
 
-test("social landscape exports omit the legend without reserving its space", () => {
-    const landscape = layoutMap(data, FORMATS.find(format => format.id === "social-landscape"));
-    assert.equal(landscape.legend, null);
-    assert.deepEqual(landscape.reserved, []);
+test("LinkedIn banners omit the legend while preserving profile-photo space", () => {
+    const banner = layoutMap(data, FORMATS.find(format => format.id === "linkedin-banner"));
+    assert.equal(banner.legend, null);
+    assert.deepEqual(banner.reserved, [{
+        x: 0, y: banner.format.height * .56,
+        width: banner.format.width * .23, height: banner.format.height * .44,
+    }]);
     for (const theme of ["dark", "light"]) {
-        assert.doesNotMatch(mapSVG(landscape, theme), /linearGradient|Publication year|Citations/);
+        assert.doesNotMatch(mapSVG(banner, theme), /linearGradient|Publication year|Citations/);
     }
-    const square = layoutMap(data, FORMATS.find(format => format.id === "social-square"));
-    assert(square.legend);
-    assert.match(mapSVG(square, "dark"), /linearGradient/);
+    const landscape = layoutMap(data, FORMATS.find(format => format.id === "social-landscape"));
+    assert(landscape.legend);
+    assert.deepEqual(landscape.reserved, [landscape.legend]);
+    assert.match(mapSVG(landscape, "dark"), /linearGradient/);
 });
 
 test("invalid source data and obscured or clipped papers fail the build", () => {

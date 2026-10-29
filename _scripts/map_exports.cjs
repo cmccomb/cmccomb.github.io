@@ -7,8 +7,8 @@ const { Resvg } = require("@resvg/resvg-js");
 const { displayClusterLabel } = require("../assets/js/publication_helpers.js");
 
 const FORMATS = [
-    { id: "linkedin-banner", name: "LinkedIn profile banner", width: 1584, height: 396, font: 18, radius: 7.5, banner: true },
-    { id: "social-landscape", name: "Social landscape", width: 1200, height: 627, font: 20, radius: 10, showLegend: false },
+    { id: "linkedin-banner", name: "LinkedIn profile banner", width: 1584, height: 396, font: 18, radius: 7.5, banner: true, showLegend: false },
+    { id: "social-landscape", name: "Social landscape", width: 1200, height: 627, font: 20, radius: 10 },
     { id: "social-square", name: "Social square", width: 1080, height: 1080, font: 24, radius: 13 },
     { id: "social-portrait", name: "Social portrait", width: 1080, height: 1350, font: 25, radius: 14 },
     { id: "slides-16x9", name: "Widescreen slides · 16:9", width: 1920, height: 1080, font: 30, radius: 16 },

@@ -3,6 +3,13 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.14] - 2026-10-29
+
+### Fixed
+
+- Remove the legend from LinkedIn profile banners in both themes and restore
+  it to the social landscape maps.
+
 ## [0.2.13] - 2026-10-29
 
 ### Fixed
