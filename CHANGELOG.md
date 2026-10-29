@@ -3,6 +3,14 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.9] - 2026-10-29
+
+### Fixed
+
+- Rename the mixed AI design cluster “AI for engineering design.”
+- Restore the publication-map topic label appearance and placement from before
+  the previous release.
+
 ## [0.2.8] - 2026-10-29
 
 ### Improved
