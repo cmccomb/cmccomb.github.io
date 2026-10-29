@@ -27,6 +27,7 @@ import numpy
 import pandas  # type: ignore[import-untyped]
 from huggingface_hub import HfApi
 from numpy.typing import NDArray
+from scipy.optimize import linear_sum_assignment  # type: ignore[import-untyped]
 from sklearn.cluster import KMeans  # type: ignore[import-untyped]
 from sklearn.decomposition import PCA  # type: ignore[import-untyped]
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer  # type: ignore[import-untyped]
@@ -254,7 +255,7 @@ def _cluster_id_series(labels: Sequence[int]) -> pandas.Series:
     )
 
 
-def _phrase_document_coverage(phrase: str, records: pandas.DataFrame) -> int:
+def _phrase_document_coverage(phrase: str, documents: Sequence[str]) -> int:
     """Count records whose title or abstract contains a candidate phrase."""
 
     normalised_phrase = normalise_topic_label(phrase)
@@ -262,13 +263,7 @@ def _phrase_document_coverage(phrase: str, records: pandas.DataFrame) -> int:
         return 0
 
     needle = f" {normalised_phrase} "
-    matching_records = 0
-    for bib_entry in records["bib_dict"]:
-        fragments = _bib_dict_to_fragments(bib_entry)
-        document = f" {normalise_topic_label(' '.join(fragments))} "
-        if needle in document:
-            matching_records += 1
-    return matching_records
+    return sum(needle in document for document in documents)
 
 
 def _minimum_label_coverage(record_count: int) -> int:
@@ -280,6 +275,62 @@ def _minimum_label_coverage(record_count: int) -> int:
         record_count,
         max(MIN_LABEL_RECORDS, int(numpy.ceil(record_count * MIN_LABEL_COVERAGE))),
     )
+
+
+def _assign_unique_topic_labels(
+    candidates: Dict[int, List[str]], reviewed: Dict[int, str]
+) -> Dict[int, str]:
+    """Choose the best distinct labels, preferring exact-membership curation."""
+
+    label_keys = sorted(
+        {
+            normalise_topic_label(label)
+            for labels in candidates.values()
+            for label in labels
+        }
+        | {normalise_topic_label(label) for label in reviewed.values()}
+    )
+    if len(label_keys) < len(candidates):
+        raise ValueError("No distinct supported topic labels for all clusters")
+
+    cluster_ids = sorted(candidates)
+    key_columns = {key: index for index, key in enumerate(label_keys)}
+    costs = numpy.full((len(cluster_ids), len(label_keys)), numpy.inf)
+    display_labels: Dict[tuple[int, str], str] = {}
+    for row, cluster_id in enumerate(cluster_ids):
+        for rank, label in enumerate(candidates[cluster_id]):
+            key = normalise_topic_label(label)
+            column = key_columns[key]
+            if not numpy.isfinite(costs[row, column]):
+                costs[row, column] = 1 - 1 / (rank + 1)
+                display_labels[cluster_id, key] = label
+        if cluster_id in reviewed:
+            label = reviewed[cluster_id]
+            key = normalise_topic_label(label)
+            costs[row, key_columns[key]] = -(len(cluster_ids) + 1)
+            display_labels[cluster_id, key] = label
+
+    try:
+        rows, columns = linear_sum_assignment(costs)
+    except ValueError as exc:
+        raise ValueError("No distinct supported topic labels for all clusters") from exc
+    if not numpy.isfinite(costs[rows, columns]).all():
+        raise ValueError("No distinct supported topic labels for all clusters")
+
+    chosen = {
+        cluster_ids[row]: display_labels[cluster_ids[row], label_keys[column]]
+        for row, column in zip(rows, columns)
+    }
+    for cluster_id, label in chosen.items():
+        preferred = reviewed.get(cluster_id) or candidates[cluster_id][0]
+        if normalise_topic_label(label) != normalise_topic_label(preferred):
+            LOGGER.info(
+                "Resolved topic collision for cluster %s: %r -> %r",
+                cluster_id,
+                preferred,
+                label,
+            )
+    return chosen
 
 
 def ctfidf_labels(
@@ -329,45 +380,37 @@ def ctfidf_labels(
     tfidf_matrix = tfidf.fit_transform(term_matrix)
     vocabulary = numpy.array(vectorizer.get_feature_names_out())
 
-    labels_out: Dict[int, str] = {}
+    candidates: Dict[int, List[str]] = {}
+    reviewed: Dict[int, str] = {}
     for index, cluster_id in enumerate(cluster_ids):
         cluster_records = df[df["cluster_id"] == cluster_id]
-        reviewed = curated_label(cluster_records["author_pub_id"])
-        if reviewed is not None:
-            labels_out[cluster_id] = reviewed
-            continue
+        curated = curated_label(cluster_records["author_pub_id"])
+        if curated is not None:
+            reviewed[cluster_id] = curated
 
         row = tfidf_matrix[index].toarray().ravel()
-        if row.sum() == 0:
-            continue
         minimum_coverage = _minimum_label_coverage(len(cluster_records))
         ranked_indices = row.argsort()[::-1]
+        documents = [
+            f" {normalise_topic_label(' '.join(_bib_dict_to_fragments(bib_entry)))} "
+            for bib_entry in cluster_records["bib_dict"]
+        ]
+        eligible: List[str] = []
         for candidate_index in ranked_indices:
             candidate = vocabulary[candidate_index]
             if (
                 suitable_label(candidate)
-                and _phrase_document_coverage(candidate, cluster_records)
+                and _phrase_document_coverage(candidate, documents)
                 >= minimum_coverage
             ):
-                labels_out[cluster_id] = candidate
-                break
-        else:
+                eligible.append(candidate)
+        if not eligible and curated is None:
             raise ValueError(
                 f"Cluster {cluster_id} has no suitable, sufficiently supported topic label"
             )
+        candidates[cluster_id] = eligible
 
-    label_owners: Dict[str, int] = {}
-    for cluster_id, label in labels_out.items():
-        normalised_label = normalise_topic_label(label)
-        if normalised_label in label_owners:
-            previous_id = label_owners[normalised_label]
-            raise ValueError(
-                f"Duplicate topic label {label!r} for clusters "
-                f"{previous_id} and {cluster_id}; review and curate one cluster"
-            )
-        label_owners[normalised_label] = cluster_id
-
-    return labels_out
+    return _assign_unique_topic_labels(candidates, reviewed)
 
 
 @dataclass
