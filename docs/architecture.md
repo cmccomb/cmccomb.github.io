@@ -44,7 +44,7 @@ profile/navigation behavior.
 
 | Module | Owns |
 | --- | --- |
-| [`publication_helpers.js`](../assets/js/publication_helpers.js) | Search normalization/ranking, topic-label corrections, citation formatting, source link validation; shared with Node tests and exports |
+| [`publication_helpers.js`](../assets/js/publication_helpers.js) | Search normalization/ranking, topic text formatting, citation formatting, source link validation; shared with Node tests and exports |
 | [`graph_layout.js`](../assets/js/graph_layout.js) | Snapshot loading, map/list rendering, search, selection, details, clipboard behavior, legends, keyboard movement, resizing |
 | [`interface.js`](../assets/js/interface.js) | Profile visibility, navigation history, focus restoration, Escape behavior, responsive default and remembered view |
 

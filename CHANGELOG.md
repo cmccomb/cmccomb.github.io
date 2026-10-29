@@ -3,6 +3,17 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.15] - 2026-10-29
+
+### Improved
+
+- Derive ten topic groups in semantic PCA space with 100 K-means starts,
+  independently of the two-dimensional display.
+- Retune t-SNE with normalized PCA preprocessing, cosine distance, a full-PCA
+  initialization, perplexity 40, and 2,000 iterations after a same-input review.
+- Record projection settings and original-space quality diagnostics, and
+  regenerate the map from the same pinned 267-paper dataset.
+
 ## [0.2.14] - 2026-10-29
 
 ### Fixed
