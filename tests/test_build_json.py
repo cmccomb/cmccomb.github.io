@@ -15,7 +15,12 @@ from sklearn.cluster import KMeans  # type: ignore[import-untyped]
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from _scripts import build_json
-from _scripts.topic_labels import curated_label, normalise_topic_label, suitable_label
+from _scripts.topic_labels import (
+    CURATED_LABELS,
+    curated_label,
+    normalise_topic_label,
+    suitable_label,
+)
 
 
 @pytest.fixture(scope="session")
@@ -240,35 +245,36 @@ def test_ctfidf_labels_prioritises_cluster_wide_phrases() -> None:
     assert phrases[0] == "design teams"
 
 
-def test_reviewed_october_topic_survives_regeneration() -> None:
-    """Keep the reviewed label while this cluster has the same publications."""
+def test_reviewed_topics_apply_only_to_exact_membership() -> None:
+    """Reviewed names outrank generated phrases until cluster membership changes."""
 
-    snapshot_path = Path(__file__).resolve().parents[1] / "assets/json/pubs.json"
-    snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
-    records = pandas.DataFrame(snapshot["records"])
-    labels = records["cluster_id"].tolist()
-    cluster_records = records[records["cluster_id"] == 10]
+    memberships = {label: ids for ids, label in CURATED_LABELS.items()}
+    rows = [
+        {"author_pub_id": publication_id, "bib_dict": {"title": title}}
+        for label, title in (
+            ("design methods", "Lattice manufacturing systems"),
+            ("design decisions", "Robot teamwork process"),
+        )
+        for publication_id in sorted(memberships[label])
+    ]
+    labels = (
+        [0] * len(memberships["design methods"])
+        + [1] * len(memberships["design decisions"])
+    )
+    rows.extend([
+        {"author_pub_id": "other-1", "bib_dict": {"title": "Coastal erosion study"}},
+        {"author_pub_id": "other-2", "bib_dict": {"title": "Coastal erosion data"}},
+    ])
+    labels.extend([2, 2])
 
-    assert curated_label(cluster_records["author_pub_id"]) == "design decisions"
-    assert build_json.ctfidf_labels(records, labels)[10] == "design decisions"
+    assert build_json.ctfidf_labels(pandas.DataFrame(rows), labels) == {
+        0: "design methods",
+        1: "design decisions",
+        2: "coastal erosion",
+    }
+    assert curated_label([*memberships["design methods"], "new-publication"]) is None
     assert not suitable_label("market in")
     assert not suitable_label("work we")
-
-
-def test_reviewed_design_methods_topic_resolves_october_duplicate() -> None:
-    """Keep AM on the stronger cluster and preserve the reviewed broad topic."""
-
-    snapshot_path = Path(__file__).resolve().parents[1] / "assets/json/pubs.json"
-    snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
-    records = pandas.DataFrame(snapshot["records"])
-    labels = records["cluster_id"].tolist()
-    cluster_records = records[records["cluster_id"] == 0]
-
-    assert curated_label(cluster_records["author_pub_id"]) == "design methods"
-    generated = build_json.ctfidf_labels(records, labels)
-    assert generated[0] == "design methods"
-    assert generated[5] == "additive manufacturing"
-    assert len(set(generated.values())) == len(generated)
 
 
 def test_ctfidf_labels_resolves_duplicate_reviewed_topics(
