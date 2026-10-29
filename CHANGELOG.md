@@ -3,6 +3,16 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.7] - 2026-10-29
+
+### Fixed
+
+- Resolve duplicate publication topic labels automatically during graph refreshes.
+
+### Data
+
+- Refresh the publication graph with 267 publications from dataset commit `0359eb8a8a1c`.
+
 ## [0.2.6] - 2026-10-22
 
 ### Fixed

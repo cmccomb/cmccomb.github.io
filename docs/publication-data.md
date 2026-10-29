@@ -37,12 +37,14 @@ atomically. The browser adjusts positions for its viewport and avoids label
 collisions; stored coordinates are the input to that layout.
 Generated labels with incomplete grammatical edges are rejected. A reviewed
 label applies only to an exact cluster membership, so it cannot silently follow
-a different group after the next scrape. Generation and snapshot validation
-also reject duplicate topic names after normalizing case and punctuation.
-When a refresh produces a duplicate, review the groups and curate a distinct
-label in `_scripts/topic_labels.py` for the appropriate exact membership.
-Inspect every proposed topic in the quarterly refresh PR; these checks cannot
-establish topical accuracy.
+a different group after the next scrape. For other clusters, the builder
+selects distinct labels from suitable phrases that meet the minimum publication
+coverage. It gives reviewed labels priority, then uses each cluster's
+highest-ranked c-TF-IDF phrases and logs replacements when first choices
+collide. The build still fails if there are too few supported phrases for
+unique names. Snapshot validation independently rejects duplicate names after
+normalizing case and punctuation. Inspect every proposed topic in the quarterly
+refresh PR; these checks cannot establish topical accuracy.
 
 ## Snapshot structure
 
