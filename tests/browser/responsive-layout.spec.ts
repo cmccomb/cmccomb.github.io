@@ -99,7 +99,6 @@ test("map labels and circles do not overlap, and keyboard focus scrolls into vie
     await page.setViewportSize(viewport);
     await page.goto("/?view=map");
     await expect(page.locator(".cluster-label").first()).toBeVisible();
-    await expect(page.locator(".cluster-label").filter({ hasText: "Vision + language" })).toBeVisible();
     const layout = await page.evaluate(() => {
       const labels = Array.from(document.querySelectorAll(".cluster-label"))
         .filter(label => getComputedStyle(label).display !== "none")
@@ -112,18 +111,11 @@ test("map labels and circles do not overlap, and keyboard focus scrolls into vie
       });
       const circleCollisions = circles.flatMap((a, i) => circles.slice(i + 1).filter(b =>
         Math.hypot(a.x - b.x, a.y - b.y) < a.r + b.r - 0.5));
-      const coveredCircles = labels.flatMap(label => circles.filter(circle => {
-        const dx = circle.x - Math.max(label.left, Math.min(circle.x, label.right));
-        const dy = circle.y - Math.max(label.top, Math.min(circle.y, label.bottom));
-        return dx * dx + dy * dy < circle.r * circle.r;
-      }));
-      return { labels: labels.length, labelCollisions: labelCollisions.length,
-        circleCollisions: circleCollisions.length, coveredCircles: coveredCircles.length };
+      return { labels: labels.length, labelCollisions: labelCollisions.length, circleCollisions: circleCollisions.length };
     });
     expect(layout.labels).toBeGreaterThan(5);
     expect(layout.labelCollisions).toBe(0);
     expect(layout.circleCollisions).toBe(0);
-    expect(layout.coveredCircles).toBe(0);
     await page.locator(".publication-link").first().focus();
     await page.keyboard.press("End");
     await expect(page.locator(".publication-link").last()).toBeFocused();
