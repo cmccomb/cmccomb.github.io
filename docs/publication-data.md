@@ -30,19 +30,38 @@ It requires uniform `embedding` arrays, `bib_dict`, `author_pub_id`, and
 `num_citations`. Existing embeddings supply the input; no PyTorch installation
 or model download is needed.
 
-The builder fits ten topic clusters in the original embeddings' PCA space
-(up to 50 dimensions, full SVD), using K-means with 100 starts. Membership never
-depends on display coordinates. The display separately normalizes the embeddings,
-reduces them to up to 50 PCA dimensions, and applies cosine-distance t-SNE with
-perplexity 40, a deterministic full-PCA initialization, and 2,000 iterations.
-Perplexity and PCA dimension are capped for small inputs. A final two-dimensional
-PCA orients the display without changing its pairwise distances.
+The builder seeds ten topic clusters in the original embeddings' PCA space
+(up to 50 dimensions, full SVD), using K-means with 100 starts. It then splits
+any parent exceeding one eighth (12.5%) of the collection. The integer size
+limit is `max(1, floor(record_count / 8))`; a parent exactly at that limit stays
+whole. Each oversized parent is divided into `ceil(parent_size / size_limit)`
+children, with no paper moving between semantic parents.
+
+Local splits combine 75% semantic PCA squared distance and 25% squared distance
+in the existing 2D map. Each coordinate block is centered and scaled to unit
+root mean square radius across the collection before weighting.
+Twenty local K-means starts alternate centroid updates with Hungarian capacity
+assignment. Every child is bounded above by the collection-wide size limit and
+below by `max(1, floor(parent_size / (2 * children)))`. This permits unequal
+child sizes while preventing a split from peeling off a tiny outlier group.
+For 267 papers the limit is 33, and four oversized parents split the ten base
+topics into fourteen groups of 9–33 papers.
+
+The display normalizes the embeddings, reduces them to up to 50 PCA dimensions,
+and applies cosine-distance t-SNE with perplexity 40, a deterministic full-PCA
+initialization, and 2,000 iterations. Perplexity and PCA dimension are capped
+for small inputs. A final two-dimensional PCA orients the display without
+changing its pairwise distances. Local topic splitting uses these coordinates
+without moving them. The spatial term encourages child labels to cover the
+neighborhoods displayed on the map while retaining their semantic parent.
 
 The [method review](map-method-review.md) records the same-input parameter
 comparison behind these defaults. t-SNE emphasizes local neighborhoods;
 distances and empty space between regions are not a calibrated semantic scale.
 The snapshot records all settings and original-cosine-space diagnostics in
-`meta.projection`, `meta.clustering`, and `meta.quality`.
+`meta.projection`, `meta.clustering`, and `meta.quality`. Clustering metadata
+includes the base and final topic counts, maximum fraction, resolved size
+limit, spatial weight, split starts, and minimum-child-size rule.
 
 The builder labels clusters with paper-supported class-based TF-IDF and writes the snapshot
 atomically. The browser places labels near their clusters and treats their

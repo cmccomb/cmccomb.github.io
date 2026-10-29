@@ -1,9 +1,12 @@
 # Publication map method review — 2026-10-29
 
-The previous map was a useful exploratory view, but its final topic memberships
-were fitted in the two-dimensional t-SNE projection. That made topic content
-depend on visualization distortion. The revised pipeline keeps topic membership
-in semantic embedding space and tunes the display separately.
+The map needs titles that describe coherent research topics and cover the
+neighborhoods visible on screen. Refitting clusters in a two-dimensional t-SNE
+projection is a valid way to improve that visual coverage, with a tradeoff:
+topic membership can also follow projection distortions. Semantic clustering
+better preserves the embedding structure, but its groups may span several
+displayed regions. The current policy starts with semantic topics and splits
+oversized groups using both semantic and visual distances.
 
 ## Input and comparisons
 
@@ -25,7 +28,53 @@ and 2,000 iterations. Leading settings were checked across seeds and in the
 actual browser layout, including its label obstacles and bubble spacing.
 KL divergence was not compared across perplexities as a common quality scale.
 
-## Selected settings and evidence
+## Current size policy
+
+The base partition uses raw embedding PCA50 with full SVD and K-means k=10,
+n_init=100, seed=42. A topic may contain at most one eighth (12.5%) of the
+collection. The integer limit is `max(1, floor(record_count / 8))`; only parents
+larger than that limit are split. Each receives
+`ceil(parent_size / size_limit)` children, and papers stay within their base
+semantic parent.
+
+The split objective combines 75% semantic PCA squared distance with 25% squared
+distance in the existing 2D map. Both coordinate blocks are centered and scaled
+to unit root mean square radius over the full collection before weighting.
+Local K-means uses 20 starts with alternating centroid updates and Hungarian
+capacity assignment. Every child must contain at least
+`max(1, floor(parent_size / (2 * children)))` papers and at most the size limit.
+These bounds allow natural unequal subdivisions while preventing tiny outlier
+children. Topics already under the cap retain their membership.
+
+For this collection of 267 papers, the cap is 33. Four parents split the ten
+base topics into fourteen groups of 9–33 papers:
+
+| Base topic | Papers | Automatically titled children |
+| --- | ---: | --- |
+| engineering design | 37 | first-year engineering (17); trait empathy (20) |
+| design teams | 54 | artificial intelligence (21); design teams (33) |
+| large language models | 38 | large language models (18); cognitive assistants (20) |
+| design agents | 37 | reinforcement learning (9); human designers (28) |
+
+All titles are re-derived from publication evidence after splitting with the
+existing paper-supported phrase scorer. The more specific names follow from
+the new memberships; the scorer and source phrases are unchanged.
+
+The t-SNE settings below and the existing projected coordinates are retained.
+Only oversized parents use the projection during local refinement. This keeps
+visual coverage in the clustering objective without refitting the entire
+collection to the map. The split step changes membership, titles, and label
+centroids, and does not move publications.
+
+![Publication map with size-capped topics](screenshots/size-capped-topics.png)
+
+## Historical 0.2.15 comparison
+
+The following settings and measurements describe the 0.2.15 build, before the
+size policy above. That build replaced a complete projection-space refit with
+ten semantic topics and retuned the display. Its metrics remain useful evidence
+about projection fidelity and the tradeoff between semantic and visual grouping;
+they do not describe the current fourteen-topic partition.
 
 - Topics: raw embedding PCA50 with full SVD; K-means k=10, n_init=100, seed=42.
 - Display: L2 normalization, full-SVD PCA50, cosine-distance t-SNE,
@@ -37,7 +86,7 @@ KL divergence was not compared across perplexities as a common quality scale.
 With its explicit PCA start, the selected projection produced identical
 coordinates at seeds 0, 42, and 84 on the review host.
 
-| Diagnostic | Previous committed map | Selected build |
+| Diagnostic | Map before 0.2.15 | 0.2.15 (10 semantic topics) |
 | --- | ---: | ---: |
 | Original-space cosine silhouette | 0.0997 | 0.1421 |
 | Nearest-10 semantic neighbors in the same topic | 62.4% | 70.0% |
@@ -55,12 +104,12 @@ refinements. Across all five semantic clustering seeds, agreement was 0.706.
 Stability is moderate: this is a useful thematic partition of
 overlapping research interests, not evidence of ten uniquely true categories.
 
-The selected groups have 12–54 papers. Automatic titles include design agents,
+The 0.2.15 groups had 12–54 papers. Automatic titles included design agents,
 large language models, human behavior, additive manufacturing, permafrost thaw,
 super-resolution, and strain fields. Browser and export tests still require
 every publication and label to fit without overlap.
 
-![Retuned publication map](screenshots/retuned-map.png)
+![Historical 0.2.15 publication map](screenshots/retuned-map.png)
 
 ## Interpretation and regression coverage
 
@@ -71,10 +120,13 @@ inter-region distances should not be read as quantitative semantic measurements.
 Color continues to show publication year and bubble size shows citation count.
 
 Tests check planted-topic recovery, local projection fidelity, deterministic
-results, and invariant topic memberships when display coordinates are scrambled.
-Snapshot provenance records the selected parameters and quality measurements.
-Future refreshes should inspect topic titles, sizes, and diagnostics rather than
-optimize for dramatic visual separation.
+results, size bounds, and preservation of parent membership. Scrambling display
+coordinates must leave topics already under the cap intact; oversized topics
+may respond to visual neighborhoods during splitting. A tied-semantic fixture
+checks that local splits can respect separate display regions. Snapshot
+provenance records the selected parameters and quality measurements. Future
+refreshes should inspect topic titles, sizes, semantic diagnostics, and visual
+coverage together rather than optimize for dramatic visual separation.
 
 An upstream follow-up is worth benchmarking separately: the current scraper
 uses the SPECTER2 base model's CLS vector. AllenAI recommends its proximity

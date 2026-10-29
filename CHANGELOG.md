@@ -3,6 +3,16 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.16] - 2026-10-29
+
+### Improved
+
+- Automatically split topic groups containing more than one eighth of the
+  publication collection, using semantic similarity and visual proximity with
+  upper size limits and a minimum child size.
+- Derive fourteen topic titles from the resulting groups without manual
+  overrides, preserving the existing t-SNE positions and overlap prevention.
+
 ## [0.2.15] - 2026-10-29
 
 ### Improved
