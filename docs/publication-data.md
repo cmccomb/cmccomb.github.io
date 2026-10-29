@@ -33,8 +33,11 @@ or model download is needed.
 The builder projects embeddings using t-SNE followed by PCA, clusters with
 K-means in reduced embedding space, refines clusters in projection space, and
 labels them with paper-supported class-based TF-IDF. It writes the snapshot
-atomically. The browser adjusts positions for its viewport and avoids label
-collisions; stored coordinates are the input to that layout.
+atomically. The browser places labels near their clusters and treats their
+rectangles as fixed obstacles while bubbles settle. Browser checks require every
+label and paper to remain present without label/label, label/bubble, or
+bubble/bubble overlaps across viewport changes. Stored coordinates are the input
+to that layout.
 [`derive_topic_labels.py`](../_scripts/derive_topic_labels.py) extracts contiguous
 phrases of up to five words from titles and abstracts, preserving hyphenated
 terms and sentence boundaries. Snowball stemming pools singular/plural and

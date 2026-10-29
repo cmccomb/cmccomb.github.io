@@ -95,14 +95,13 @@ test("long details keep Close fixed and reveal copy feedback", async ({ page, co
 });
 
 test("map labels and circles do not overlap, and keyboard focus scrolls into view", async ({ page }) => {
-  for (const viewport of [{ width: 320, height: 568 }, { width: 1440, height: 900 }]) {
-    await page.setViewportSize(viewport);
-    await page.goto("/?view=map");
-    await expect(page.locator(".cluster-label").first()).toBeVisible();
-    const layout = await page.evaluate(() => {
+  test.setTimeout(60_000);
+  const readLayout = () => page.evaluate(() => {
+      const viewport = document.getElementById("publication-map-viewport")!;
+      const canvas = document.getElementById("publication-graph")!;
       const labels = Array.from(document.querySelectorAll(".cluster-label"))
         .filter(label => getComputedStyle(label).display !== "none")
-        .map(label => label.getBoundingClientRect());
+        .map(label => label.querySelector(".cluster-label-background")!.getBoundingClientRect());
       const labelCollisions = labels.flatMap((a, i) => labels.slice(i + 1).filter(b =>
         a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom));
       const circles = Array.from(document.querySelectorAll(".publication-node")).map(node => {
@@ -111,16 +110,45 @@ test("map labels and circles do not overlap, and keyboard focus scrolls into vie
       });
       const circleCollisions = circles.flatMap((a, i) => circles.slice(i + 1).filter(b =>
         Math.hypot(a.x - b.x, a.y - b.y) < a.r + b.r - 0.5));
-      return { labels: labels.length, labelCollisions: labelCollisions.length, circleCollisions: circleCollisions.length };
+      const coveredCircles = labels.flatMap(label => circles.filter(circle => {
+        const dx = circle.x - Math.max(label.left, Math.min(circle.x, label.right));
+        const dy = circle.y - Math.max(label.top, Math.min(circle.y, label.bottom));
+        return dx * dx + dy * dy < circle.r * circle.r;
+      }));
+      return {
+        renderedAtViewportSize: Number(canvas.getAttribute("width")) === Math.max(1024, viewport.clientWidth)
+          && Number(canvas.getAttribute("height")) === Math.max(720, viewport.clientHeight),
+        labels: labels.length,
+        circles: circles.length,
+        labelCollisions: labelCollisions.length,
+        circleCollisions: circleCollisions.length,
+        coveredCircles: coveredCircles.length,
+      };
     });
-    expect(layout.labels).toBeGreaterThan(5);
-    expect(layout.labelCollisions).toBe(0);
-    expect(layout.circleCollisions).toBe(0);
+  const expectedLayout = {
+    renderedAtViewportSize: true,
+    labels: snapshot.clusters.length,
+    circles: snapshot.records.length,
+    labelCollisions: 0,
+    circleCollisions: 0,
+    coveredCircles: 0,
+  };
+  for (const viewport of [
+    { width: 320, height: 568 }, { width: 1440, height: 900 },
+    { width: 1024, height: 500 }, { width: 2560, height: 1440 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/?view=map");
+    await expect(page.locator(".cluster-label").first()).toBeVisible();
+    await expect.poll(readLayout).toEqual(expectedLayout);
     await page.locator(".publication-link").first().focus();
     await page.keyboard.press("End");
     await expect(page.locator(".publication-link").last()).toBeFocused();
     await expect(page.locator(".publication-link").last()).toBeInViewport({ ratio: 1 });
   }
+  // A same-page resize must rebuild collision-free geometry as well.
+  await page.setViewportSize({ width: 320, height: 568 });
+  await expect.poll(readLayout).toEqual(expectedLayout);
 });
 
 test("tooltip is dismissed on resize and fits the new viewport when reopened", async ({ page }) => {

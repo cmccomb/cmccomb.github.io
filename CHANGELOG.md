@@ -3,6 +3,14 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.11] - 2026-10-29
+
+### Fixed
+
+- Reserve space around topic labels in the interactive publication map and
+  settle bubbles around those obstacles, keeping every topic visible without
+  label/bubble or bubble/bubble overlaps after resizing.
+
 ## [0.2.10] - 2026-10-29
 
 ### Improved
