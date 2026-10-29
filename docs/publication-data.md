@@ -30,9 +30,21 @@ It requires uniform `embedding` arrays, `bib_dict`, `author_pub_id`, and
 `num_citations`. Existing embeddings supply the input; no PyTorch installation
 or model download is needed.
 
-The builder projects embeddings using t-SNE followed by PCA, clusters with
-K-means in reduced embedding space, refines clusters in projection space, and
-labels them with paper-supported class-based TF-IDF. It writes the snapshot
+The builder fits ten topic clusters in the original embeddings' PCA space
+(up to 50 dimensions, full SVD), using K-means with 100 starts. Membership never
+depends on display coordinates. The display separately normalizes the embeddings,
+reduces them to up to 50 PCA dimensions, and applies cosine-distance t-SNE with
+perplexity 40, a deterministic full-PCA initialization, and 2,000 iterations.
+Perplexity and PCA dimension are capped for small inputs. A final two-dimensional
+PCA orients the display without changing its pairwise distances.
+
+The [method review](map-method-review.md) records the same-input parameter
+comparison behind these defaults. t-SNE emphasizes local neighborhoods;
+distances and empty space between regions are not a calibrated semantic scale.
+The snapshot records all settings and original-cosine-space diagnostics in
+`meta.projection`, `meta.clustering`, and `meta.quality`.
+
+The builder labels clusters with paper-supported class-based TF-IDF and writes the snapshot
 atomically. The browser places labels near their clusters and treats their
 rectangles as fixed obstacles while bubbles settle. Browser checks require every
 label and paper to remain present without label/label, label/bubble, or

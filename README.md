@@ -25,6 +25,7 @@ See [Development](docs/development.md) for setup, checks, and troubleshooting.
 | [Development](docs/development.md) | Runtime versions, local preview, test commands, failure reports |
 | [Architecture](docs/architecture.md) | Directory map, rendering, browser state, responsive behavior |
 | [Publication data](docs/publication-data.md) | Sources, JSON structure, provenance, graph regeneration |
+| [Map method review](docs/map-method-review.md) | Clustering and t-SNE comparison, selected settings, interpretation limits |
 | [Map exports](docs/map-exports.md) | Social and slide formats, local compilation, gallery, release bundles |
 | [Maintenance](docs/maintenance.md) | Routine edits, dependency updates, deployment, rollback |
 | [Changelog](CHANGELOG.md) | Version history and GitHub release notes |

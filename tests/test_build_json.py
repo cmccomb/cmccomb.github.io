@@ -11,7 +11,8 @@ from typing import Dict, List
 import numpy
 import pandas  # type: ignore[import-untyped]
 import pytest
-from sklearn.cluster import KMeans  # type: ignore[import-untyped]
+from sklearn.manifold import trustworthiness
+from sklearn.metrics import adjusted_rand_score
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
@@ -28,7 +29,7 @@ def fixture_records() -> list[dict[str, object]]:
 
 
 def test_compute_projection_is_deterministic() -> None:
-    """t-SNE + PCA should return repeatable coordinates for a fixed seed."""
+    """A fixed input and seed should produce repeatable finite map coordinates."""
 
     rng = numpy.random.default_rng(0)
     embeddings = rng.normal(size=(10, 64))
@@ -38,101 +39,94 @@ def test_compute_projection_is_deterministic() -> None:
 
     numpy.testing.assert_allclose(result_one.coordinates, result_two.coordinates)
     assert result_one.perplexity == 3
+    assert numpy.isfinite(result_one.coordinates).all()
 
 
-def test_cluster_points_from_embeddings_forms_clusters() -> None:
-    """K-means should partition the embeddings into the configured groups."""
+def test_semantic_clustering_recovers_separated_topics_across_seeds() -> None:
+    """Clearly separated semantic topics should survive different fit seeds."""
 
     rng = numpy.random.default_rng(42)
-    cluster_a = rng.normal(loc=0.0, scale=0.2, size=(20, 64))
-    cluster_b = rng.normal(loc=5.0, scale=0.2, size=(20, 64))
-    embeddings = numpy.vstack([cluster_a, cluster_b])
+    n_clusters = build_json.DEFAULT_KMEANS_CLUSTERS
+    points_per_cluster = 8
+    embeddings = numpy.vstack([
+        numpy.eye(64)[cluster] * 10
+        + rng.normal(scale=.15, size=(points_per_cluster, 64))
+        for cluster in range(n_clusters)
+    ])
+    planted = numpy.repeat(numpy.arange(n_clusters), points_per_cluster)
 
-    result = build_json.cluster_points_from_embeddings(embeddings, random_state=13)
+    first = build_json.cluster_points_from_embeddings(embeddings, random_state=13)
+    second = build_json.cluster_points_from_embeddings(embeddings, random_state=84)
 
-    unique_labels = set(result.labels)
-    assert len(unique_labels) == build_json.DEFAULT_KMEANS_CLUSTERS
-    assert result.algorithm == "kmeans"
-
-
-def test_cluster_points_from_embeddings_finds_multiple_topics() -> None:
-    """The clustering heuristics should surface several granular topics."""
-
-    rng = numpy.random.default_rng(3)
-    points_per_cluster = 40
-    clusters: list[numpy.ndarray] = []
-    for index in range(7):
-        angle = 2 * numpy.pi * index / 7
-        center = numpy.array([
-            numpy.cos(angle) * 6.0,
-            numpy.sin(angle) * 6.0,
-        ])
-        samples = rng.normal(loc=0.0, scale=0.35, size=(points_per_cluster, 6))
-        samples[:, :2] += center
-        clusters.append(samples)
-
-    embeddings = numpy.vstack(clusters)
-
-    result = build_json.cluster_points_from_embeddings(embeddings, random_state=11)
-
-    unique_labels = set(result.labels)
-    assert len(unique_labels) == build_json.DEFAULT_KMEANS_CLUSTERS
+    assert first.algorithm == "kmeans"
+    assert len(numpy.unique(first.labels)) == n_clusters
+    assert adjusted_rand_score(planted, first.labels) > .95
+    assert adjusted_rand_score(first.labels, second.labels) > .95
 
 
-def test_cluster_points_refines_using_projection() -> None:
-    """Clusters should be reinitialised in the projection space."""
+def test_projection_preserves_clear_semantic_neighborhoods() -> None:
+    """An easily separable cosine geometry should retain its local neighbors."""
 
     rng = numpy.random.default_rng(17)
+    embeddings = numpy.vstack([
+        numpy.eye(16)[cluster] * 8
+        + rng.normal(scale=.3, size=(20, 16))
+        for cluster in range(3)
+    ])
+
+    result = build_json.compute_projection(embeddings, random_state=42)
+
+    assert result.coordinates.shape == (len(embeddings), 2)
+    assert trustworthiness(
+        embeddings, result.coordinates, n_neighbors=5, metric="cosine"
+    ) > .9
+
+
+def test_build_payload_keeps_membership_independent_of_map_coordinates(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Changing the map projection must not change a paper's semantic topic."""
+
+    rng = numpy.random.default_rng(29)
     n_clusters = build_json.DEFAULT_KMEANS_CLUSTERS
-    points_per_cluster = 12
-    feature_dim = 64
+    points_per_cluster = 3
+    embeddings = numpy.vstack([
+        numpy.eye(64)[cluster] * 10
+        + rng.normal(scale=.1, size=(points_per_cluster, 64))
+        for cluster in range(n_clusters)
+    ])
+    frame = pandas.DataFrame([
+        {"embedding": vector.tolist(), "author_pub_id": f"paper-{index}",
+         "pub_year": 2026, "num_citations": 1,
+         "bib_dict": {"title": f"Synthetic publication {index}"}}
+        for index, vector in enumerate(embeddings)
+    ])
+    first_layout = numpy.column_stack([
+        numpy.repeat(numpy.arange(n_clusters), points_per_cluster),
+        numpy.tile(numpy.arange(points_per_cluster), n_clusters),
+    ]).astype(float)
+    second_layout = rng.permutation(first_layout) * numpy.array([-3., 2.])
+    monkeypatch.setattr(build_json, "ctfidf_labels", lambda citations, labels: {
+        int(group): f"research topic {group}" for group in set(labels)
+    })
+    monkeypatch.setattr(build_json, "compute_projection", lambda *args, **kwargs:
+                        build_json.ProjectionResult(first_layout, 3))
+    first = build_json.build_payload(frame, random_state=42)
+    monkeypatch.setattr(build_json, "compute_projection", lambda *args, **kwargs:
+                        build_json.ProjectionResult(second_layout, 3))
+    second = build_json.build_payload(frame, random_state=42)
 
-    embedding_groups: list[numpy.ndarray] = []
-    projection_groups: list[numpy.ndarray] = []
-    for cluster_id in range(n_clusters):
-        angle = (2 * numpy.pi * cluster_id) / float(n_clusters)
-        center_2d = numpy.array([numpy.cos(angle) * 5.0, numpy.sin(angle) * 5.0])
-        embedding_cluster = rng.normal(
-            loc=0.0,
-            scale=0.3,
-            size=(points_per_cluster, feature_dim),
-        )
-        embedding_cluster[:, :2] += center_2d
-        projection_cluster = rng.normal(
-            loc=center_2d,
-            scale=0.2,
-            size=(points_per_cluster, 2),
-        )
-        embedding_groups.append(embedding_cluster)
-        projection_groups.append(projection_cluster)
-
-    embeddings = numpy.vstack(embedding_groups)
-    projection = numpy.vstack(projection_groups)
-
-    result = build_json.cluster_points_from_embeddings(
-        embeddings,
-        projection,
-        random_state=11,
-    )
-
-    assert result.space == "tsne(init=pca50)"
-
-    reduced = build_json.reduce_for_clustering(embeddings, random_state=11)
-    base_clusterer = KMeans(n_clusters=n_clusters, random_state=11)
-    base_labels = base_clusterer.fit_predict(reduced.matrix)
-
-    centroids = numpy.vstack(
-        [projection[base_labels == cluster_id].mean(axis=0) for cluster_id in range(n_clusters)]
-    )
-    expected_clusterer = KMeans(
-        n_clusters=n_clusters,
-        init=centroids,
-        n_init=1,
-        random_state=11,
-    )
-    expected_labels = expected_clusterer.fit_predict(projection)
-
-    numpy.testing.assert_array_equal(result.labels, expected_labels)
+    assert {
+        record["author_pub_id"]: record["cluster_id"] for record in first["records"]
+    } == {
+        record["author_pub_id"]: record["cluster_id"] for record in second["records"]
+    }
+    assert [(row["x"], row["y"]) for row in first["records"]] != [
+        (row["x"], row["y"]) for row in second["records"]
+    ]
+    assert "tsne" not in first["meta"]["clustering"]["space"]
+    assert first["meta"]["clustering"]["projection_refinement"] is False
+    assert first["meta"]["clustering"]["n_init"] == build_json.DEFAULT_KMEANS_N_INIT
 
 
 def test_ctfidf_labels_produces_multiword_phrases() -> None:
@@ -530,6 +524,7 @@ def test_build_payload_preserves_optional_paper_links(monkeypatch: pytest.Monkey
     monkeypatch.setattr(build_json, "ctfidf_labels", lambda *args, **kwargs: {})
     monkeypatch.setattr(build_json, "summarize_clusters", lambda *args, **kwargs: [])
     payload = build_json.build_payload(frame)
+    assert payload["meta"]["quality"]["projection_trustworthiness"] is None
     records = payload["records"]
     assert records[0]["pub_url"] == "https://doi.org/10.1234/example"
     assert "eprint_url" not in records[0]

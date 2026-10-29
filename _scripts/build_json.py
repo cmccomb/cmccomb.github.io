@@ -30,7 +30,9 @@ from huggingface_hub import HfApi
 from numpy.typing import NDArray
 from sklearn.cluster import KMeans  # type: ignore[import-untyped]
 from sklearn.decomposition import PCA  # type: ignore[import-untyped]
-from sklearn.manifold import TSNE  # type: ignore[import-untyped]
+from sklearn.preprocessing import normalize
+from sklearn.metrics import pairwise_distances, silhouette_score
+from sklearn.manifold import trustworthiness, TSNE  # type: ignore[import-untyped]
 
 if __package__:
     from .derive_topic_labels import derive_labels, labeling_metadata, assign_unique_labels as _assign_unique_topic_labels
@@ -42,7 +44,10 @@ LOGGER = logging.getLogger(__name__)
 DEFAULT_RANDOM_STATE = 42
 DEFAULT_DATASET_ID = "ccm/publications"
 DEFAULT_DATASET_REVISION = "main"
-DEFAULT_KMEANS_CLUSTERS = 12
+DEFAULT_KMEANS_CLUSTERS = 10
+DEFAULT_KMEANS_N_INIT = 100
+DEFAULT_PERPLEXITY = 40
+DEFAULT_TSNE_ITERATIONS = 2000
 
 
 @dataclass(frozen=True)
@@ -51,6 +56,9 @@ class ProjectionResult:
 
     coordinates: numpy.ndarray
     perplexity: int
+    preprocessing: str = "l2+pca50(full)"
+    explained_variance: float | None = None
+    kl_divergence: float | None = None
 
 
 @dataclass(frozen=True)
@@ -81,134 +89,114 @@ def compute_projection(
     embeddings: numpy.ndarray,
     random_state: int = DEFAULT_RANDOM_STATE,
 ) -> ProjectionResult:
-    """Project embeddings to two dimensions using t-SNE followed by PCA."""
+    """Visualize cosine neighborhoods with PCA-preprocessed, PCA-initialized t-SNE."""
 
-    if embeddings.ndim != 2:
-        msg = "Embeddings must be a 2D array."
-        raise ValueError(msg)
-
-    n_samples = embeddings.shape[0]
+    if embeddings.ndim != 2 or embeddings.shape[1] < 2:
+        raise ValueError("Embeddings must be a 2D array with at least two features.")
+    embeddings = numpy.asarray(embeddings, dtype=numpy.float64)
+    n_samples, n_features = embeddings.shape
     if n_samples < 3:
-        msg = "At least three samples are required for t-SNE."
-        raise ValueError(msg)
+        raise ValueError("At least three samples are required for t-SNE.")
+    if not numpy.isfinite(embeddings).all() or numpy.any(numpy.linalg.norm(embeddings, axis=1) == 0):
+        raise ValueError("Embeddings must be finite and nonzero.")
 
-    max_ok = max(2, (n_samples - 1) // 3)
-    perplexity = int(min(30, max(2, max_ok)))
-    LOGGER.debug("Using t-SNE perplexity %d for %d samples", perplexity, n_samples)
-
+    unit = normalize(embeddings)
+    components = min(50, n_samples - 1, n_features)
+    denoising = PCA(n_components=components, svd_solver="full")
+    reduced = denoising.fit(unit).transform(unit)
+    # A full-SVD start avoids randomized PCA initialization changing the map
+    # when the seed changes. Match t-SNE's small initial coordinate scale.
+    initial = PCA(n_components=2, svd_solver="full").fit_transform(unit).astype(numpy.float32)
+    scale = float(numpy.std(initial[:, 0]))
+    if scale > 0:
+        initial = initial / numpy.std(initial[:, 0]) * 1e-4
+    perplexity = min(DEFAULT_PERPLEXITY, max(2, (n_samples - 1) // 3))
     tsne = TSNE(
         n_components=2,
         random_state=random_state,
         perplexity=perplexity,
-        init="random",
+        init=initial,
+        metric="cosine",
         learning_rate="auto",
+        max_iter=DEFAULT_TSNE_ITERATIONS,
+        n_jobs=1,
     )
-    tsne_embeddings = tsne.fit_transform(embeddings)
-
-    pca = PCA(n_components=2, random_state=random_state)
-    oriented_embeddings = pca.fit_transform(tsne_embeddings)
-    return ProjectionResult(coordinates=oriented_embeddings, perplexity=perplexity)
+    coordinates = PCA(n_components=2, svd_solver="full").fit_transform(tsne.fit_transform(reduced))
+    return ProjectionResult(
+        coordinates=coordinates,
+        perplexity=perplexity,
+        preprocessing=f"l2+pca{components}(full)",
+        explained_variance=float(denoising.explained_variance_ratio_.sum()),
+        kl_divergence=float(tsne.kl_divergence_),
+    )
 
 
 def reduce_for_clustering(
     embeddings: numpy.ndarray, random_state: int = DEFAULT_RANDOM_STATE
 ) -> ReducedSpace:
-    """Reduce embeddings for clustering with PCA."""
+    """Denoise semantic embeddings without using visualization coordinates."""
 
     if embeddings.ndim != 2:
-        msg = "Embeddings must be a 2D array."
-        raise ValueError(msg)
-
+        raise ValueError("Embeddings must be a 2D array.")
+    embeddings = numpy.asarray(embeddings, dtype=numpy.float64)
     n_samples, n_features = embeddings.shape
     if n_features <= 50:
         return ReducedSpace(matrix=embeddings, descriptor="original")
-
-    n_components = min(50, n_samples, n_features)
-    pca = PCA(n_components=n_components, random_state=random_state)
-    reduced = pca.fit_transform(embeddings)
-    descriptor = f"pca{n_components}"
-    return ReducedSpace(matrix=reduced, descriptor=descriptor)
-
-
-def _compute_cluster_centroids(
-    points: numpy.ndarray, labels: numpy.ndarray, n_clusters: int
-) -> numpy.ndarray:
-    """Return centroids for each cluster in the provided space."""
-
-    centroids = numpy.zeros((n_clusters, points.shape[1]), dtype=float)
-    for cluster_id in range(n_clusters):
-        mask = labels == cluster_id
-        if not numpy.any(mask):
-            msg = f"Cluster {cluster_id} has no assigned points."
-            raise ValueError(msg)
-        centroids[cluster_id] = points[mask].mean(axis=0)
-    return centroids
-
-
-def _refine_clusters_in_projection(
-    projection: numpy.ndarray,
-    labels: numpy.ndarray,
-    *,
-    n_clusters: int,
-    random_state: int,
-) -> tuple[KMeans, numpy.ndarray]:
-    """Refit K-means in the projection space using the supplied initial labels."""
-
-    centroids = _compute_cluster_centroids(projection, labels, n_clusters)
-    clusterer = KMeans(
-        n_clusters=n_clusters,
-        init=centroids,
-        n_init=1,
-        random_state=random_state,
-    )
-    refined_labels = clusterer.fit_predict(projection)
-    return clusterer, refined_labels
+    components = min(50, n_samples - 1, n_features)
+    reduced = PCA(n_components=components, svd_solver="full").fit_transform(embeddings)
+    return ReducedSpace(matrix=reduced, descriptor=f"pca{components}")
 
 
 def cluster_points_from_embeddings(
     embeddings: numpy.ndarray,
-    projection: numpy.ndarray | None = None,
     *,
     random_state: int = DEFAULT_RANDOM_STATE,
 ) -> ClusteringResult:
-    """Cluster embeddings using K-means in reduced space and refine in projection."""
+    """Group papers in semantic space, independently of the t-SNE display."""
 
     reduced = reduce_for_clustering(embeddings, random_state)
-    base_clusterer = KMeans(
-        n_clusters=DEFAULT_KMEANS_CLUSTERS,
+    clusterer = KMeans(
+        n_clusters=min(DEFAULT_KMEANS_CLUSTERS, len(embeddings)),
+        n_init=DEFAULT_KMEANS_N_INIT,
         random_state=random_state,
     )
-    base_labels = base_clusterer.fit_predict(reduced.matrix)
-
-    final_clusterer = base_clusterer
-    final_labels = numpy.asarray(base_labels, dtype=int)
-    final_space = reduced.descriptor
-
-    if projection is not None:
-        if projection.ndim != 2:
-            msg = "Projection array must be two-dimensional."
-            raise ValueError(msg)
-        if projection.shape[0] != embeddings.shape[0]:
-            msg = "Projection must have the same number of rows as embeddings."
-            raise ValueError(msg)
-
-        final_clusterer, refined_labels = _refine_clusters_in_projection(
-            projection,
-            final_labels,
-            n_clusters=int(base_clusterer.n_clusters),
-            random_state=random_state,
-        )
-        final_labels = numpy.asarray(refined_labels, dtype=int)
-        final_space = f"tsne(init={reduced.descriptor})"
-
-    algorithm = "kmeans"
-
+    labels = clusterer.fit_predict(reduced.matrix)
     return ClusteringResult(
-        labels=final_labels,
-        space=final_space,
-        algorithm=algorithm,
-        n_clusters=int(final_clusterer.n_clusters),
+        labels=numpy.asarray(labels, dtype=int),
+        space=reduced.descriptor,
+        algorithm="kmeans",
+        n_clusters=int(clusterer.n_clusters),
     )
+
+
+def map_quality(embeddings: numpy.ndarray, coordinates: numpy.ndarray, labels: numpy.ndarray) -> dict:
+    """Measure semantic grouping and local map fidelity in original cosine space."""
+
+    embeddings = numpy.asarray(embeddings, dtype=numpy.float64)
+    samples = len(embeddings)
+    neighbors = min(10, samples - 1)
+    distances = pairwise_distances(embeddings, metric="cosine")
+    numpy.fill_diagonal(distances, numpy.inf)
+    original = distances.argsort(axis=1)[:, :neighbors]
+    shown = pairwise_distances(coordinates)
+    numpy.fill_diagonal(shown, numpy.inf)
+    projected = shown.argsort(axis=1)[:, :neighbors]
+    trust_neighbors = min(10, (samples - 1) // 2)
+    groups = len(numpy.unique(labels))
+    return {
+        "reference_metric": "cosine(original embeddings)",
+        "neighbors": neighbors,
+        "cosine_silhouette": float(silhouette_score(embeddings, labels, metric="cosine"))
+            if 1 < groups < samples else None,
+        "semantic_neighbor_agreement": float(numpy.mean(labels[original] == labels[:, None])),
+        "projection_neighbor_recall": float(numpy.mean([
+            len(set(a) & set(b)) / neighbors for a, b in zip(original, projected)
+        ])) if neighbors else None,
+        "trustworthiness_neighbors": trust_neighbors,
+        "projection_trustworthiness": float(trustworthiness(
+            embeddings, coordinates, n_neighbors=trust_neighbors, metric="cosine"
+        )) if trust_neighbors else None,
+    }
 
 
 def _bib_dict_to_fragments(bib_entry: Dict[str, object]) -> List[str]:
@@ -469,11 +457,20 @@ def curation_metadata(
         "projection": {
             "method": "tsne+pca",
             "perplexity": int(projection.perplexity),
+            "preprocessing": projection.preprocessing,
+            "pca_explained_variance": projection.explained_variance,
+            "metric": "cosine",
+            "initialization": "pca(full), scaled to 1e-4",
+            "max_iter": DEFAULT_TSNE_ITERATIONS,
+            "learning_rate": "auto",
+            "kl_divergence": projection.kl_divergence,
         },
         "clustering": {
             "space": clustering.space,
             "algorithm": clustering.algorithm,
             "n_clusters": int(clustering.n_clusters),
+            "n_init": DEFAULT_KMEANS_N_INIT,
+            "projection_refinement": False,
         },
         "noise_fraction": noise_fraction,
         "record_count": record_count,
@@ -501,7 +498,6 @@ def build_payload(
     projection = compute_projection(embeddings, random_state=random_state)
     clustering = cluster_points_from_embeddings(
         embeddings,
-        projection.coordinates,
         random_state=random_state,
     )
 
@@ -549,6 +545,7 @@ def build_payload(
         "records": records,
         "clusters": [summary.as_dict() for summary in summaries],
     }
+    payload["meta"]["quality"] = map_quality(embeddings, coordinates, labels_array)
     return payload
 
 
