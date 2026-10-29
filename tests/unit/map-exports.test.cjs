@@ -36,6 +36,18 @@ test("layouts and self-contained SVGs are reproducible and retain accessible des
     assert.match(svg, /<path/);
 });
 
+test("social landscape exports omit the legend without reserving its space", () => {
+    const landscape = layoutMap(data, FORMATS.find(format => format.id === "social-landscape"));
+    assert.equal(landscape.legend, null);
+    assert.deepEqual(landscape.reserved, []);
+    for (const theme of ["dark", "light"]) {
+        assert.doesNotMatch(mapSVG(landscape, theme), /linearGradient|Publication year|Citations/);
+    }
+    const square = layoutMap(data, FORMATS.find(format => format.id === "social-square"));
+    assert(square.legend);
+    assert.match(mapSVG(square, "dark"), /linearGradient/);
+});
+
 test("invalid source data and obscured or clipped papers fail the build", () => {
     const bad = structuredClone(data);
     bad.records.push(bad.records[0]);

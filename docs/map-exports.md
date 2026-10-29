@@ -22,6 +22,8 @@ all images, an offline gallery, usage notes, licenses, and a provenance manifest
 Use the native PNG for social uploads and the 2× PNG or SVG for slides. Preserve
 the aspect ratio. SVG text is converted to paths so it renders without installing
 a font, and the SVG contains a title and description for accessible embedding.
+The social landscape format leaves out the legend to give the map more room;
+other formats include it.
 
 The LinkedIn banner reserves the lower-left 23% of width and 44% of height for
 the profile-photo overlay. This is a design allowance, not a platform guarantee:

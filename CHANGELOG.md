@@ -3,6 +3,13 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.12] - 2026-10-29
+
+### Improved
+
+- Remove the legend from social landscape map downloads in both themes, letting
+  the publication map fill the space.
+
 ## [0.2.11] - 2026-10-29
 
 ### Fixed
