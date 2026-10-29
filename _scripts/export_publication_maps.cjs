@@ -12,6 +12,7 @@ const ROOT = path.resolve(__dirname, "..");
 const sha256 = contents => createHash("sha256").update(contents).digest("hex");
 
 function gallery(manifest) {
+    const asset = file => `${xml(file)}?v=${encodeURIComponent(manifest.version)}`;
     return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Publication map downloads · Chris McComb</title>
@@ -23,16 +24,16 @@ function gallery(manifest) {
 <header><a href="/">← cmccomb.com</a><p class="eyebrow">CHRIS MCCOMB · RESEARCH</p><h1>Publication maps</h1>
 <p>The same research, sized for where you share it. Choose a dark or light background, download a PNG, or use the scalable SVG in your slides.</p>
 <p>${manifest.publications} publications · ${manifest.topics} topics · ${manifest.years.join("–")}</p>
-<a class="download" href="publication-maps.zip" download>Download all formats · ZIP</a></header>
+<a class="download" href="${asset("publication-maps.zip")}" download>Download all formats · ZIP</a></header>
 ${FORMATS.map(format => `<section aria-labelledby="${format.id}"><h2 id="${format.id}">${xml(format.name)}</h2>
 <p class="dimensions">${format.width} × ${format.height} px · 2× PNG: ${format.width * 2} × ${format.height * 2} px${format.banner ? ". Space at the lower left accommodates a profile photo; check LinkedIn’s crop preview before saving." : ""}</p>
 <div class="variants">${Object.keys(THEMES).map(theme => {
         const item = manifest.images.find(i => i.format === format.id && i.theme === theme);
         const title = `${theme[0].toUpperCase() + theme.slice(1)} background`;
-        return `<article class="variant"><a class="preview" href="${item.files.png.path}"><img src="${item.files.png.path}" width="${format.width}" height="${format.height}" loading="lazy" alt="${xml(format.name)} publication map on a ${theme} background"></a><div class="links"><h3>${title}</h3><nav aria-label="${xml(format.name)} ${theme} downloads"><a href="${item.files.png.path}" download>PNG</a><a href="${item.files.png2x.path}" download>PNG · 2×</a><a href="${item.files.svg.path}" download>SVG</a></nav></div></article>`;
+        return `<article class="variant"><a class="preview" href="${asset(item.files.png.path)}"><img src="${asset(item.files.png.path)}" width="${format.width}" height="${format.height}" loading="lazy" alt="${xml(format.name)} publication map on a ${theme} background"></a><div class="links"><h3>${title}</h3><nav aria-label="${xml(format.name)} ${theme} downloads"><a href="${asset(item.files.png.path)}" download>PNG</a><a href="${asset(item.files.png2x.path)}" download>PNG · 2×</a><a href="${asset(item.files.svg.path)}" download>SVG</a></nav></div></article>`;
     }).join("")}</div></section>`).join("\n")}
 <footer>Site v${xml(manifest.version)} &ensp; Updated ${xml(manifest.updated)} · Publication data from ${xml(manifest.dataBuiltAt.slice(0, 10))}.
-<p>Color shows publication year; circle size shows citations. Layouts adapt to each aspect ratio. <a href="README.txt">Usage and data notes</a> · <a href="manifest.json">Export details</a></p></footer>
+<p>Color shows publication year; circle size shows citations. Layouts adapt to each aspect ratio. <a href="${asset("README.txt")}">Usage and data notes</a> · <a href="${asset("manifest.json")}">Export details</a></p></footer>
 </main></body></html>\n`;
 }
 

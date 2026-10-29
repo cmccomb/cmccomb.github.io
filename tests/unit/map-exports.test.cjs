@@ -75,7 +75,7 @@ test("export bundle contains every requested resolution, matching checksums, and
             assert.equal(file.sha256, createHash("sha256").update(buffer).digest("hex"));
             assert.equal(buffer.length, file.bytes);
             assert.deepEqual(Buffer.from(archive[file.path]), buffer);
-            assert(html.includes(`href="${file.path}"`));
+            assert(html.includes(`href="${file.path}?v=${manifest.version}"`));
             if (kind.startsWith("png")) {
                 assert.equal(buffer.subarray(1, 4).toString(), "PNG");
                 assert.equal(buffer.readUInt32BE(16), file.width);
@@ -86,6 +86,8 @@ test("export bundle contains every requested resolution, matching checksums, and
         }
         assert.equal(Object.keys(archive).filter(n => n.endsWith(".png")).length, 24);
         assert.equal(Object.keys(archive).filter(n => n.endsWith(".svg")).length, 12);
+        assert(html.includes(`src="social-landscape-dark.png?v=${manifest.version}"`));
+        assert(html.includes(`href="publication-maps.zip?v=${manifest.version}"`));
         assert(archive["README.txt"] && archive["font-license.txt"] && archive["manifest.json"]);
     } finally { fs.rmSync(directory, { recursive: true, force: true }); }
 });

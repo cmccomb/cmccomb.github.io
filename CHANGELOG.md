@@ -3,6 +3,13 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.13] - 2026-10-29
+
+### Fixed
+
+- Version map gallery previews and download links so browsers request the
+  current images after a site release.
+
 ## [0.2.12] - 2026-10-29
 
 ### Improved
