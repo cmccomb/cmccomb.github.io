@@ -20,7 +20,7 @@ test("every aspect ratio preserves papers and topics without clipping or collisi
         assert.doesNotThrow(() => validateLayout(layout));
         assert.equal(layout.nodes.find(n => n.year === layout.years[0]).color, "#000004");
         assert.equal(layout.nodes.find(n => n.year === layout.years[1]).color, "#fcfdbf");
-        if (format.banner) assert(layout.reserved.some(r => r.x === 0 && r.width === format.width * .23));
+        if (format.banner) assert(layout.reserved.some(r => r.type === "circle" && r.y === format.height));
     }
 });
 
@@ -40,9 +40,13 @@ test("LinkedIn banners omit the legend while preserving profile-photo space", ()
     const banner = layoutMap(data, FORMATS.find(format => format.id === "linkedin-banner"));
     assert.equal(banner.legend, null);
     assert.deepEqual(banner.reserved, [{
-        x: 0, y: banner.format.height * .56,
-        width: banner.format.width * .23, height: banner.format.height * .44,
+        type: "circle", x: banner.format.width * .115,
+        y: banner.format.height, r: banner.format.height * .44,
     }]);
+    const photo = banner.reserved[0];
+    for (const node of banner.nodes) {
+        assert(Math.hypot(node.x - photo.x, node.y - photo.y) >= photo.r + node.r);
+    }
     for (const theme of ["dark", "light"]) {
         assert.doesNotMatch(mapSVG(banner, theme), /linearGradient|Publication year|Citations/);
     }
@@ -50,6 +54,28 @@ test("LinkedIn banners omit the legend while preserving profile-photo space", ()
     assert(landscape.legend);
     assert.deepEqual(landscape.reserved, [landscape.legend]);
     assert.match(mapSVG(landscape, "dark"), /linearGradient/);
+});
+
+test("circular photo clearance protects content without excluding its bounding-box corners", () => {
+    const layout = {
+        format: { id: "photo-clearance-fixture", width: 300, height: 200 },
+        reserved: [{ type: "circle", x: 100, y: 200, r: 60 }],
+        nodes: [{ id: "paper", x: 100, y: 150, r: 5 }],
+        labels: [],
+    };
+    assert.throws(() => validateLayout(layout), /Obscured/);
+
+    // This paper intersects the circle's bounding box but clears the circle.
+    Object.assign(layout.nodes[0], { x: 160, y: 145 });
+    assert.doesNotThrow(() => validateLayout(layout));
+
+    layout.nodes = [];
+    layout.labels = [{ x: 98, y: 148, width: 12, height: 8 }];
+    assert.throws(() => validateLayout(layout), /overlapping topic/);
+
+    // Label rectangles need the same curved clearance as publication circles.
+    layout.labels = [{ x: 150, y: 140, width: 8, height: 8 }];
+    assert.doesNotThrow(() => validateLayout(layout));
 });
 
 test("invalid source data and obscured or clipped papers fail the build", () => {

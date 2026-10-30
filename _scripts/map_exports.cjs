@@ -44,10 +44,30 @@ function circleHitsRect(node, rect, gap = 0) {
     return dx * dx + dy * dy < (node.r + gap) ** 2;
 }
 
-// Move circles out through the closest side; keep a gap around labels and legends.
+function circleHitsObstacle(node, obstacle, gap = 0) {
+    return obstacle.type === "circle"
+        ? Math.hypot(node.x - obstacle.x, node.y - obstacle.y) < node.r + obstacle.r + gap
+        : circleHitsRect(node, obstacle, gap);
+}
+
+function rectangleHitsObstacle(rect, obstacle, gap = 0) {
+    return obstacle.type === "circle"
+        ? circleHitsRect(obstacle, rect, gap)
+        : rectanglesOverlap(rect, obstacle, gap);
+}
+
+// Move circles to the nearest clear boundary; retain gaps around all obstacles.
 function excludeObstacles(node, obstacles, gap, bounds) {
-    if (!obstacles.some(rect => circleHitsRect(node, rect, gap))) return;
+    if (!obstacles.some(obstacle => circleHitsObstacle(node, obstacle, gap))) return;
     const choices = obstacles.flatMap(rect => {
+        if (rect.type === "circle") {
+            const angle = Math.atan2(node.y - rect.y, node.x - rect.x);
+            const radius = rect.r + node.r + gap + .01;
+            return [angle, ...d3.range(32).map(i => i * Math.PI / 16)].map(a => ({
+                x: rect.x + Math.cos(a) * radius,
+                y: rect.y + Math.sin(a) * radius,
+            }));
+        }
         const left = rect.x - node.r - gap - .01;
         const right = rect.x + rect.width + node.r + gap + .01;
         const top = rect.y - node.r - gap - .01;
@@ -60,7 +80,7 @@ function excludeObstacles(node, obstacles, gap, bounds) {
         ];
     }).filter(p => p.x >= bounds.margin + node.r && p.x <= bounds.width - bounds.margin - node.r
         && p.y >= bounds.margin + node.r && p.y <= bounds.height - bounds.margin - node.r
-        && !obstacles.some(r => circleHitsRect({ ...p, r: node.r }, r, gap)))
+        && !obstacles.some(r => circleHitsObstacle({ ...p, r: node.r }, r, gap)))
         .sort((a, b) => Math.hypot(a.x - node.x, a.y - node.y) - Math.hypot(b.x - node.x, b.y - node.y));
     if (!choices.length) throw new Error("No room outside obstacle");
     node.x = choices[0].x;
@@ -95,7 +115,8 @@ function layoutMap(data, format) {
     const legend = format.showLegend === false ? null
         : { x: width - margin - font * 21, y: margin, width: font * 21, height: font * 4.5 };
     const reserved = legend ? [legend] : [];
-    if (banner) reserved.push({ x: 0, y: height * .56, width: width * .23, height: height * .44 });
+    const photo = banner ? { type: "circle", x: width * .115, y: height, r: height * .44 } : null;
+    if (photo) reserved.push(photo);
     const x = d3.scaleLinear().domain(d3.extent(data.records, d => d.x)).range([margin + radius * 2, width - margin - radius * 2]);
     const y = d3.scaleLinear().domain(d3.extent(data.records, d => d.y)).range([height - margin - radius * 2, margin + radius * 2]);
     const years = d3.extent(data.records, d => d.pub_year);
@@ -106,6 +127,21 @@ function layoutMap(data, format) {
         id: d.author_pub_id, cluster: String(d.cluster_id), year: d.pub_year, citations: d.num_citations,
         x: x(d.x), y: y(d.y), targetX: x(d.x), targetY: y(d.y), r: size(d.num_citations), color: color(d.pub_year),
     }));
+    if (photo) {
+        // Compress smoothly above the photo instead of pulling papers into it
+        // and accumulating them on the collision boundary. The Gaussian lift
+        // envelopes the expanded circle and fades into the unchanged map.
+        const top = margin + radius * 2, bottom = height - top;
+        const clearance = photo.r + d3.max(nodes, n => n.r) + 4;
+        const lift = Math.max(0, clearance - (photo.y - bottom));
+        if (lift > 0) {
+            for (const n of nodes) {
+                const offset = n.x - photo.x;
+                const displacement = lift * Math.exp(-offset * offset / (2 * clearance * lift));
+                n.y = n.targetY = top + (n.y - top) * (bottom - displacement - top) / (bottom - top);
+            }
+        }
+    }
     function constrain(obstacles) {
         for (const n of nodes) {
             n.x = clamp(n.x, margin + n.r, width - margin - n.r);
@@ -143,7 +179,7 @@ function layoutMap(data, format) {
                     x: clamp(topic.cx + Math.cos(a) * ring * font * .85 - w / 2, margin, width - margin - w),
                     y: clamp(topic.cy + Math.sin(a) * ring * font * .85 - h / 2, margin, height - margin - h),
                 };
-                if ([...reserved, ...labels].some(r => rectanglesOverlap(candidate, r, font * .5))) continue;
+                if ([...reserved, ...labels].some(r => rectangleHitsObstacle(candidate, r, font * .5))) continue;
                 candidate.score = Math.hypot(candidate.x + w / 2 - topic.cx, candidate.y + h / 2 - topic.cy)
                     + nodes.filter(n => circleHitsRect(n, candidate, 4)).length * font * .32;
                 candidates.push(candidate);
@@ -182,14 +218,14 @@ function validateLayout({ format, nodes, labels, reserved }) {
         if (n.x - n.r < 0 || n.x + n.r > format.width || n.y - n.r < 0 || n.y + n.r > format.height) {
             throw new Error(`Clipped paper in ${format.id}`);
         }
-        if ([...labels, ...reserved].some(r => circleHitsRect(n, r))) throw new Error(`Obscured paper ${n.id} in ${format.id}`);
+        if ([...labels, ...reserved].some(r => circleHitsObstacle(n, r))) throw new Error(`Obscured paper ${n.id} in ${format.id}`);
     }
     for (const [i, a] of nodes.entries()) for (const b of nodes.slice(i + 1)) {
         if (Math.hypot(a.x - b.x, a.y - b.y) < a.r + b.r - .1) throw new Error(`Overlapping papers in ${format.id}`);
     }
     for (const [i, label] of labels.entries()) {
         if (label.x < 0 || label.y < 0 || label.x + label.width > format.width || label.y + label.height > format.height
-            || [...labels.slice(i + 1), ...reserved].some(r => rectanglesOverlap(label, r))) {
+            || [...labels.slice(i + 1), ...reserved].some(r => rectangleHitsObstacle(label, r))) {
             throw new Error(`Clipped or overlapping topic in ${format.id}`);
         }
     }
