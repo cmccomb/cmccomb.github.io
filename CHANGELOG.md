@@ -3,6 +3,17 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.19] - 2026-10-30
+
+### Improved
+
+- Use the clearer, editorially reviewed “robust design” name for the two
+  closely related Stackelberg game papers. Their separate map positions and
+  publication records are unchanged.
+- Reserve visible map and downloadable-figure labels for neighborhoods with
+  at least three publications. Smaller groups still appear as interactive
+  papers, with their neighborhood name in paper details and accessible text.
+
 ## [0.2.18] - 2026-10-30
 
 ### Improved

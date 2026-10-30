@@ -10,12 +10,17 @@ const { unzipSync } = require("fflate");
 const { FORMATS, layoutMap, validateData, validateLayout, mapSVG } = require("../../_scripts/map_exports.cjs");
 const { buildExports } = require("../../_scripts/export_publication_maps.cjs");
 const data = require("../../assets/json/pubs.json");
+const groupSizes = new Map(data.clusters.map(cluster => [String(cluster.id),
+    data.records.filter(record => String(record.cluster_id) === String(cluster.id)).length]));
+const visibleTopics = data.clusters.filter(cluster => groupSizes.get(String(cluster.id)) >= 3);
 
 test("every aspect ratio preserves papers and topics without clipping or collisions", () => {
     for (const format of FORMATS) {
         const layout = layoutMap(data, format);
         assert.deepEqual(new Set(layout.nodes.map(n => n.id)), new Set(data.records.map(r => r.author_pub_id)));
-        assert.equal(layout.labels.length, data.clusters.length);
+        assert.equal(layout.labels.length, visibleTopics.length);
+        assert.deepEqual(new Set(layout.labels.map(label => label.id)),
+            new Set(visibleTopics.map(cluster => String(cluster.id))));
         assert(layout.labels.some(l => l.text === "design teams"));
         assert.doesNotThrow(() => validateLayout(layout));
         assert.equal(layout.nodes.find(n => n.year === layout.years[0]).color, "#000004");

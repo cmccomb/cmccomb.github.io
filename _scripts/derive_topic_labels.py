@@ -28,6 +28,32 @@ MAX_WORDS = 5
 TOKEN = re.compile(r"\b[^\W\d_]+(?:[-‐‑–][^\W\d_]+)*\b", re.UNICODE)
 EDGES = ENGLISH_STOP_WORDS | {"using", "based", "including", "toward", "towards", "within", "via"}
 STEMMER = stemmer("english")
+# A reviewed subject label for this exact pair of related robust-design works.
+# Matching by complete Scholar publication IDs prevents the label from carrying
+# forward if future clustering adds or removes a paper from this neighborhood.
+CURATED_TOPIC_OVERRIDES = {
+    frozenset({
+        "0P9w_S0AAAAJ:OU6Ihb5iCvQC",
+        "0P9w_S0AAAAJ:BrmTIyaxlBUC",
+    }): (
+        "robust design",
+        "Both papers study designs resistant to adversarial conditions; use the "
+        "shared research subject instead of a long method-specific phrase.",
+    ),
+}
+
+
+def _curated_label(records: Sequence[Mapping]) -> str | None:
+    """Return a reviewed title only for an exact, unchanged publication set."""
+
+    ids = [record.get("author_pub_id") for record in records]
+    if not all(isinstance(publication_id, str) for publication_id in ids):
+        return None
+    id_set = frozenset(ids)
+    if len(id_set) != len(ids):
+        return None
+    override = CURATED_TOPIC_OVERRIDES.get(id_set)
+    return override[0] if override else None
 
 
 def labeling_metadata() -> dict:
@@ -41,6 +67,17 @@ def labeling_metadata() -> dict:
         "minimum_paper_fraction": MIN_COVERAGE,
         "completion_retention": COMPLETION_RETENTION,
         "stemmer": f"snowballstemmer-{version('snowballstemmer')}",
+        "curated_overrides": [
+            {
+                "label": label,
+                "author_pub_ids": sorted(ids),
+                "match_policy": "exact_cluster_author_pub_id_set",
+                "reason": reason,
+            }
+            for ids, (label, reason) in sorted(
+                CURATED_TOPIC_OVERRIDES.items(), key=lambda item: sorted(item[0])
+            )
+        ],
     }
 
 
@@ -176,6 +213,11 @@ def derive_labels(records: Sequence[Mapping], labels: Sequence[int]) -> dict[int
             ranked.append((surface, float(scores[row, column]), len(support[key]), len(term.titles & papers)))
         ranked.sort(key=lambda item: (-item[1], -item[2], -item[3], item[0]))
         candidates[group] = [(surface, score) for surface, score, _, _ in ranked]
+        curated = _curated_label([records[index] for index in sorted(papers)])
+        if curated:
+            # The unique-title assignment reserves this phrase and gives any
+            # other cluster a chance to choose its next supported candidate.
+            candidates[group] = [(curated, 1.0)]
     chosen = assign_unique_labels(candidates)
     for group, title in chosen.items():
         term = next(item for item in candidates[group] if item[0] == title)
