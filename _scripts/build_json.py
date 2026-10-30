@@ -1,7 +1,7 @@
 """Build and persist publication embeddings, clusters, and labels.
 
 This module loads the publications dataset, projects the embeddings for
-visualisation, seeds semantic topics with size-bounded local splits, and
+visualisation, seeds semantic topics with size-bounded and proximity-checked splits, and
 produces descriptive labels per cluster. The resulting payload is persisted to
 ``assets/json/pubs.json`` in an atomic manner so downstream consumers never
 observe partial writes.
@@ -50,6 +50,10 @@ DEFAULT_KMEANS_N_INIT = 100
 DEFAULT_MAX_CLUSTER_FRACTION = 1 / 8
 DEFAULT_SPLIT_SPATIAL_WEIGHT = .25
 DEFAULT_SPLIT_N_INIT = 20
+DEFAULT_PROXIMITY_SILHOUETTE = .60
+DEFAULT_PROXIMITY_RADIUS_REDUCTION = .35
+DEFAULT_PROXIMITY_SEMANTIC_SILHOUETTE = .30
+DEFAULT_PROXIMITY_MIN_GROUP_SIZE = 6
 DEFAULT_PERPLEXITY = 40
 DEFAULT_TSNE_ITERATIONS = 2000
 
@@ -84,6 +88,7 @@ class ClusteringResult:
     base_n_clusters: int | None = None
     size_limit: int | None = None
     spatial_weight: float = 0.0
+    proximity_splits: int = 0
 
 
 def _datasets_offline() -> bool:
@@ -233,13 +238,82 @@ def cap_cluster_sizes(
     return result
 
 
+def split_visually_dispersed_topics(
+    embeddings: numpy.ndarray,
+    points: numpy.ndarray,
+    labels: numpy.ndarray,
+    projection: numpy.ndarray,
+    *,
+    random_state: int = DEFAULT_RANDOM_STATE,
+) -> tuple[numpy.ndarray, int]:
+    """Split a separated map island only when it is distinct in source space.
+
+    One additional split per existing group keeps the visual gate conservative.
+    t-SNE distances are used to propose a split, never as semantic evidence.
+    """
+
+    embeddings = numpy.asarray(embeddings, dtype=numpy.float64)
+    points = numpy.asarray(points, dtype=numpy.float64)
+    labels = numpy.asarray(labels, dtype=int)
+    projection = numpy.asarray(projection, dtype=numpy.float64)
+    if len(embeddings) != len(points) or len(points) != len(labels) or projection.shape != (len(labels), 2):
+        raise ValueError("Every paper needs an embedding, topic, and 2D coordinate")
+    if not numpy.isfinite(embeddings).all() or not numpy.isfinite(points).all() or not numpy.isfinite(projection).all():
+        raise ValueError("Embeddings and map coordinates must be finite")
+
+    mixed = numpy.column_stack([
+        _unit_variance_block(points) * numpy.sqrt(1 - DEFAULT_SPLIT_SPATIAL_WEIGHT),
+        _unit_variance_block(projection) * numpy.sqrt(DEFAULT_SPLIT_SPATIAL_WEIGHT),
+    ])
+    result = labels.copy()
+    next_id = int(labels.max()) + 1 if len(labels) else 0
+    splits = 0
+    for group in numpy.unique(labels):
+        members = numpy.flatnonzero(labels == group)
+        if len(members) < DEFAULT_PROXIMITY_MIN_GROUP_SIZE:
+            continue
+        # Leave room for at least two papers in each child. The bounded solver
+        # also reserves at least half the average share in larger groups.
+        children = _bounded_kmeans(mixed[members], 2, len(members) - 2, random_state)
+        counts = numpy.bincount(children, minlength=2)
+        if counts.min() < 2:
+            continue
+
+        coordinates = projection[members]
+        centroid = coordinates.mean(axis=0)
+        before = float(numpy.percentile(numpy.linalg.norm(coordinates - centroid, axis=1), 90))
+        child_centroids = numpy.array([
+            coordinates[children == child].mean(axis=0) for child in range(2)
+        ])
+        after = float(numpy.percentile(numpy.linalg.norm(
+            coordinates - child_centroids[children], axis=1
+        ), 90))
+        if before <= 0 or 1 - after / before < DEFAULT_PROXIMITY_RADIUS_REDUCTION:
+            continue
+        if silhouette_score(coordinates, children) < DEFAULT_PROXIMITY_SILHOUETTE:
+            continue
+        if silhouette_score(embeddings[members], children, metric="cosine") < DEFAULT_PROXIMITY_SEMANTIC_SILHOUETTE:
+            continue
+
+        # Retain the old ID for the larger child to minimize snapshot churn.
+        new_child = int(numpy.argmin(counts))
+        result[members[children == new_child]] = next_id
+        LOGGER.info(
+            "Split visually dispersed topic %s: %d + %d papers",
+            group, int(counts.max()), int(counts.min()),
+        )
+        next_id += 1
+        splits += 1
+    return result, splits
+
+
 def cluster_points_from_embeddings(
     embeddings: numpy.ndarray,
     projection: numpy.ndarray | None = None,
     *,
     random_state: int = DEFAULT_RANDOM_STATE,
 ) -> ClusteringResult:
-    """Seed semantic topics, then split large groups with spatial regularization."""
+    """Seed semantic topics, then split large or disconnected groups conservatively."""
 
     reduced = reduce_for_clustering(embeddings, random_state)
     clusterer = KMeans(
@@ -249,16 +323,25 @@ def cluster_points_from_embeddings(
     )
     base_labels = clusterer.fit_predict(reduced.matrix)
     labels = cap_cluster_sizes(reduced.matrix, base_labels, projection, random_state=random_state)
-    split = len(numpy.unique(labels)) > clusterer.n_clusters
+    size_split = len(numpy.unique(labels)) > clusterer.n_clusters
+    proximity_splits = 0
+    if projection is not None:
+        labels, proximity_splits = split_visually_dispersed_topics(
+            embeddings, reduced.matrix, labels, projection, random_state=random_state,
+        )
+    split = size_split or proximity_splits > 0
     spatial_weight = DEFAULT_SPLIT_SPATIAL_WEIGHT if split and projection is not None else 0.0
     return ClusteringResult(
         labels=labels,
-        space=reduced.descriptor + ("+spatial-bounded-splits" if spatial_weight else "+bounded-splits" if split else ""),
-        algorithm="kmeans+bounded-splits" if split else "kmeans",
+        space=reduced.descriptor + ("+spatial-bounded-splits" if size_split and projection is not None else "+bounded-splits" if size_split else "")
+            + ("+proximity-splits" if proximity_splits else ""),
+        algorithm="kmeans" + ("+bounded-splits" if size_split else "")
+            + ("+proximity-splits" if proximity_splits else ""),
         n_clusters=len(numpy.unique(labels)),
         base_n_clusters=int(clusterer.n_clusters),
         size_limit=max(1, int(numpy.floor(len(embeddings) * DEFAULT_MAX_CLUSTER_FRACTION))),
         spatial_weight=spatial_weight,
+        proximity_splits=proximity_splits,
     )
 
 
@@ -570,6 +653,11 @@ def curation_metadata(
             "split_spatial_weight": clustering.spatial_weight,
             "split_n_init": DEFAULT_SPLIT_N_INIT,
             "minimum_child_size": "floor(parent_size / (2 * children)), at least one",
+            "proximity_splits": clustering.proximity_splits,
+            "proximity_min_group_size": DEFAULT_PROXIMITY_MIN_GROUP_SIZE,
+            "proximity_silhouette_min": DEFAULT_PROXIMITY_SILHOUETTE,
+            "proximity_radius_reduction_min": DEFAULT_PROXIMITY_RADIUS_REDUCTION,
+            "proximity_semantic_silhouette_min": DEFAULT_PROXIMITY_SEMANTIC_SILHOUETTE,
         },
         "noise_fraction": noise_fraction,
         "record_count": record_count,

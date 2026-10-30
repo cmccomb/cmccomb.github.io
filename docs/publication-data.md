@@ -44,8 +44,19 @@ Twenty local K-means starts alternate centroid updates with Hungarian capacity
 assignment. Every child is bounded above by the collection-wide size limit and
 below by `max(1, floor(parent_size / (2 * children)))`. This permits unequal
 child sizes while preventing a split from peeling off a tiny outlier group.
-For 267 papers the limit is 33, and four oversized parents split the ten base
-topics into fourteen groups of 9–33 papers.
+For 267 papers the limit is 33, and four oversized parents first split the ten
+base topics into fourteen groups of 9–33 papers.
+
+The builder then checks each group of at least six papers for one additional
+split. It fits a two-way candidate in the same semantic/visual space with at
+least two papers per child. The candidate must score at least 0.60 on the
+displayed projection's silhouette, lower the 90th-percentile distance to a
+child centroid by at least 35%, and score at least 0.30 on a cosine silhouette
+in the original embeddings. These checks distinguish a separated map island
+from a projection artifact. The larger child keeps its previous ID. In the
+current snapshot, only the two Stackelberg game papers separate from the
+reinforcement-learning neighborhood, producing fifteen groups. The source
+dataset and displayed publication coordinates are unchanged.
 
 The display normalizes the embeddings, reduces them to up to 50 PCA dimensions,
 and applies cosine-distance t-SNE with perplexity 40, a deterministic full-PCA
@@ -61,10 +72,14 @@ distances and empty space between regions are not a calibrated semantic scale.
 The snapshot records all settings and original-cosine-space diagnostics in
 `meta.projection`, `meta.clustering`, and `meta.quality`. Clustering metadata
 includes the base and final topic counts, maximum fraction, resolved size
-limit, spatial weight, split starts, and minimum-child-size rule.
+limit, spatial weight, split starts, minimum-child-size rule, and proximity
+split thresholds and count.
 
 The builder labels clusters with paper-supported class-based TF-IDF and writes the snapshot
-atomically. The browser places labels near their clusters and treats their
+atomically. These labels are map-neighborhood summaries, not independently
+verified subject tags for every member. Search indexes each paper's title,
+authors, citation, abstract, and year without adding its neighborhood name.
+The browser places labels near their clusters and treats their
 rectangles as fixed obstacles while bubbles settle. Browser checks require every
 label and paper to remain present without label/label, label/bubble, or
 bubble/bubble overlaps across viewport changes. Stored coordinates are the input
