@@ -38,6 +38,7 @@
     const MIN_PUBLICATION_RADIUS = 10.5;
     // Keep touch targets above 24 px even when low-citation bubbles look smaller.
     const MIN_PUBLICATION_HIT_RADIUS = 12.1;
+    const MIN_VISIBLE_TOPIC_SIZE = 3;
 
     function updateToolbarGeometry() {
         const bottom = graphCommandBar.getBoundingClientRect().bottom;
@@ -952,7 +953,8 @@
                         y: d3.mean(members, member => member.y) ?? 0,
                     };
                 }
-            ).sort((a, b) => b.count - a.count || String(a.clusterId).localeCompare(String(b.clusterId)));
+            ).filter(label => label.count >= MIN_VISIBLE_TOPIC_SIZE)
+                .sort((a, b) => b.count - a.count || String(a.clusterId).localeCompare(String(b.clusterId)));
             const mergedLabels = clusterLabelLayer.selectAll("g.cluster-label")
                 .data(labelData, label => label.clusterId)
                 .join(enter => {

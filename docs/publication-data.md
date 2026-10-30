@@ -76,10 +76,15 @@ limit, spatial weight, split starts, minimum-child-size rule, and proximity
 split thresholds and count.
 
 The builder labels clusters with paper-supported class-based TF-IDF and writes the snapshot
-atomically. These labels are map-neighborhood summaries, not independently
+atomically. The exact two-paper Stackelberg group has one reviewed override,
+“robust design,” documented with stable publication IDs and rationale in
+`meta.labeling.curated_overrides`. The two papers still form their own group,
+but groups with fewer than three papers do not receive a visible label on the
+interactive map or downloadable figures. Their names remain in accessible
+paper controls and details. These labels are map-neighborhood summaries, not independently
 verified subject tags for every member. Search indexes each paper's title,
 authors, citation, abstract, and year without adding its neighborhood name.
-The browser places labels near their clusters and treats their
+The browser places visible labels near their clusters and treats their
 rectangles as fixed obstacles while bubbles settle. Browser checks require every
 label and paper to remain present without label/label, label/bubble, or
 bubble/bubble overlaps across viewport changes. Stored coordinates are the input
@@ -87,8 +92,10 @@ to that layout.
 [`derive_topic_labels.py`](../_scripts/derive_topic_labels.py) extracts contiguous
 phrases of up to five words from titles and abstracts, preserving hyphenated
 terms and sentence boundaries. Snowball stemming pools singular/plural and
-inflected variants into term families for scoring and coverage; the displayed wording is an actual source
-phrase, with title evidence preferred when variants have equal paper support.
+inflected variants into term families for scoring and coverage. For automatically
+selected labels, the displayed wording is an actual source phrase, with title
+evidence preferred when variants have equal paper support. The reviewed
+“robust design” name is the one editorial exception.
 Each paper contributes at most once per field, with title evidence weighted
 twice as strongly as abstract evidence. Repeating a phrase in one abstract
 cannot inflate its support. Candidates must occur in at least 20% of the

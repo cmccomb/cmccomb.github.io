@@ -70,17 +70,24 @@ the pinned snapshot. Generated titles must still pass the existing distinct,
 paper-supported phrase check.
 
 The reinforcement-learning group alone passes all three checks. Its two
-Stackelberg game papers become a separate neighborhood, automatically titled
-“stochastic stackelberg game.” The remaining seven-paper group keeps
+Stackelberg game papers become a separate neighborhood. Their automatically
+derived title was “stochastic stackelberg game,” which accurately names the
+method but gave a two-paper group an outsized, specialized map label. The
+reviewed snapshot uses the clearer “robust design” name for this exact pair
+and does not show a visible map label for groups of fewer than three papers.
+The remaining seven-paper group keeps
 “reinforcement learning”; five papers clearly discuss RL and two concern
 drone design data or prediction. The map now has fifteen groups of 2–33
 papers. An exclusive map neighborhood remains an imperfect subject tag for
 an individual paper, so the browser searches each paper's own text rather
 than automatically treating the neighborhood name as its keyword.
 
-All titles are re-derived from publication evidence after splitting with the
-existing paper-supported phrase scorer. The more specific names follow from
-the new memberships; the scorer and source phrases are unchanged.
+Titles are first re-derived from publication evidence after splitting with the
+paper-supported phrase scorer. The only editorial override is the exact
+two-paper robust-design group; its stable publication IDs and rationale are
+recorded in the snapshot metadata. The scorer's source phrases are otherwise
+unchanged. All fifteen groups remain in the data and in paper details; fourteen
+have visible labels on the map.
 
 The t-SNE settings below and the existing projected coordinates are retained.
 Only oversized parents and groups passing the proximity check use the projection

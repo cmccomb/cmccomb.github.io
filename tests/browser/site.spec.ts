@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import snapshot from "../../assets/json/pubs.json";
 
 const SITE_ORIGIN = "https://cmccomb.com";
 const TEST_ORIGIN = "http://127.0.0.1:4173";
@@ -399,6 +400,25 @@ test.describe("homepage", () => {
     await expect(unrelated).toHaveClass(/search-hidden/);
     await expect(relevant).not.toHaveClass(/search-hidden/);
     await expect(relevantElsewhere).not.toHaveClass(/search-hidden/);
+  });
+
+  test("a small neighborhood keeps searchable papers without a map label", async ({ page }) => {
+    const visibleTopicCount = snapshot.clusters.filter(cluster =>
+      snapshot.records.filter(record => record.cluster_id === cluster.id).length >= 3).length;
+    const smallCluster = snapshot.clusters.find(cluster =>
+      snapshot.records.filter(record => record.cluster_id === cluster.id).length < 3);
+    expect(smallCluster).toBeDefined();
+    const paperIndex = snapshot.records.findIndex(record => record.cluster_id === smallCluster!.id);
+    const paper = snapshot.records[paperIndex];
+    await page.goto("/?view=map");
+    await expect(page.locator(".cluster-label")).toHaveCount(visibleTopicCount);
+    expect(await page.locator(".cluster-label-text").allTextContents()).not.toContain(smallCluster!.label);
+    const node = page.locator(".publication-link").nth(paperIndex);
+    expect(await node.getAttribute("aria-label")).toContain(`map neighborhood ${smallCluster!.label}`);
+    await page.locator("#publication-search").fill(paper.bib_dict.title);
+    await expect(node).not.toHaveClass(/search-hidden/);
+    await node.click();
+    await expect(page.locator("#publication-detail-title")).toHaveText(paper.bib_dict.title);
   });
 
   test("opens and closes the responsive publication map on mobile", async ({

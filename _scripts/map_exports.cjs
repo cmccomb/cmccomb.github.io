@@ -16,6 +16,7 @@ const FORMATS = [
 ];
 const MAX_CITATION_RADIUS_FACTOR = 1.6;
 const MIN_CITATION_RADIUS_FACTOR = .6;
+const MIN_VISIBLE_TOPIC_SIZE = 3;
 const THEMES = {
     dark: { background: "#212529", text: "#eef0f2", muted: "#b9bfc5", border: "#dce1e6", label: "#f7f8f9", labelText: "#212529" },
     light: { background: "#ffffff", text: "#212529", muted: "#58616a", border: "#545b62", label: "#f3f4f5", labelText: "#212529" },
@@ -165,7 +166,8 @@ function layoutMap(data, format) {
         id: String(c.id), text: displayClusterLabel(c.label), count: groups.get(String(c.id))?.length || 0,
         cx: d3.mean(groups.get(String(c.id)) || [], d => d.x),
         cy: d3.mean(groups.get(String(c.id)) || [], d => d.y),
-    })).filter(c => c.count).sort((a, b) => b.count - a.count || a.id.localeCompare(b.id));
+    })).filter(c => c.count >= MIN_VISIBLE_TOPIC_SIZE)
+        .sort((a, b) => b.count - a.count || a.id.localeCompare(b.id));
     const labels = [];
     for (const topic of topics) {
         const w = Math.ceil(textWidth(topic.text, font) + font * .85);
@@ -253,7 +255,7 @@ ${[years[0], Math.round((years[0] + years[1]) / 2), years[1]].map((year, i) => `
 ${sizes.map((n, i) => `<circle cx="${sizeX + font * .8 + i * font * 2.7}" cy="${barY + largestRadius * 2 - size(n)}" r="${size(n)}" fill="none" stroke="${theme.muted}" stroke-width="1"/><text x="${sizeX + font * .8 + i * font * 2.7}" y="${barY + largestRadius * 2 + lFont * 1.6}" text-anchor="middle" fill="${theme.muted}">${n}</text>`).join("")}
 </g>`;
     }
-    const description = `${nodes.length} publications, ${labels.length} research topics. Color represents publication year (${years.join("–")}); circle radius scales with the square root of citations. Positions adapt the website's embedding to ${name.toLowerCase()}.`;
+    const description = `${nodes.length} publications, ${labels.length} labeled research neighborhoods. Color represents publication year (${years.join("–")}); circle radius scales with the square root of citations. Positions adapt the website's embedding to ${name.toLowerCase()}.`;
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title description">
 <title id="title">Chris McComb · publication map</title><desc id="description">${xml(description)}</desc>
 ${legend ? `<defs><linearGradient id="years">${d3.range(41).map(i => `<stop offset="${i / 40}" stop-color="${d3.interpolateMagma(i / 40)}"/>`).join("")}</linearGradient></defs>` : ""}

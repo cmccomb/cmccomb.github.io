@@ -2,7 +2,7 @@
 
 ## Scope and method
 
-This review covers the **live** `cmccomb.com` publication map snapshot built at
+This review covers the **pre-change live** `cmccomb.com` publication map snapshot built at
 `2026-10-29T23:45:30Z`: 267 records from `ccm/publications` commit
 `0359eb8a8a1ca9dae4e40d43057e63c1b5f60cdb`. The live JSON matched the
 committed `assets/json/pubs.json` at the start of this audit. I read all 267
@@ -114,7 +114,7 @@ map at desktop and narrow widths. These are release checks for the next
 snapshot, not claims that a two-dimensional projection can certify topical
 similarity.
 
-## Response in the proposed 0.2.18 snapshot
+## Response in the released 0.2.18 snapshot
 
 The proximity check splits the two Stackelberg works into an automatically
 named **stochastic stackelberg game** neighborhood. All 267 publication IDs,
@@ -122,7 +122,7 @@ metadata, and projected coordinates remain identical. The RL neighborhood
 shrinks from nine to seven papers; five of those seven have clear RL evidence,
 while the two drone-design works remain. Its centroid's nearest ten papers now
 include four members (and one other RL paper assigned to **human designers**),
-up from zero members in the live 0.2.17 snapshot. This is a substantial label
+up from zero members in the prior live 0.2.17 snapshot. This is a substantial label
 placement improvement, not complete subject classification.
 
 The browser now describes a paper's assigned label as its **map neighborhood**
@@ -137,3 +137,15 @@ silhouette changes from 0.1180 to 0.1164 and nearest-ten same-neighborhood
 agreement from 61.57% to 61.39%. Projection trustworthiness and paper positions
 are unchanged. The split is justified by the specific label-placement and
 membership correction, not by a claim of general classification improvement.
+
+## Follow-up: small-group label in 0.2.19
+
+Both separated Stackelberg publications explicitly use the method, so the
+0.2.18 phrase was factually supported. They are two closely related works by
+the same authors, however, and a full-sized technical label made the pair look
+like a broad research area. Version 0.2.19 retains their distinct map
+neighborhood, names this exact pair **robust design** in paper details, and
+omits visible map labels for groups of fewer than three publications. The
+override is keyed to the complete pair of stable publication IDs and is
+recorded in the snapshot metadata. This changes presentation, not the
+publication positions or the RL split.

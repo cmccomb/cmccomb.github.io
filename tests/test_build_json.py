@@ -17,7 +17,7 @@ from sklearn.metrics import adjusted_rand_score
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from _scripts import build_json
-from _scripts.derive_topic_labels import complete_terms
+from _scripts.derive_topic_labels import _curated_label, complete_terms, labeling_metadata
 
 
 @pytest.fixture(scope="session")
@@ -515,6 +515,65 @@ def test_unique_topic_assignment_fails_without_distinct_candidates() -> None:
         build_json._assign_unique_topic_labels(
             {3: [("language models", 1.0)], 11: [("language models", 1.0)]}
         )
+
+
+def _stackelberg_records() -> list[dict[str, object]]:
+    """The stable publication IDs and source text for the reviewed pair."""
+
+    return [
+        {
+            "author_pub_id": "0P9w_S0AAAAJ:OU6Ihb5iCvQC",
+            "bib_dict": {
+                "title": "Stochastic Stackelberg Games for Agent-Driven Robust Design",
+                "abstract": "Game-theoretic agents generate robust designs under adversarial conditions.",
+            },
+        },
+        {
+            "author_pub_id": "0P9w_S0AAAAJ:BrmTIyaxlBUC",
+            "bib_dict": {
+                "title": "An Adversarial Agent-Based Design Method Using Stochastic Stackelberg Game Conditions",
+                "abstract": "Stackelberg game agents generate designs resistant to adversarial conditions.",
+            },
+        },
+    ]
+
+
+def test_curated_robust_design_label_requires_exact_publication_set() -> None:
+    """A later addition, removal, or replacement must return to source labeling."""
+
+    pair = _stackelberg_records()
+    assert _curated_label(pair) == "robust design"
+    assert _curated_label(list(reversed(pair))) == "robust design"
+    assert _curated_label(pair[:1]) is None
+    assert _curated_label(pair + [{"author_pub_id": "another:paper"}]) is None
+    assert _curated_label(pair + [pair[0]]) is None
+    assert _curated_label([pair[0], {"author_pub_id": "another:paper"}]) is None
+
+
+def test_robust_design_override_is_reproducible_in_both_label_paths() -> None:
+    """Full builds and relabel-only snapshots use the same reviewed ID set."""
+
+    pair = _stackelberg_records()
+    assert build_json.ctfidf_labels(pandas.DataFrame(pair), [14, 14]) == {
+        14: "robust design",
+    }
+
+    payload = {
+        "meta": {"labeling": {"algorithm": "old"}},
+        "records": [
+            {**record, "cluster_id": 14, "x": float(index), "y": 0.0}
+            for index, record in enumerate(pair)
+        ],
+        "clusters": [{"id": 14, "label": "stochastic stackelberg game",
+                      "centroid": {"x": 0.5, "y": 0.0}}],
+    }
+    relabeled = build_json.relabel_payload(payload)
+    assert relabeled["clusters"][0]["label"] == "robust design"
+    assert relabeled["records"] == payload["records"]
+    assert relabeled["meta"]["labeling"] == labeling_metadata()
+    assert relabeled["meta"]["labeling"]["curated_overrides"][0]["author_pub_ids"] == sorted(
+        record["author_pub_id"] for record in pair
+    )
 
 
 def test_summarize_clusters_uses_ctfidf_labels(

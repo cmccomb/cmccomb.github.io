@@ -81,7 +81,9 @@ Every publication remains a circle. Color uses the same Magma year scale as the
 website; radius scales with the square root of citation count with a minimum
 visible size for uncited papers. The size legend uses exactly the same radii.
 The existing embedding is fitted to each aspect ratio; deterministic collision
-avoidance keeps circles, topic labels, legends, and the avatar allowance clear.
+avoidance keeps circles, visible topic labels, legends, and the avatar allowance clear.
+The export applies the same three-publication minimum as the interactive map
+for showing a neighborhood label; smaller groups retain their circles.
 Absolute distances between papers are not a quantitative metric.
 
 [`export_publication_maps.cjs`](../_scripts/export_publication_maps.cjs) writes

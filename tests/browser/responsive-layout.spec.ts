@@ -9,6 +9,8 @@ const sizes = [
   [1024, 501], [1024, 768], [1280, 360], [1280, 800], [1440, 900],
   [1920, 1080], [2560, 1440],
 ];
+const visibleTopicCount = snapshot.clusters.filter(cluster =>
+  snapshot.records.filter(record => record.cluster_id === cluster.id).length >= 3).length;
 
 test("toolbar and empty states remain usable across the audited viewport matrix", async ({ page }) => {
   test.setTimeout(90_000);
@@ -127,7 +129,7 @@ test("map labels and circles do not overlap, and keyboard focus scrolls into vie
     });
   const expectedLayout = {
     renderedAtViewportSize: true,
-    labels: snapshot.clusters.length,
+    labels: visibleTopicCount,
     circles: snapshot.records.length,
     labelCollisions: 0,
     circleCollisions: 0,
