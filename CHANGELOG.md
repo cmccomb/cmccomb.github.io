@@ -3,6 +3,26 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.18] - 2026-10-30
+
+### Improved
+
+- Split visually disconnected publication neighborhoods when the proposed
+  groups also separate in the source embeddings. The two Stackelberg game
+  papers now form their own neighborhood instead of pulling the reinforcement
+  learning label into an unrelated area.
+- Search publication text rather than assigning every paper its neighborhood
+  name as a search term. Describe the displayed name as a map neighborhood in
+  paper details and accessible labels.
+- Lower the smallest visible citation bubble on the interactive map and in
+  downloadable figures, while retaining a 24-pixel interaction target and
+  collision clearance on the site.
+
+### Data
+
+- Rebuild the 267-paper map from the same pinned publication dataset with
+  fifteen reviewed neighborhoods and unchanged publication coordinates.
+
 ## [0.2.17] - 2026-10-29
 
 ### Fixed

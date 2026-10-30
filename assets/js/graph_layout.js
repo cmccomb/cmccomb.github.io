@@ -35,6 +35,9 @@
     const copyStatus = document.getElementById("publication-copy-status");
     const copyFallback = document.getElementById("publication-copy-fallback");
     const copyFallbackLabel = document.getElementById("publication-copy-fallback-label");
+    const MIN_PUBLICATION_RADIUS = 10.5;
+    // Keep touch targets above 24 px even when low-citation bubbles look smaller.
+    const MIN_PUBLICATION_HIT_RADIUS = 12.1;
 
     function updateToolbarGeometry() {
         const bottom = graphCommandBar.getBoundingClientRect().bottom;
@@ -221,7 +224,7 @@
             .text("Year");
 
         const sizeLegendWidth = 140;
-        const sizeLegendHeight = 72;
+        const sizeLegendHeight = 76;
         const sizeLegendSvg = sizeLegendContainer.append("svg")
             .attr("class", "size-legend-svg")
             .attr("width", sizeLegendWidth)
@@ -276,7 +279,7 @@
             sizeKeys.attr("transform", entry => `translate(${entry.x}, 35)`);
             sizeKeys.select("circle").attr("r", entry => entry.radius);
             sizeKeys.select("text")
-                .attr("y", 34)
+                .attr("y", 37)
                 .text(entry => d3.format(",d")(Math.round(entry.value)));
             sizeLegendContainer.attr(
                 "aria-label",
@@ -316,13 +319,13 @@
                     citation,
                     abstract,
                     record.pub_year,
-                    clusterLabel,
                 ], title),
                 x: 0,
                 y: 0,
                 x_orig: 0,
                 y_orig: 0,
                 r: 0,
+                hitRadius: MIN_PUBLICATION_HIT_RADIUS,
             };
         });
 
@@ -337,8 +340,12 @@
             .attr("tabindex", -1)
             .attr("aria-describedby", "publication-tooltip")
             .attr("aria-label", node => (
-                `${node.title}; ${node.pub_year}; ${node.num_citations} citation${node.num_citations === 1 ? "" : "s"}; topic ${node.cluster_label}; show publication details`
+                `${node.title}; ${node.pub_year}; ${node.num_citations} citation${node.num_citations === 1 ? "" : "s"}; map neighborhood ${node.cluster_label}; show publication details`
             ));
+        const hitTargetSelection = publicationControls.append("rect")
+            .attr("class", "publication-hit-target")
+            .attr("fill", "transparent")
+            .attr("aria-hidden", "true");
         const nodeSelection = publicationControls.append("rect")
             .attr("class", "publication-node")
             .attr("fill", node => node.color)
@@ -367,7 +374,7 @@
             authors.textContent = formatAuthors(node.author);
             const meta = document.createElement("span");
             meta.className = "publication-result-meta";
-            meta.textContent = `${node.pub_year} · ${node.cluster_label} · ${node.num_citations} citation${node.num_citations === 1 ? "" : "s"}`;
+            meta.textContent = `${node.pub_year} · Map neighborhood: ${node.cluster_label} · ${node.num_citations} citation${node.num_citations === 1 ? "" : "s"}`;
             button.append(title, authors, meta);
             button.addEventListener("click", () => {
                 setRovingIndex(index);
@@ -598,7 +605,7 @@
                 detailTitle.textContent = node.title;
             }
             if (detailMeta) {
-                detailMeta.textContent = `${node.pub_year} · ${node.num_citations} citation${node.num_citations === 1 ? "" : "s"} · Topic: ${node.cluster_label}`;
+                detailMeta.textContent = `${node.pub_year} · ${node.num_citations} citation${node.num_citations === 1 ? "" : "s"} · Map neighborhood: ${node.cluster_label}`;
             }
             if (detailCitation) {
                 detailCitation.textContent = [
@@ -712,7 +719,7 @@
             if (detailPanel && !detailPanel.hidden) {
                 return;
             }
-            const target = event.currentTarget.querySelector(".publication-node")
+            const target = event.currentTarget.querySelector(".publication-hit-target")
                 || event.currentTarget;
             const viewportBounds = mapViewport.getBoundingClientRect();
             const targetBounds = target.getBoundingClientRect();
@@ -881,33 +888,34 @@
             yScale.range([bottomCoordinate, topPadding]);
             const radiusBase = Math.sqrt(width * height);
             const maxRadius = Math.min(20, Math.max(16, radiusBase / 60)) * 1.1;
-            radiusScale.range([12.1, maxRadius]);
+            radiusScale.range([MIN_PUBLICATION_RADIUS, maxRadius]);
             renderSizeLegend();
             nodes.forEach(node => {
                 node.x_orig = xScale(node.x_data);
                 node.y_orig = yScale(node.y_data);
                 node.r = radiusScale(node.num_citations);
+                node.hitRadius = Math.max(MIN_PUBLICATION_HIT_RADIUS, node.r);
             });
 
             if (!simulation) {
                 simulation = d3.forceSimulation(nodes)
                     .force("x", d3.forceX(node => node.x_orig).strength(0.15))
                     .force("y", d3.forceY(node => node.y_orig).strength(0.15))
-                    .force("collide", d3.forceCollide(node => node.r + 1).strength(1).iterations(3))
+                    .force("collide", d3.forceCollide(node => node.hitRadius + 1).strength(1).iterations(3))
                     .stop();
             } else {
                 simulation
                     .force("x", d3.forceX(node => node.x_orig).strength(0.15))
                     .force("y", d3.forceY(node => node.y_orig).strength(0.15))
-                    .force("collide", d3.forceCollide(node => node.r + 1).strength(1).iterations(3));
+                    .force("collide", d3.forceCollide(node => node.hitRadius + 1).strength(1).iterations(3));
             }
 
             simulation.alpha(1).stop();
             const constrainNodeToMap = node => {
-                const minimumX = node.r;
-                const maximumX = width - node.r;
-                const minimumY = topPadding + node.r;
-                const maximumY = bottomCoordinate - node.r;
+                const minimumX = node.hitRadius;
+                const maximumX = width - node.hitRadius;
+                const minimumY = topPadding + node.hitRadius;
+                const maximumY = bottomCoordinate - node.hitRadius;
                 node.x = minimumX <= maximumX
                     ? Math.max(minimumX, Math.min(maximumX, node.x))
                     : width / 2;
@@ -961,7 +969,7 @@
             const circleHitsLabel = (node, rect, gap = 4) => {
                 const dx = node.x - Math.max(rect.x, Math.min(node.x, rect.x + rect.width));
                 const dy = node.y - Math.max(rect.y, Math.min(node.y, rect.y + rect.height));
-                return dx * dx + dy * dy < (node.r + gap) ** 2;
+                return dx * dx + dy * dy < (node.hitRadius + gap) ** 2;
             };
             const labelsOverlap = (a, b) => (
                 a.x < b.x + b.width + 8 && a.x + a.width + 8 > b.x
@@ -1023,10 +1031,10 @@
                 if (!placedLabels.some(rect => circleHitsLabel(node, rect))) return;
                 const gap = 4.01;
                 const choices = placedLabels.flatMap(rect => {
-                    const left = rect.x - node.r - gap;
-                    const right = rect.x + rect.width + node.r + gap;
-                    const top = rect.y - node.r - gap;
-                    const bottom = rect.y + rect.height + node.r + gap;
+                    const left = rect.x - node.hitRadius - gap;
+                    const right = rect.x + rect.width + node.hitRadius + gap;
+                    const top = rect.y - node.hitRadius - gap;
+                    const bottom = rect.y + rect.height + node.hitRadius + gap;
                     return [
                         { x: left, y: node.y }, { x: right, y: node.y },
                         { x: node.x, y: top }, { x: node.x, y: bottom },
@@ -1034,9 +1042,9 @@
                         { x: left, y: bottom }, { x: right, y: bottom },
                     ];
                 }).filter(point => (
-                    point.x >= node.r && point.x <= width - node.r
-                    && point.y >= topPadding + node.r && point.y <= bottomCoordinate - node.r
-                    && !placedLabels.some(rect => circleHitsLabel({ ...point, r: node.r }, rect))
+                    point.x >= node.hitRadius && point.x <= width - node.hitRadius
+                    && point.y >= topPadding + node.hitRadius && point.y <= bottomCoordinate - node.hitRadius
+                    && !placedLabels.some(rect => circleHitsLabel({ ...point, hitRadius: node.hitRadius }, rect))
                 ));
                 choices.sort((a, b) => Math.hypot(a.x - node.x, a.y - node.y)
                     - Math.hypot(b.x - node.x, b.y - node.y));
@@ -1063,7 +1071,7 @@
                         const dx = b.x - a.x;
                         const dy = b.y - a.y;
                         const distance = Math.hypot(dx, dy);
-                        const penetration = a.r + b.r + 1 - distance;
+                        const penetration = a.hitRadius + b.hitRadius + 1 - distance;
                         if (penetration <= 0) continue;
                         overlap = Math.max(overlap, penetration);
                         const ux = distance ? dx / distance : 1;
@@ -1080,11 +1088,17 @@
             if (nodes.some((node, index) => (
                 placedLabels.some(rect => circleHitsLabel(node, rect, 0))
                 || nodes.slice(index + 1).some(other => (
-                    Math.hypot(node.x - other.x, node.y - other.y) < node.r + other.r - .1
+                    Math.hypot(node.x - other.x, node.y - other.y) < node.hitRadius + other.hitRadius - .1
                 ))
             ))) {
                 throw new Error("Could not settle publication map without overlaps");
             }
+            hitTargetSelection
+                .attr("x", node => node.x - node.hitRadius)
+                .attr("y", node => node.y - node.hitRadius)
+                .attr("rx", node => node.hitRadius)
+                .attr("width", node => 2 * node.hitRadius)
+                .attr("height", node => 2 * node.hitRadius);
             nodeSelection
                 .attr("x", node => node.x - node.r)
                 .attr("y", node => node.y - node.r)

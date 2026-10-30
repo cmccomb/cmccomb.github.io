@@ -1,12 +1,13 @@
-# Publication map method review — 2026-10-29
+# Publication map method review — 2026-10-30
 
 The map needs titles that describe coherent research topics and cover the
 neighborhoods visible on screen. Refitting clusters in a two-dimensional t-SNE
 projection is a valid way to improve that visual coverage, with a tradeoff:
 topic membership can also follow projection distortions. Semantic clustering
 better preserves the embedding structure, but its groups may span several
-displayed regions. The current policy starts with semantic topics and splits
-oversized groups using both semantic and visual distances.
+displayed regions. The current policy starts with semantic topics, splits
+oversized groups using both semantic and visual distances, and checks the
+resulting groups for well-separated visual islands with semantic support.
 
 ## Input and comparisons
 
@@ -28,7 +29,7 @@ and 2,000 iterations. Leading settings were checked across seeds and in the
 actual browser layout, including its label obstacles and bubble spacing.
 KL divergence was not compared across perplexities as a common quality scale.
 
-## Current size policy
+## Current size and proximity policy
 
 The base partition uses raw embedding PCA50 with full SVD and K-means k=10,
 n_init=100, seed=42. A topic may contain at most one eighth (12.5%) of the
@@ -37,16 +38,16 @@ larger than that limit are split. Each receives
 `ceil(parent_size / size_limit)` children, and papers stay within their base
 semantic parent.
 
-The split objective combines 75% semantic PCA squared distance with 25% squared
+The size-split objective combines 75% semantic PCA squared distance with 25% squared
 distance in the existing 2D map. Both coordinate blocks are centered and scaled
 to unit root mean square radius over the full collection before weighting.
 Local K-means uses 20 starts with alternating centroid updates and Hungarian
 capacity assignment. Every child must contain at least
 `max(1, floor(parent_size / (2 * children)))` papers and at most the size limit.
 These bounds allow natural unequal subdivisions while preventing tiny outlier
-children. Topics already under the cap retain their membership.
+children.
 
-For this collection of 267 papers, the cap is 33. Four parents split the ten
+For this collection of 267 papers, the cap is 33. Four parents first split the ten
 base topics into fourteen groups of 9–33 papers:
 
 | Base topic | Papers | Automatically titled children |
@@ -56,17 +57,41 @@ base topics into fourteen groups of 9–33 papers:
 | large language models | 38 | large language models (18); cognitive assistants (20) |
 | design agents | 37 | reinforcement learning (9); human designers (28) |
 
+After size splitting, every group with at least six papers receives one
+candidate two-way split in the same 75% semantic / 25% visual space. Each
+candidate child needs at least two papers. A split is accepted only when its
+two-dimensional silhouette is at least 0.60, its 90th-percentile distance to
+the nearest child centroid falls at least 35% relative to the unsplit group,
+and its silhouette in the original embeddings' cosine space is at least 0.30.
+Each group is checked once; the larger child retains its previous ID. This
+lets clear display islands separate while rejecting a t-SNE gap that lacks
+semantic support. The thresholds were checked against all fourteen groups in
+the pinned snapshot. Generated titles must still pass the existing distinct,
+paper-supported phrase check.
+
+The reinforcement-learning group alone passes all three checks. Its two
+Stackelberg game papers become a separate neighborhood, automatically titled
+“stochastic stackelberg game.” The remaining seven-paper group keeps
+“reinforcement learning”; five papers clearly discuss RL and two concern
+drone design data or prediction. The map now has fifteen groups of 2–33
+papers. An exclusive map neighborhood remains an imperfect subject tag for
+an individual paper, so the browser searches each paper's own text rather
+than automatically treating the neighborhood name as its keyword.
+
 All titles are re-derived from publication evidence after splitting with the
 existing paper-supported phrase scorer. The more specific names follow from
 the new memberships; the scorer and source phrases are unchanged.
 
 The t-SNE settings below and the existing projected coordinates are retained.
-Only oversized parents use the projection during local refinement. This keeps
-visual coverage in the clustering objective without refitting the entire
-collection to the map. The split step changes membership, titles, and label
-centroids, and does not move publications.
+Only oversized parents and groups passing the proximity check use the projection
+during local refinement. This keeps visual coverage in the clustering objective
+without refitting the entire collection to the map. Splits change membership,
+titles, and label centroids; they do not move publications.
 
-![Publication map with size-capped topics](screenshots/size-capped-topics.png)
+![Publication map after the proximity split](screenshots/proximity-topics.png)
+
+The [previous size-only map](screenshots/size-capped-topics.png) shows the
+reinforcement-learning label before the Stackelberg island separated.
 
 ## Historical 0.2.15 comparison
 
@@ -74,7 +99,7 @@ The following settings and measurements describe the 0.2.15 build, before the
 size policy above. That build replaced a complete projection-space refit with
 ten semantic topics and retuned the display. Its metrics remain useful evidence
 about projection fidelity and the tradeoff between semantic and visual grouping;
-they do not describe the current fourteen-topic partition.
+they do not describe the current fifteen-topic partition.
 
 - Topics: raw embedding PCA50 with full SVD; K-means k=10, n_init=100, seed=42.
 - Display: L2 normalization, full-SVD PCA50, cosine-distance t-SNE,
@@ -120,10 +145,11 @@ inter-region distances should not be read as quantitative semantic measurements.
 Color continues to show publication year and bubble size shows citation count.
 
 Tests check planted-topic recovery, local projection fidelity, deterministic
-results, size bounds, and preservation of parent membership. Scrambling display
-coordinates must leave topics already under the cap intact; oversized topics
-may respond to visual neighborhoods during splitting. A tied-semantic fixture
-checks that local splits can respect separate display regions. Snapshot
+results, size bounds, and preservation of parent membership. Compact topics
+already under the cap stay intact when display coordinates change; larger or
+disconnected topics can respond to visual neighborhoods. A tied-semantic fixture
+checks that size splits can respect separate display regions, and a second
+fixture rejects a visual split without original-space semantic support. Snapshot
 provenance records the selected parameters and quality measurements. Future
 refreshes should inspect topic titles, sizes, semantic diagnostics, and visual
 coverage together rather than optimize for dramatic visual separation.

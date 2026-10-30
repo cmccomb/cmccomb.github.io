@@ -36,7 +36,7 @@
             <div class="graph-search-row">
                 <input aria-describedby="publication-search-status"
                        autocomplete="off" class="form-control graph-search-input"
-                       disabled id="publication-search" placeholder="Title, author, topic, or year"
+                       disabled id="publication-search" placeholder="Title, author, abstract, or year"
                        type="search">
                 <button class="btn graph-search-clear" disabled
                         id="publication-search-clear" type="button">Clear</button>
@@ -64,17 +64,17 @@
                     <svg aria-describedby="publication-graph-description" aria-label="Interactive publication map"
                          id="publication-graph" role="group">
                         <desc id="publication-graph-description">
-                            Publications are grouped by research topic. Color indicates publication year and circle size indicates citation count. Search by title, author, topic, or year. Use Tab to enter the map and arrow keys to move between publications.
+                            Publications are grouped into algorithmically derived map neighborhoods. Color indicates publication year and circle size indicates citation count. Search by title, author, abstract, or year. Use Tab to enter the map and arrow keys to move between publications.
                         </desc>
                     </svg>
                 </div>
             </div>
             <section aria-label="Publication results" class="publication-results" id="publication-results" hidden>
-                <p class="publication-results-help">Newest first. Search to find a title, author, topic, or year.</p>
+                <p class="publication-results-help">Newest first. Search to find a title, author, abstract, or year.</p>
                 <ol id="publication-list"></ol>
                 <div class="publication-empty" id="publication-empty" hidden>
                     <h2>No publications found</h2>
-                    <p>Try a shorter title, an author, a topic, or a year.</p>
+                    <p>Try a shorter title, an author, an abstract term, or a year.</p>
                     <button class="btn btn-light" id="publication-empty-clear" type="button">Clear search</button>
                 </div>
             </section>

@@ -160,7 +160,7 @@ test("tooltip is dismissed on resize and fits the new viewport when reopened", a
   await firstPublication.focus();
   await expect(tooltip).toHaveAttribute("aria-hidden", "false");
   await expect(tooltip).toHaveText(`${firstPaper.bib_dict.title} (${firstPaper.pub_year}).`);
-  await expect(firstPublication).toHaveAttribute("aria-label", /; topic .+; show publication details/i);
+  await expect(firstPublication).toHaveAttribute("aria-label", /; map neighborhood .+; show publication details/i);
   await page.setViewportSize({ width: 320, height: 568 });
   await expect(tooltip).toHaveAttribute("aria-hidden", "true");
   await page.locator("#publication-search").focus();

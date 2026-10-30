@@ -221,6 +221,59 @@ def test_oversized_semantically_tied_topic_respects_separate_visual_regions() ->
         assert len(numpy.unique(labels[parents == parent])) == 1
 
 
+def test_proximity_splits_a_small_semantically_distinct_visual_island() -> None:
+    """A group below the size cap can still have two meaningful map islands."""
+
+    rng = numpy.random.default_rng(107)
+    embeddings = numpy.vstack([
+        numpy.eye(8)[0] * 8 + rng.normal(scale=.08, size=(5, 8)),
+        numpy.eye(8)[1] * 8 + rng.normal(scale=.08, size=(5, 8)),
+        numpy.eye(8)[2] * 8 + rng.normal(scale=.08, size=(10, 8)),
+    ])
+    projection = numpy.vstack([
+        numpy.array([-10, 0]) + rng.normal(scale=.08, size=(5, 2)),
+        numpy.array([10, 0]) + rng.normal(scale=.08, size=(5, 2)),
+        numpy.array([0, 10]) + rng.normal(scale=.08, size=(10, 2)),
+    ])
+    parents = numpy.repeat([0, 1], [10, 10])
+
+    first, count = build_json.split_visually_dispersed_topics(
+        embeddings, embeddings, parents, projection, random_state=42,
+    )
+    second, repeated_count = build_json.split_visually_dispersed_topics(
+        embeddings, embeddings, parents, projection, random_state=42,
+    )
+
+    assert count == repeated_count == 1
+    numpy.testing.assert_array_equal(first, second)
+    assert len(numpy.unique(first[:10])) == 2
+    assert len(numpy.unique(first[10:])) == 1
+    assert first[0] != first[5]
+
+
+def test_proximity_does_not_split_a_visual_artifact_without_semantic_support() -> None:
+    """Separated t-SNE positions alone cannot redefine a coherent topic."""
+
+    rng = numpy.random.default_rng(109)
+    embeddings = numpy.vstack([
+        numpy.eye(8)[0] * 8 + rng.normal(scale=.08, size=(10, 8)),
+        numpy.eye(8)[1] * 8 + rng.normal(scale=.08, size=(10, 8)),
+    ])
+    projection = numpy.vstack([
+        numpy.array([-10, 0]) + rng.normal(scale=.08, size=(5, 2)),
+        numpy.array([10, 0]) + rng.normal(scale=.08, size=(5, 2)),
+        numpy.array([0, 10]) + rng.normal(scale=.08, size=(10, 2)),
+    ])
+    parents = numpy.repeat([0, 1], [10, 10])
+
+    result, count = build_json.split_visually_dispersed_topics(
+        embeddings, embeddings, parents, projection, random_state=42,
+    )
+
+    assert count == 0
+    numpy.testing.assert_array_equal(result, parents)
+
+
 def test_ctfidf_labels_produces_multiword_phrases() -> None:
     """The c-TF-IDF helper should surface informative phrases per cluster."""
 

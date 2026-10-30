@@ -20,6 +20,9 @@ test("every aspect ratio preserves papers and topics without clipping or collisi
         assert.doesNotThrow(() => validateLayout(layout));
         assert.equal(layout.nodes.find(n => n.year === layout.years[0]).color, "#000004");
         assert.equal(layout.nodes.find(n => n.year === layout.years[1]).color, "#fcfdbf");
+        const nodeRadii = layout.nodes.map(n => n.r);
+        assert(Math.abs(Math.min(...nodeRadii) - format.radius * .6) < .001);
+        assert(Math.max(...nodeRadii) / Math.min(...nodeRadii) > 2.5);
         if (format.banner) assert(layout.reserved.some(r => r.type === "circle" && r.y === format.height));
     }
 });

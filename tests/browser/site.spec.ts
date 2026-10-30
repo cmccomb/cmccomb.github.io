@@ -223,9 +223,10 @@ test.describe("homepage", () => {
     expect(citationLegendRadii).toHaveLength(3);
     expect(citationLegendRadii[0]).toBeLessThan(citationLegendRadii[1]);
     expect(citationLegendRadii[1]).toBeLessThan(citationLegendRadii[2]);
-    expect(citationLegendRadii[0]).toBe(12.1);
+    expect(citationLegendRadii[0]).toBe(10.5);
     expect(citationLegendRadii[2]).toBeGreaterThan(20);
     expect(citationLegendRadii[2]).toBeLessThanOrEqual(22);
+    expect(citationLegendRadii[2] / citationLegendRadii[0]).toBeGreaterThan(2);
     const citationLegendBounds = await page
       .locator(".citation-size-key circle")
       .evaluateAll((circles) => circles.map((circle) => {
@@ -384,6 +385,22 @@ test.describe("homepage", () => {
     await expectNoAccessibilityViolations(page);
   });
 
+  test("topic wording does not make unrelated papers match a search", async ({ page }) => {
+    await page.goto("/?view=map");
+    const unrelated = page.locator('.publication-link[aria-label*="Assessing Machine Learnability Of Image And Graph Representations For Drone Performance Prediction"]');
+    const relevant = page.locator('.publication-link[aria-label*="Reinforcement Learning for Efficient Design Space Exploration"]');
+    const relevantElsewhere = page.locator('.publication-link[aria-label*="A Multi-Agent Reinforcement Learning Framework for Intelligent Manufacturing"]');
+    await expect(unrelated).toHaveCount(1);
+    await expect(relevant).toHaveCount(1);
+    await expect(relevantElsewhere).toHaveCount(1);
+    await expect(unrelated).toHaveAttribute("aria-label", /map neighborhood reinforcement learning/i);
+
+    await page.locator("#publication-search").fill("reinforcement learning");
+    await expect(unrelated).toHaveClass(/search-hidden/);
+    await expect(relevant).not.toHaveClass(/search-hidden/);
+    await expect(relevantElsewhere).not.toHaveClass(/search-hidden/);
+  });
+
   test("opens and closes the responsive publication map on mobile", async ({
     page,
   }) => {
@@ -424,6 +441,9 @@ test.describe("homepage", () => {
         .querySelector(".colorbar-legend")
         ?.getBoundingClientRect();
       const pointBounds = Array.from(
+        document.querySelectorAll(".publication-hit-target"),
+      ).map((point) => point.getBoundingClientRect());
+      const visualBounds = Array.from(
         document.querySelectorAll(".publication-node"),
       ).map((point) => point.getBoundingClientRect());
       const canvas = document.getElementById("publication-graph")!.getBoundingClientRect();
@@ -463,6 +483,9 @@ test.describe("homepage", () => {
         smallestPointTarget: Math.min(
           ...pointBounds.map((bounds) => Math.min(bounds.width, bounds.height)),
         ),
+        smallestVisiblePoint: Math.min(
+          ...visualBounds.map((bounds) => Math.min(bounds.width, bounds.height)),
+        ),
         pointsAreInCanvas: pointBounds.every((bounds) => (
           bounds.left >= canvas.left
           && bounds.top >= canvas.top
@@ -481,6 +504,7 @@ test.describe("homepage", () => {
     expect(mobileLayout.hasHorizontalOverflow).toBe(false);
     expect(mobileLayout.pointsOverlapLegend).toBe(false);
     expect(mobileLayout.smallestPointTarget).toBeGreaterThanOrEqual(24);
+    expect(mobileLayout.smallestVisiblePoint).toBeCloseTo(21, 1);
     expect(mobileLayout.pointsAreInCanvas).toBe(true);
     expect(mobileLayout.labelsAreInCanvas).toBe(true);
     const searchBounds = await page.locator("#publication-search").boundingBox();
