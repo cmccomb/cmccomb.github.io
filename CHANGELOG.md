@@ -3,6 +3,14 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.17] - 2026-10-29
+
+### Fixed
+
+- Replace rectangular LinkedIn banner photo clearance with a circular area
+  and smoothly adapted positions, removing the flat row of displaced bubbles
+  while keeping papers and labels clear of the profile photo.
+
 ## [0.2.16] - 2026-10-29
 
 ### Improved

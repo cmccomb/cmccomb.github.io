@@ -25,8 +25,12 @@ a font, and the SVG contains a title and description for accessible embedding.
 The LinkedIn profile banner leaves out the legend to give the map more room;
 other formats include it.
 
-The LinkedIn banner reserves the lower-left 23% of width and 44% of height for
-the profile-photo overlay. This is a design allowance, not a platform guarantee:
+The LinkedIn banner leaves circular clearance for the profile-photo overlay,
+centered 11.5% across the bottom edge with a radius of 44% of banner height.
+Initial positions and their force targets are compressed smoothly above that
+area so papers do not collect along a hard edge. Paper and label collisions
+are checked against the circle itself, allowing space outside its curve.
+This is a design allowance, not a platform guarantee:
 check the upload preview because crops and overlays vary across devices.
 The landscape format follows LinkedIn's
 [1200 × 627 sharing-image guidance](https://www.linkedin.com/help/linkedin/answer/a521928).
