@@ -110,7 +110,7 @@ test.describe("homepage", () => {
     const linkedin = page.getByRole("link", { name: "LinkedIn" });
     await expect(linkedin.locator("svg")).toHaveClass(/linkedin-icon/);
 
-    const cv = page.getByRole("link", { name: "Curriculum vitae (PDF)" });
+    const cv = page.getByRole("link", { name: "CV — Curriculum vitae (PDF)" });
     await expect(cv).toHaveAttribute("href", CV_PATH);
     await expect(cv).toHaveAttribute("target", "_blank");
     await expect(cv).toHaveAttribute("rel", /noopener/);
