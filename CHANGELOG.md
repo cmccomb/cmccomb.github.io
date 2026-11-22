@@ -3,6 +3,16 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.2.20] - 2026-11-22
+
+### Updated
+
+- Replace the public CV with the current external, detailed build. The complete
+  professional record remains available while internal enrollment, evaluation,
+  response-count, and grant-finance fields are omitted.
+- Calculate reverse-numbered publication and mentorship identifiers from their
+  source entries so new records cannot leave the displayed totals out of sync.
+
 ## [0.2.19] - 2026-10-30
 
 ### Improved
