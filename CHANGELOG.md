@@ -13,6 +13,11 @@ Earlier tags and releases remain available in GitHub history.
 - Calculate reverse-numbered publication and mentorship identifiers from their
   source entries so new records cannot leave the displayed totals out of sync.
 
+### Fixed
+
+- Update Addressable to 2.9.2 to incorporate the current URI parsing and
+  regular-expression denial-of-service security fixes.
+
 ## [0.2.19] - 2026-10-30
 
 ### Improved
