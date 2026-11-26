@@ -50,7 +50,7 @@
         }));
         if (focus) {
             (isVisible ? (publicationSearch.disabled ? graphCloseButton : publicationSearch)
-                : profileOpener).focus({ preventScroll: isVisible || profileOpener === exploreButton });
+                : profileOpener).focus({ preventScroll: isVisible });
         }
     }
 

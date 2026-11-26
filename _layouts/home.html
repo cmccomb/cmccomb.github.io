@@ -118,12 +118,12 @@
         <img alt="A headshot of {{ site.author }}" class="card-img-top"
              decoding="async" height="600" src="{{ site.headshot | relative_url }}" width="600">
         <div class="card-body">
-            <h1 class="card-title h5 text-center">{{ site.author }}</h1>
-            <p class="card-subtitle h6 mb-2 text-muted text-center"> {{ site.affiliation }} </p>
-            <p class="card-text text-center">{{ content | markdownify | remove: '<p>' | remove: '</p>' }}</p>
+            <h1 class="card-title h5 text-center mb-1">{{ site.author }}</h1>
+            <p class="card-subtitle h6 mb-1 text-muted text-center"> {{ site.affiliation }} </p>
+            <p class="card-text text-center mb-2">{{ content | markdownify | remove: '<p>' | remove: '</p>' }}</p>
 
             <div aria-label="Contact and profile links" class="btn-group d-flex" role="group">
-                <a aria-label="Email" class="btn btn-outline-dark contact-first" href="mailto:{{ site.email }}">
+                <a aria-label="Email" class="btn btn-outline-dark" href="mailto:{{ site.email }}">
                     <svg aria-hidden="true" class="icon" viewBox="0 0 512 512"><path d="M48 64c-26.5 0-48 21.5-48 48 0 15.1 7.1 29.3 19.2 38.4l208 156c17.1 12.8 40.5 12.8 57.6 0l208-156c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48L48 64zM0 196L0 384c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-188-198.4 148.8c-34.1 25.6-81.1 25.6-115.2 0L0 196z"/></svg>
                 </a>
                 <a aria-label="LinkedIn" class="btn btn-outline-dark rounded-0"
@@ -144,7 +144,7 @@
                 </a>
             </div>
             <a aria-controls="graph-container" aria-expanded="false"
-               class="btn btn-outline-dark w-100 rounded-0 rounded-bottom border-top-0 explore-button"
+               class="btn btn-outline-dark w-100 explore-button"
                href="?view=list" id="exit">
                 <span>Explore publications</span>
             </a>
