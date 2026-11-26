@@ -38,9 +38,8 @@ body {
     min-width: 0;
 }
 
-.recent-publications {
-    /* The portrait card determines the desktop row height. */
-    contain: size;
+.profile-shell > .card > .card-body {
+    padding: 0.75rem;
 }
 
 .recent-publications[hidden] {
@@ -55,7 +54,7 @@ body {
 }
 
 .recent-publications .card-title {
-    margin-bottom: 0.5625rem;
+    margin-bottom: 0.375rem;
 }
 
 .recent-publications-list {
@@ -66,7 +65,11 @@ body {
     flex: 1 0 auto;
     justify-content: center;
     border-top: 1px solid #d8dadd;
-    padding: 0.375rem 0;
+    padding: 0.3125rem 0;
+}
+
+.recent-publications .explore-button {
+    margin-top: 0.375rem;
 }
 
 .recent-publication-meta,
@@ -99,12 +102,8 @@ body {
         gap: 1rem;
     }
 
-    .recent-publications {
-        contain: none;
-    }
-
     .recent-publications-list li {
-        padding-block: 0.75rem;
+        padding-block: 0.5rem;
     }
 
     .recent-publication-meta,
@@ -172,12 +171,18 @@ body {
     color: #212529;
 }
 
-.contact-first {
+.btn-group:has(+ .explore-button) > .btn:first-child {
     border-bottom-left-radius: 0;
 }
 
-.btn-group > .btn:last-child {
+.btn-group:has(+ .explore-button) > .btn:last-child {
     border-bottom-right-radius: 0;
+}
+
+.btn-group + .explore-button {
+    border-top-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 .explore-button {

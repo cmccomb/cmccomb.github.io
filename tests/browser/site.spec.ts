@@ -142,9 +142,11 @@ test.describe("homepage", () => {
 
     const card = page.locator("#profile > .card").first();
     const recent = page.getByRole("complementary", { name: "Recent publications" });
-    const links = recent.getByRole("link");
+    const links = recent.getByRole("list").getByRole("link");
+    const explore = recent.locator("ul + #exit");
     const titles = () => links.allTextContents();
     await expect(links).toHaveCount(3);
+    await expect(explore).toBeVisible();
     await expect(page.getByRole("link", { name: "Site source on GitHub" }))
       .toHaveAttribute("href", "https://github.com/cmccomb/cmccomb.github.io");
     expect((await recent.boundingBox())!.height).toBe((await card.boundingBox())!.height);
@@ -169,6 +171,10 @@ test.describe("homepage", () => {
     expect(publicationBounds!.y).toBeGreaterThan(profileBounds!.y + profileBounds!.height);
     expect(publicationBounds!.width).toBe(profileBounds!.width);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await explore.click();
+    await page.getByRole("button", { name: "Back to profile" }).click();
+    await expect(explore).toBeFocused();
+    await expect(explore).toBeInViewport({ ratio: 1 });
     await expectNoAccessibilityViolations(page);
   });
 

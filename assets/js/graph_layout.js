@@ -125,7 +125,12 @@
             }
             list.append(item);
         }
-        panel.hidden = list.children.length === 0;
+        if (!list.childElementCount) return;
+        const exploreButton = document.getElementById("exit");
+        const restoreFocus = document.activeElement === exploreButton;
+        list.after(exploreButton);
+        panel.hidden = false;
+        if (restoreFocus) exploreButton.focus();
     }
 
     const publicationURL = new URL("assets/json/pubs.json", document.baseURI);

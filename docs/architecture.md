@@ -58,7 +58,8 @@ at least six are available. Otherwise, it samples from the current and previous
 years. The card uses the same validated snapshot as the browser and resamples
 on a full page load. Its links open the corresponding publication detail in
 List view. The card matches the profile card's height on desktop and stacks
-below it on narrow screens.
+below it on narrow screens. Explore publications appears under the citations
+when the card is available and under the profile links otherwise.
 
 ## State and navigation
 

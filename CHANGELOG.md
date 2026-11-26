@@ -3,6 +3,14 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.3.1] - 2026-11-26
+
+### Updated
+
+- Place Explore publications beneath the recent papers and tighten the padding
+  inside both homepage cards. Keep the control on the profile when recent
+  papers are unavailable.
+
 ## [0.3.0] - 2026-11-25
 
 ### Added
