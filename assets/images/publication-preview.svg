@@ -1,0 +1,9 @@
+---
+layout: null
+---
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640">
+<path fill="#212529" d="M0 0h1000v640H0z"/>
+{% for point in site.data.publication_preview -%}
+<circle cx="{{ point.x }}" cy="{{ point.y }}" r="{{ point.radius }}" fill="#{{ point.color }}"/>
+{% endfor -%}
+</svg>

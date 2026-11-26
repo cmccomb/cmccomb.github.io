@@ -3,6 +3,19 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.4.0] - 2026-11-26
+
+### Added
+
+- Add Fit map to show the whole collection within a small viewport. Toggle
+  it off to return to the scrollable map at its previous position.
+
+### Improved
+
+- Use a static map backdrop and a compact bibliography on the homepage.
+  Load D3, the publication browser, and the full snapshot when someone opens
+  the browser or follows a publication link.
+
 ## [0.3.1] - 2026-11-26
 
 ### Updated

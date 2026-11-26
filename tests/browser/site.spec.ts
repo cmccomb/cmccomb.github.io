@@ -215,13 +215,7 @@ test.describe("homepage", () => {
     const close = page.locator("#graph-close");
 
     await expect(explore).toHaveAttribute("aria-expanded", "false");
-    await expect(page.locator(".publication-link")).not.toHaveCount(0);
-    const nodePositionsBeforeReveal = await page
-      .locator(".publication-node")
-      .evaluateAll((nodes) => nodes.map((node) => ({
-        x: node.getAttribute("x"),
-        y: node.getAttribute("y"),
-      })));
+    await expect(page.locator(".publication-link")).toHaveCount(0);
 
     await explore.click();
     await expect(graph).toHaveAttribute("aria-hidden", "false");
@@ -252,13 +246,7 @@ test.describe("homepage", () => {
       ),
     ).toBeLessThan(2);
     await expect(page.locator("#publication-search")).toBeFocused();
-    const nodePositionsAfterReveal = await page
-      .locator(".publication-node")
-      .evaluateAll((nodes) => nodes.map((node) => ({
-        x: node.getAttribute("x"),
-        y: node.getAttribute("y"),
-      })));
-    expect(nodePositionsAfterReveal).toEqual(nodePositionsBeforeReveal);
+    await expect(page.locator(".publication-link")).toHaveCount(snapshot.records.length);
     await expect(page.locator("#publication-search-help")).toHaveCount(0);
     await expect(page.locator(".colorbar-legend svg")).toBeVisible();
     await expect(page.locator(".size-legend svg")).toBeVisible();
@@ -370,8 +358,8 @@ test.describe("homepage", () => {
     const search = page.locator("#publication-search");
     const status = page.locator("#publication-search-status");
     const allPublications = page.locator(".publication-link");
-    const total = await allPublications.count();
-    expect(total).toBeGreaterThan(1);
+    const total = snapshot.records.length;
+    await expect(allPublications).toHaveCount(total);
     await expect(status).toHaveText(`${total} publications`);
 
     await search.fill("no-publication-can-match-this-phrase");

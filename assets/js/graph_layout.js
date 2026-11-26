@@ -8,15 +8,14 @@
     const statusElement = document.getElementById("graph-status");
     const statusMessage = document.getElementById("graph-status-message");
     const statusDismiss = document.getElementById("graph-status-dismiss");
-    const statusScholar = document.getElementById("graph-status-scholar");
     const graphContainer = document.getElementById("graph-container");
-    const graphCommandBar = document.getElementById("graph-command-bar");
     const searchInput = document.getElementById("publication-search");
     const searchClearButton = document.getElementById("publication-search-clear");
     const searchStatus = document.getElementById("publication-search-status");
     const detailPanel = document.getElementById("publication-detail");
     const detailBody = document.getElementById("publication-detail-body");
     const mapViewport = document.getElementById("publication-map-viewport");
+    const fitMap = document.getElementById("publication-fit-map");
     const detailCloseButton = document.getElementById("publication-detail-close");
     const detailTitle = document.getElementById("publication-detail-title");
     const detailMeta = document.getElementById("publication-detail-meta");
@@ -40,45 +39,10 @@
     const MIN_PUBLICATION_HIT_RADIUS = 12.1;
     const MIN_VISIBLE_TOPIC_SIZE = 3;
 
-    function updateToolbarGeometry() {
-        const bottom = graphCommandBar.getBoundingClientRect().bottom;
-        graphContainer.style.setProperty("--browser-content-top", `${bottom + 12}px`);
-    }
-    const toolbarObserver = new ResizeObserver(updateToolbarGeometry);
-    toolbarObserver.observe(graphCommandBar);
     statusDismiss.addEventListener("click", () => {
         statusElement.hidden = true;
         searchInput.focus({ preventScroll: true });
     });
-
-    function showGraphError(error) {
-        console.error("Unable to render publication graph", error);
-        legendContainer.attr("hidden", true);
-        sizeLegendContainer.attr("hidden", true);
-        if (searchInput) {
-            searchInput.disabled = true;
-        }
-        if (searchClearButton) {
-            searchClearButton.disabled = true;
-        }
-        if (searchStatus) {
-            searchStatus.textContent = "Publication search is unavailable.";
-        }
-        if (statusElement) {
-            graphContainer.classList.add("data-unavailable");
-            resultsPanel.hidden = true;
-            emptyResults.hidden = true;
-            Object.values(viewButtons).forEach(button => {
-                button.disabled = true;
-                button.setAttribute("aria-pressed", "false");
-            });
-            statusMessage.textContent = "The publication browser is temporarily unavailable.";
-            statusDismiss.hidden = true;
-            statusScholar.hidden = false;
-            statusElement.hidden = false;
-            updateToolbarGeometry();
-        }
-    }
 
     function asFiniteNumber(value) {
         const number = Number(value);
@@ -96,41 +60,6 @@
 
     function displayClusterLabel(label) {
         return helpers.displayClusterLabel(label);
-    }
-
-    function renderRecentPublications(records) {
-        const panel = document.getElementById("recent-publications");
-        if (!panel) return;
-        const list = panel.querySelector(".recent-publications-list");
-        for (const record of helpers.sampleRecentPublications(records, new Date().getFullYear())) {
-            const item = document.createElement("li");
-            const meta = document.createElement("div");
-            meta.className = "recent-publication-meta";
-            const names = helpers.authors(record.bib_dict.author, { compact: true });
-            meta.textContent = names ? `${names} (${record.pub_year}).` : String(record.pub_year);
-
-            const title = document.createElement("a");
-            title.className = "recent-publication-title";
-            const params = new URLSearchParams({ view: "list", paper: record.author_pub_id });
-            title.href = `?${params}`;
-            title.textContent = record.bib_dict.title;
-            item.append(meta, title);
-
-            const venue = helpers.venue(record);
-            if (venue) {
-                const source = document.createElement("div");
-                source.className = "recent-publication-meta";
-                source.textContent = venue;
-                item.append(source);
-            }
-            list.append(item);
-        }
-        if (!list.childElementCount) return;
-        const exploreButton = document.getElementById("exit");
-        const restoreFocus = document.activeElement === exploreButton;
-        list.after(exploreButton);
-        panel.hidden = false;
-        if (restoreFocus) exploreButton.focus();
     }
 
     const publicationURL = new URL("assets/json/pubs.json", document.baseURI);
@@ -182,8 +111,6 @@
         if (records.length === 0) {
             throw new Error("Publication snapshot contains no valid records");
         }
-
-        renderRecentPublications(records);
 
         const xExtent = d3.extent(records, record => record.x);
         const yExtent = d3.extent(records, record => record.y);
@@ -903,15 +830,27 @@
             .attr("aria-hidden", "true");
         let simulation;
         let renderedDimensions = "";
+        let mapScroll = { left: 0, top: 0 };
+
+        fitMap.addEventListener("click", () => {
+            const fitted = !mapViewport.classList.contains("map-fitted");
+            if (fitted) mapScroll = { left: mapViewport.scrollLeft, top: mapViewport.scrollTop };
+            mapViewport.classList.toggle("map-fitted", fitted);
+            fitMap.setAttribute("aria-pressed", String(fitted));
+            mapViewport.scrollTo(fitted ? { left: 0, top: 0 } : mapScroll);
+            hideTooltip();
+        });
 
         function render() {
             hideTooltip();
-            updateToolbarGeometry();
             if (!mapViewport.clientWidth || !mapViewport.clientHeight) return;
             // Preserve readable labels and touch targets instead of squeezing the
             // entire collection into a phone-sized plot.
             const width = Math.max(1024, mapViewport.clientWidth);
             const height = Math.max(720, mapViewport.clientHeight);
+            const fitScale = Math.min(mapViewport.clientWidth / width, mapViewport.clientHeight / height);
+            fitMap.hidden = fitScale === 1;
+            mapViewport.classList.toggle("small-map-fit", fitScale < 0.65);
             const dimensions = `${width},${height},${window.innerWidth}`;
             if (dimensions === renderedDimensions) return;
             renderedDimensions = dimensions;
@@ -1147,20 +1086,15 @@
             updateClusterLabelVisibility();
         }
 
-        render();
-        if (searchInput) {
-            searchInput.disabled = false;
-        }
+        searchInput.disabled = false;
         restorePublicationLocation();
+        render();
         Object.values(viewButtons).forEach(button => { button.disabled = false; });
         const mapObserver = new ResizeObserver(render);
         mapObserver.observe(mapViewport);
         d3.select(window).on("resize.graph", render);
-        window.addEventListener("unload", () => {
-            d3.select(window).on("resize.graph", null);
-            toolbarObserver.disconnect();
-            mapObserver.disconnect();
-            simulation?.stop();
-        });
-    }).catch(showGraphError);
+        graphContainer.dispatchEvent(new Event("publicationgraph:ready"));
+    }).catch(error => {
+        graphContainer.dispatchEvent(new CustomEvent("publicationgraph:unavailable", { detail: error }));
+    });
 })();

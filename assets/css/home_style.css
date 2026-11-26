@@ -75,20 +75,7 @@
     backdrop-filter: blur(10px);
 }
 
-.graph-command-bar[hidden] {
-    /* Preserve the active layout geometry behind the profile preview. */
-    display: grid !important;
-    visibility: hidden;
-}
-
-.graph-command-bar[hidden] .graph-close[hidden] {
-    display: inline-flex !important;
-}
-
-#graph-container.blur[data-publication-view="list"] .graph-command-bar[hidden] {
-    /* Preview the complete list layout; the parent stays inert and aria-hidden. */
-    visibility: visible;
-}
+.graph-command-bar[hidden] { display: none; }
 
 .graph-command-bar .graph-close {
     position: static;
@@ -380,11 +367,10 @@
 .list-view .publication-content { margin-inline: var(--browser-inset); }
 .publication-map { position: absolute; inset: 0; display: flex; flex-direction: column; }
 .publication-map-viewport { flex: 1 1 0; min-height: 0; overflow: auto; overscroll-behavior: contain; }
-#graph-container.blur .publication-map-viewport,
-#graph-container.blur .publication-results { overflow: hidden; }
-#graph-container.blur .publication-results-help,
-#graph-container.blur .graph-status { visibility: hidden; }
 #publication-graph { display: block; max-width: none; }
+.publication-map-viewport.map-fitted { overflow: hidden; }
+.map-fitted #publication-graph { width: 100%; height: 100%; }
+.map-fitted.small-map-fit .cluster-label-layer { visibility: hidden; }
 #graph-container.list-view .publication-map,
 #graph-container.empty-results.graph-active .publication-map,
 #graph-container.data-unavailable .publication-map,
@@ -399,8 +385,13 @@
     border-radius: 0.55rem;
     box-shadow: inset 0 0 0 1px #6c757d;
 }
-.publication-view-controls .btn { min-height: 2.75rem; color: #f8f9fa; }
+.publication-view-controls .btn { min-height: 2.75rem; color: #f8f9fa; transition: none; }
 .publication-view-controls .btn[aria-pressed="true"] { color: #212529; background: var(--publication-control-fill); }
+#publication-fit-map { white-space: nowrap; }
+#publication-fit-map[hidden],
+.list-view #publication-fit-map,
+.empty-results #publication-fit-map,
+.data-unavailable #publication-fit-map { display: none; }
 .graph-command-bar .btn:focus-visible,
 .publication-result:focus-visible { outline: 3px solid #a9ceff; outline-offset: 2px; box-shadow: none; }
 #publication-results[hidden],

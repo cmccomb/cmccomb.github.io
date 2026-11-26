@@ -39,8 +39,9 @@ excluding a file from Git does not, by itself, exclude it from the built site.
 
 [`_layouts/home.html`](../_layouts/home.html) renders the profile, publication
 toolbar, map container, results list, detail panel, and accessible status regions.
-Its scripts load in order: D3, shared publication helpers, graph rendering, then
-profile/navigation behavior.
+Shared publication helpers and profile navigation load with the page. The site
+loads D3 and graph rendering when someone opens the browser or follows a
+publication link.
 
 | Module | Owns |
 | --- | --- |
@@ -55,8 +56,8 @@ also offers a Scholar link when JavaScript is disabled.
 
 The homepage samples up to three distinct papers from the current year when
 at least six are available. Otherwise, it samples from the current and previous
-years. The card uses the same validated snapshot as the browser and resamples
-on a full page load. Its links open the corresponding publication detail in
+years. Jekyll generates the blurred map backdrop and a compact bibliography
+from the same snapshot as the browser. The card resamples on a full page load. Its links open the corresponding publication detail in
 List view. The card matches the profile card's height on desktop and stacks
 below it on narrow screens. Explore publications appears under the citations
 when the card is available and under the profile links otherwise.
@@ -85,16 +86,19 @@ when the user chooses a view. The two modules share the current view through
 
 Before an explicit choice, widths up to 768 px default to List; larger viewports
 default to Map. An explicit choice is remembered during the current page visit,
-including a return to the profile. It is not stored across visits. The blurred
-profile background uses the selected view, including the search toolbar in List,
-and remains inert, hidden from
-assistive technology, and clipped to prevent background scrollbars.
+including a return to the profile. It is not stored across visits. The static
+profile backdrop is decorative. The interactive browser stays hidden and inert
+while the profile is visible.
 
 ## Layout and accessibility
 
 The map uses a minimum 1024 × 720 canvas so papers and labels remain legible.
-Smaller viewports scroll within the active map. Year colors use D3's Magma scale;
-circle sizes represent citation counts. List accents reuse the year colors.
+Smaller viewports scroll within the active map. Fit map scales the full canvas
+to the available space, retaining search matches and selection. At small
+scales it hides topic labels to keep the overview legible. Toggling it off
+restores the scrollable view and its prior position. Year colors use D3's
+Magma scale, and circle sizes represent citation counts. List accents reuse
+the year colors.
 
 The toolbar's measured height reserves the content area below it. List/detail
 columns share its centered width, and long details scroll below a fixed Close
