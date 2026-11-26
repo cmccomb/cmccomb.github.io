@@ -5,5 +5,8 @@
             <span>v{{ site.data.release.version | escape }}</span>
             <span>Updated <time datetime="{{ site.data.release.last_updated | escape }}">{{ site.data.release.last_updated | date: '%b %-d, %Y' }}</time></span>
         </span>
+        {% if include.show_source %}
+        <a class="footer-source" href="{{ site.source_repository | escape }}">Site source on GitHub</a>
+        {% endif %}
     </div>
 </footer>

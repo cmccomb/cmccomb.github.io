@@ -98,6 +98,36 @@
         return helpers.displayClusterLabel(label);
     }
 
+    function renderRecentPublications(records) {
+        const panel = document.getElementById("recent-publications");
+        if (!panel) return;
+        const list = panel.querySelector(".recent-publications-list");
+        for (const record of helpers.sampleRecentPublications(records, new Date().getFullYear())) {
+            const item = document.createElement("li");
+            const meta = document.createElement("div");
+            meta.className = "recent-publication-meta";
+            const names = helpers.authors(record.bib_dict.author, { compact: true });
+            meta.textContent = names ? `${names} (${record.pub_year}).` : String(record.pub_year);
+
+            const title = document.createElement("a");
+            title.className = "recent-publication-title";
+            const params = new URLSearchParams({ view: "list", paper: record.author_pub_id });
+            title.href = `?${params}`;
+            title.textContent = record.bib_dict.title;
+            item.append(meta, title);
+
+            const venue = helpers.venue(record);
+            if (venue) {
+                const source = document.createElement("div");
+                source.className = "recent-publication-meta";
+                source.textContent = venue;
+                item.append(source);
+            }
+            list.append(item);
+        }
+        panel.hidden = list.children.length === 0;
+    }
+
     const publicationURL = new URL("assets/json/pubs.json", document.baseURI);
     publicationURL.searchParams.set("v", graphContainer.dataset.siteVersion);
     d3.json(publicationURL.toString()).then(rawPayload => {
@@ -147,6 +177,8 @@
         if (records.length === 0) {
             throw new Error("Publication snapshot contains no valid records");
         }
+
+        renderRecentPublications(records);
 
         const xExtent = d3.extent(records, record => record.x);
         const yExtent = d3.extent(records, record => record.y);

@@ -16,12 +16,101 @@ body {
 }
 
 .profile-shell {
-    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 300px minmax(0, 392px);
+    align-content: center;
+    justify-content: center;
+    gap: clamp(1.375rem, 4vw, 3rem);
     min-height: calc(100vh - 3.5rem);
     padding: 1.5rem 0.75rem;
     position: relative;
     width: 100%;
     z-index: 1;
+}
+
+.profile-shell:has(.recent-publications[hidden]) {
+    grid-template-columns: min(90%, 300px);
+}
+
+.profile-shell > .card {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+}
+
+.recent-publications {
+    /* The portrait card determines the desktop row height. */
+    contain: size;
+}
+
+.recent-publications[hidden] {
+    display: none;
+}
+
+.recent-publications .card-body,
+.recent-publications-list,
+.recent-publications-list li {
+    display: flex;
+    flex-direction: column;
+}
+
+.recent-publications .card-title {
+    margin-bottom: 0.5625rem;
+}
+
+.recent-publications-list {
+    flex: 1;
+}
+
+.recent-publications-list li {
+    flex: 1 0 auto;
+    justify-content: center;
+    border-top: 1px solid #d8dadd;
+    padding: 0.375rem 0;
+}
+
+.recent-publication-meta,
+.recent-publication-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+}
+
+.recent-publication-meta {
+    -webkit-line-clamp: 2;
+    color: #495057;
+    font-size: 0.78125rem;
+    line-height: 1.38;
+}
+
+.recent-publication-title {
+    -webkit-line-clamp: 4;
+    align-self: start;
+    margin: 0.1875rem 0;
+    font-size: 0.9rem;
+    font-weight: 550;
+    line-height: 1.35;
+}
+
+@media (max-width: 650px) {
+    .profile-shell {
+        grid-template-columns: min(90%, 300px);
+        gap: 1rem;
+    }
+
+    .recent-publications {
+        contain: none;
+    }
+
+    .recent-publications-list li {
+        padding-block: 0.75rem;
+    }
+
+    .recent-publication-meta,
+    .recent-publication-title {
+        display: block;
+    }
 }
 
 .card {
@@ -133,6 +222,15 @@ body {
 
 .footer-release {
     gap: 0.75rem;
+}
+
+.footer-source {
+    color: inherit;
+    text-underline-offset: 0.2em;
+}
+
+.footer-source:hover {
+    color: #f8f9fa;
 }
 
 .footer-release > span:last-child {
