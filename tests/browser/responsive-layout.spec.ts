@@ -20,7 +20,7 @@ test("toolbar and empty states remain usable across the audited viewport matrix"
     await page.setViewportSize({ width, height });
     for (const view of ["list", "map"]) {
       await page.locator(`#publication-view-${view}`).click();
-      const controls = await page.locator("#graph-command-bar button, #publication-search").evaluateAll(elements =>
+      const controls = await page.locator("#graph-command-bar button:visible, #publication-search").evaluateAll(elements =>
         elements.map(element => ({ id: element.id, ...element.getBoundingClientRect().toJSON() })));
       for (const box of controls) {
         expect(box.width, `${width}×${height} ${view} ${box.id}`).toBeGreaterThanOrEqual(44);
@@ -179,9 +179,45 @@ test("tooltip is dismissed on resize and fits the new viewport when reopened", a
   expect(box!.y + box!.height).toBeLessThanOrEqual(568);
 });
 
+test("phone map fits the entire collection and restores detail scale and scroll", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/?view=map");
+  const viewport = page.locator("#publication-map-viewport");
+  const fit = page.getByRole("button", { name: "Fit map", exact: true });
+
+  await expect(fit).toBeVisible();
+  await expect(page.locator(".publication-node")).toHaveCount(snapshot.records.length);
+  await viewport.evaluate(element => { element.scrollLeft = 120; });
+  await fit.click();
+  await expect(fit).toHaveAttribute("aria-pressed", "true");
+  await expect.poll(() => viewport.evaluate(element => {
+    const bounds = element.getBoundingClientRect();
+    return [...element.querySelectorAll(".publication-node")].every(node => {
+      const paper = node.getBoundingClientRect();
+      return paper.left >= bounds.left - 1 && paper.right <= bounds.right + 1
+        && paper.top >= bounds.top - 1 && paper.bottom <= bounds.bottom + 1;
+    });
+  })).toBe(true);
+
+  const search = page.getByRole("searchbox");
+  await search.fill("truss");
+  const title = "Data on the Design of Truss Structures by Teams of Engineering Students";
+  const paper = page.getByRole("button", { name: new RegExp(title) });
+  await paper.press("Enter");
+  await expect(page.locator("#publication-detail-title")).toHaveText(title);
+  await page.getByRole("button", { name: "Close publication details" }).click();
+  await fit.click();
+  await expect(fit).toHaveAttribute("aria-pressed", "false");
+  await expect(search).toHaveValue("truss");
+  await expect.poll(() => viewport.evaluate(element => element.scrollLeft)).toBe(120);
+  await page.locator("#publication-view-list").click();
+  await expect(fit).toBeHidden();
+});
+
 test("data failure disables unavailable views and offers Google Scholar directly", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 256 });
   await page.route("**/assets/json/pubs.json**", route => route.abort());
+  await page.route("**/assets/json/recent-publications.json**", route => route.abort());
   await page.goto("/");
   await expect(page.locator("#recent-publications")).toBeHidden();
   await page.locator("#profile > .card").first().getByRole("link", { name: "Explore publications" }).click();

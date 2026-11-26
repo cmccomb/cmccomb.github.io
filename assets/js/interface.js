@@ -19,6 +19,99 @@
     const defaultView = () => compactViewport.matches ? "list" : "map";
     let preferredView = null;
     let profileOpener = exploreButton;
+    let browserLoad;
+    let recentLoad;
+
+    function updateToolbarGeometry() {
+        const bottom = graphCommandBar.getBoundingClientRect().bottom;
+        graphContainer.style.setProperty("--browser-content-top", `${bottom + 12}px`);
+    }
+    new ResizeObserver(updateToolbarGeometry).observe(graphCommandBar);
+
+    function loadScript(src) {
+        return new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = src;
+            script.addEventListener("load", resolve, { once: true });
+            script.addEventListener("error", () => reject(new Error(`Unable to load ${src}`)), { once: true });
+            document.head.append(script);
+        });
+    }
+
+    function showBrowserError(error) {
+        console.error("Unable to load the publication browser", error);
+        graphContainer.classList.add("data-unavailable");
+        publicationSearch.disabled = true;
+        publicationSearchClear.disabled = true;
+        document.getElementById("publication-search-status").textContent = "Publication search is unavailable.";
+        graphContainer.querySelectorAll(".publication-view-controls button").forEach(button => {
+            button.disabled = true;
+            button.setAttribute("aria-pressed", "false");
+        });
+        document.getElementById("publication-results").hidden = true;
+        document.getElementById("publication-empty").hidden = true;
+        document.getElementById("graph-status-message").textContent = "The publication browser is temporarily unavailable.";
+        document.getElementById("graph-status-dismiss").hidden = true;
+        document.getElementById("graph-status-scholar").hidden = false;
+        document.getElementById("graph-status").hidden = false;
+    }
+
+    graphContainer.addEventListener("publicationgraph:unavailable", event => showBrowserError(event.detail));
+    graphContainer.addEventListener("publicationgraph:ready", () => {
+        if (!graphContainer.hidden && document.activeElement === graphCloseButton) {
+            publicationSearch.focus({ preventScroll: true });
+        }
+    });
+
+    function loadBrowser() {
+        browserLoad ??= loadScript(graphContainer.dataset.d3Src)
+            .then(() => loadScript(graphContainer.dataset.browserSrc))
+            .catch(showBrowserError);
+    }
+
+    function loadRecentPublications() {
+        const panel = document.getElementById("recent-publications");
+        recentLoad ??= fetch(panel.dataset.src)
+            .then(response => {
+                if (!response.ok) throw new Error(`Recent publications returned HTTP ${response.status}`);
+                return response.json();
+            })
+            .then(records => renderRecentPublications(panel, records))
+            .catch(error => console.warn("Unable to load recent publications", error));
+    }
+
+    function renderRecentPublications(panel, records) {
+        const helpers = window.PublicationHelpers;
+        const list = panel.querySelector(".recent-publications-list");
+        for (const record of helpers.sampleRecentPublications(records, new Date().getFullYear())) {
+            const item = document.createElement("li");
+            const meta = document.createElement("div");
+            meta.className = "recent-publication-meta";
+            const names = helpers.authors(record.bib_dict.author, { compact: true });
+            meta.textContent = names ? `${names} (${record.pub_year}).` : String(record.pub_year);
+
+            const title = document.createElement("a");
+            title.className = "recent-publication-title";
+            const params = new URLSearchParams({ view: "list", paper: record.author_pub_id });
+            title.href = `?${params}`;
+            title.textContent = record.bib_dict.title;
+            item.append(meta, title);
+
+            const venue = helpers.venue(record);
+            if (venue) {
+                const source = document.createElement("div");
+                source.className = "recent-publication-meta";
+                source.textContent = venue;
+                item.append(source);
+            }
+            list.append(item);
+        }
+        if (!list.childElementCount) return;
+        const restoreFocus = document.activeElement === exploreButton;
+        list.after(exploreButton);
+        panel.hidden = false;
+        if (restoreFocus) exploreButton.focus();
+    }
 
     function updateView(view) {
         graphContainer.dataset.publicationView = view;
@@ -39,12 +132,14 @@
         setRegionVisibility(profile, !isVisible);
         setRegionVisibility(footer, !isVisible);
         graphContainer.inert = !isVisible;
-        graphContainer.setAttribute("aria-hidden", String(!isVisible));
-        graphContainer.classList.toggle("blur", !isVisible);
+        setRegionVisibility(graphContainer, isVisible);
         graphContainer.classList.toggle("graph-active", isVisible);
         graphCloseButton.hidden = !isVisible;
         setRegionVisibility(graphCommandBar, isVisible);
         exploreButton.setAttribute("aria-expanded", String(isVisible));
+        updateToolbarGeometry();
+        if (isVisible) loadBrowser();
+        else loadRecentPublications();
         graphContainer.dispatchEvent(new CustomEvent("publicationgraph:visibilitychange", {
             detail: { isVisible },
         }));

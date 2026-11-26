@@ -12,15 +12,16 @@
     <link href="{{ '/assets/vendor/bootstrap/bootstrap.min.css' | relative_url }}" rel="stylesheet">
     <link href="{{ '/assets/css/default_style.css' | relative_url }}?v={{ site.data.release.version | escape }}" rel="stylesheet">
     <link href="{{ '/assets/css/home_style.css' | relative_url }}?v={{ site.data.release.version | escape }}" rel="stylesheet">
-    <script defer src="{{ '/assets/vendor/d3/d3.v7.9.0.min.js' | relative_url }}"></script>
     <script defer src="{{ '/assets/js/publication_helpers.js' | relative_url }}?v={{ site.data.release.version | escape }}"></script>
-    <script defer src="{{ '/assets/js/graph_layout.js' | relative_url }}?v={{ site.data.release.version | escape }}"></script>
 </head>
 <body class="bg-dark d-flex flex-column">
 
 <div aria-hidden="true" aria-label="Publication browser"
-     class="container-fluid blur unselectable p-0" data-site-version="{{ site.data.release.version | escape }}"
-     id="graph-container" inert role="region">
+     class="container-fluid unselectable p-0"
+     data-d3-src="{{ '/assets/vendor/d3/d3.v7.9.0.min.js' | relative_url }}"
+     data-browser-src="{{ '/assets/js/graph_layout.js' | relative_url }}?v={{ site.data.release.version | escape }}"
+     data-site-version="{{ site.data.release.version | escape }}"
+     hidden id="graph-container" inert role="region">
     <div aria-hidden="true" class="graph-command-bar" hidden id="graph-command-bar">
         <button aria-label="Back to profile" class="btn graph-close"
                 hidden id="graph-close" title="Back to profile" type="button">
@@ -45,6 +46,8 @@
         <div class="publication-view-controls" role="group" aria-label="Publication view">
             <button class="btn" id="publication-view-list" type="button" aria-pressed="false" disabled>List</button>
             <button class="btn" id="publication-view-map" type="button" aria-pressed="false" disabled>Map</button>
+            <button aria-controls="publication-graph" aria-pressed="false" class="btn" hidden
+                    id="publication-fit-map" type="button">Fit map</button>
         </div>
         <div aria-label="Publication map legends" class="graph-legends" role="group">
             <div class="colorbar-legend" role="img" aria-label="Color legend for publication years"></div>
@@ -114,6 +117,8 @@
 
 <main aria-hidden="false" class="profile-shell flex-grow-1"
       id="profile">
+    <img alt="" class="profile-backdrop" decoding="async" width="1000" height="640"
+         src="{{ '/assets/images/publication-preview.svg' | relative_url }}?v={{ site.data.release.version | escape }}">
     <div class="card px-0">
         <img alt="A headshot of {{ site.author }}" class="card-img-top"
              decoding="async" height="600" src="{{ site.headshot | relative_url }}" width="600">
@@ -152,6 +157,7 @@
         </div>
     </div>
     <aside aria-labelledby="recent-publications-title" class="card recent-publications"
+           data-src="{{ '/assets/json/recent-publications.json' | relative_url }}?v={{ site.data.release.version | escape }}"
            hidden id="recent-publications">
         <div class="card-body">
             <h2 class="card-title h5 text-center" id="recent-publications-title">Recent publications</h2>
