@@ -18,6 +18,7 @@
     const compactViewport = window.matchMedia("(max-width: 768px)");
     const defaultView = () => compactViewport.matches ? "list" : "map";
     let preferredView = null;
+    let profileOpener = exploreButton;
 
     function updateView(view) {
         graphContainer.dataset.publicationView = view;
@@ -49,17 +50,21 @@
         }));
         if (focus) {
             (isVisible ? (publicationSearch.disabled ? graphCloseButton : publicationSearch)
-                : exploreButton).focus({ preventScroll: true });
+                : profileOpener).focus({ preventScroll: isVisible || profileOpener === exploreButton });
         }
     }
 
-    exploreButton.addEventListener("click", event => {
+    profile.addEventListener("click", event => {
+        const paperLink = event.target.closest(".recent-publication-title");
+        if (!paperLink && !exploreButton.contains(event.target)) return;
         if (event.button !== 0 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
         event.preventDefault();
-        const url = new URL(window.location.href);
-        url.searchParams.set("view", preferredView || defaultView());
+        profileOpener = paperLink || exploreButton;
+        const url = new URL(paperLink?.href || window.location.href);
+        if (!paperLink) url.searchParams.set("view", preferredView || defaultView());
         window.history.pushState(null, "", url);
-        restoreLocation({ focus: true });
+        // When opening a paper, the publication browser focuses its detail title.
+        restoreLocation({ focus: !paperLink });
     });
     graphCloseButton.addEventListener("click", () => {
         const url = new URL(window.location.href);

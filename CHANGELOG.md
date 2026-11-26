@@ -3,6 +3,15 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.3.0] - 2026-11-25
+
+### Added
+
+- Show a new sample of up to three recent publications on every homepage load.
+  The publication card matches the profile card's height on desktop and stacks
+  beneath it on phones. Paper titles open the full publication details.
+- Link to the site's GitHub repository in the footer.
+
 ## [0.2.20] - 2026-11-22
 
 ### Updated

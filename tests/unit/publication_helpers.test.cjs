@@ -49,3 +49,14 @@ test('extracts only explicit DOIs in known publisher URL formats', () => {
     assert.equal(h.publisherDOI('https://example.com/doi/10.1234/unverified'), null);
     assert.equal(h.publisherDOI('https://dl.acm.org/doi/%FF'), null);
 });
+
+test('samples distinct papers from the current year or the last two years', () => {
+    const years = [2025, 2026, 2026, 2026, 2026, 2026, 2026, 2024];
+    const records = years.map((pub_year, index) => ({ pub_year, author_pub_id: String(index) }));
+    const ids = (pool, random) => h.sampleRecentPublications(pool, 2026, random).map(p => p.author_pub_id);
+    assert.deepEqual(ids(records, () => 0), ['1', '2', '3']);
+    assert.deepEqual(ids(records, () => 0.99), ['6', '5', '4']);
+    assert.deepEqual(ids(records.slice(0, 6), () => 0), ['0', '1', '2']);
+    assert.deepEqual(ids([records[0], records[0], records.at(-1)], () => 0), ['0']);
+    assert.deepEqual(ids([records.at(-1)], () => 0), []);
+});

@@ -53,6 +53,13 @@ records for rendering and provides an unavailable-data state with a Scholar
 link if loading fails. Publication metadata is inserted as text. The homepage
 also offers a Scholar link when JavaScript is disabled.
 
+The homepage samples up to three distinct papers from the current year when
+at least six are available. Otherwise, it samples from the current and previous
+years. The card uses the same validated snapshot as the browser and resamples
+on a full page load. Its links open the corresponding publication detail in
+List view. The card matches the profile card's height on desktop and stacks
+below it on narrow screens.
+
 ## State and navigation
 
 The profile is the root URL. Any `view`, `q`, or `paper` query parameter opens

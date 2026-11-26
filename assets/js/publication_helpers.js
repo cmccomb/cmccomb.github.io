@@ -92,8 +92,9 @@
         return links;
     }
 
-    function authors(value) {
+    function authors(value, { compact = false } = {}) {
         const parts = String(value || "").split(" and ").filter(Boolean);
+        if (compact && parts.length > 3) return `${parts[0]} et al.`;
         if (parts.length > 2) return `${parts.slice(0, -1).join(", ")}, and ${parts.at(-1)}`;
         return parts.join(" and ");
     }
@@ -117,7 +118,28 @@
         ].filter(Boolean).join(" ");
     }
 
-    const helpers = { normalize, displayClusterLabel, searchIndex, searchScore, safeURL, doiURL, publisherDOI, resources, authors, venue, citation };
+    function sampleRecentPublications(records, year, random = Math.random) {
+        const eligible = new Map();
+        for (const record of records) {
+            if (record.pub_year === year || record.pub_year === year - 1) {
+                eligible.set(record.author_pub_id, record);
+            }
+        }
+        const recent = [...eligible.values()];
+        const currentYear = recent.filter(record => record.pub_year === year);
+        const pool = currentYear.length > 5 ? currentYear : recent;
+        const sample = [];
+        while (sample.length < 3 && pool.length) {
+            const index = Math.floor(random() * pool.length);
+            sample.push(pool.splice(index, 1)[0]);
+        }
+        return sample;
+    }
+
+    const helpers = {
+        normalize, displayClusterLabel, searchIndex, searchScore, safeURL, doiURL,
+        publisherDOI, resources, authors, venue, citation, sampleRecentPublications,
+    };
     if (typeof module !== "undefined" && module.exports) module.exports = helpers;
     else root.PublicationHelpers = helpers;
 })(typeof window !== "undefined" ? window : globalThis);

@@ -130,6 +130,48 @@ test.describe("homepage", () => {
     await expectNoAccessibilityViolations(page);
   });
 
+  test("samples recent publications on reload and stacks the cards on mobile", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await page.clock.setFixedTime(new Date("2026-11-25T12:00:00Z"));
+    await page.addInitScript(() => {
+      const reloaded = sessionStorage.getItem("test-publication-sample") === "loaded";
+      sessionStorage.setItem("test-publication-sample", "loaded");
+      Math.random = () => reloaded ? 0.99999 : 0;
+    });
+    await page.goto("/");
+
+    const card = page.locator("#profile > .card").first();
+    const recent = page.getByRole("complementary", { name: "Recent publications" });
+    const links = recent.getByRole("link");
+    const titles = () => links.allTextContents();
+    await expect(links).toHaveCount(3);
+    await expect(page.getByRole("link", { name: "Site source on GitHub" }))
+      .toHaveAttribute("href", "https://github.com/cmccomb/cmccomb.github.io");
+    expect((await recent.boundingBox())!.height).toBe((await card.boundingBox())!.height);
+
+    const currentYear = snapshot.records.filter(paper => paper.pub_year === 2026);
+    const chosen = currentYear.slice(0, 3).map(paper => paper.bib_dict.title);
+    expect(await titles()).toEqual(chosen);
+    await links.first().click();
+    await expect(page.locator("#publication-detail-title")).toHaveText(chosen[0]);
+    await expect(page.locator("#publication-detail-title")).toBeFocused();
+    await page.getByRole("button", { name: "Back to profile" }).click();
+    await expect(links.first()).toBeFocused();
+    expect(await titles()).toEqual(chosen);
+
+    await page.reload();
+    await expect(links).toHaveCount(3);
+    expect(await titles()).toEqual(currentYear.slice(-3).reverse().map(paper => paper.bib_dict.title));
+    expect(new Set(await titles()).size).toBe(3);
+
+    await page.setViewportSize({ width: 320, height: 568 });
+    const [profileBounds, publicationBounds] = await Promise.all([card.boundingBox(), recent.boundingBox()]);
+    expect(publicationBounds!.y).toBeGreaterThan(profileBounds!.y + profileBounds!.height);
+    expect(publicationBounds!.width).toBe(profileBounds!.width);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await expectNoAccessibilityViolations(page);
+  });
+
   test("keeps controls reachable without horizontal overflow in short landscape", async ({
     page,
   }) => {
