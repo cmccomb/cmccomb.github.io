@@ -1,16 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Security-Policy"
-          content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'self'; upgrade-insecure-requests">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="no-referrer" name="referrer">
-    <meta content="{{ site.author | escape }}" name="author">
-    {% include seo.html %}
-    <link href="{{ '/assets/images/favicon.svg' | relative_url }}?v={{ site.data.release.version }}" rel="icon" type="image/svg+xml">
-    <link href="{{ '/assets/vendor/bootstrap/bootstrap.min.css' | relative_url }}" rel="stylesheet">
-    <link href="{{ '/assets/css/default_style.css' | relative_url }}" rel="stylesheet">
+    {% include site-head.html %}
 </head>
 <body class="bg-dark d-flex flex-column min-vh-100">
 <main class="container-fluid d-flex flex-grow-1 justify-content-center align-items-center" id="profile">

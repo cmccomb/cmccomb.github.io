@@ -7,7 +7,7 @@ locale: "en_US"
 author: "Chris McComb, Ph.D."
 person_name: "Chris McComb"
 job_title: "Professor, Mechanical Engineering"
-affiliation: "<a href='https://meche.engineering.cmu.edu/directory/bios/mccomb-christopher.html'>Professor @ CMU</a>"
+affiliation_label: "Professor @ CMU"
 organization:
   name: "Carnegie Mellon University"
   url: "https://www.cmu.edu/"

@@ -16,12 +16,12 @@ images and a gallery, then adds them to the static output after Jekyll.
 | --- | --- |
 | `index.md`, `_config.yml` | Bio and shared site identity/configuration |
 | `_data/release.json`, `CHANGELOG.md` | Site version, displayed update date, and release notes |
-| `_layouts/` | Homepage and 404 markup |
-| `_includes/seo.html` | Canonical URLs, social metadata, Person structured data, `llms.txt` discovery |
-| `_includes/footer.html` | Shared copyright, version, and update date on the homepage and 404 |
-| `assets/css/` | Profile styling and responsive publication layouts |
+| `_layouts/` | Page shells for the homepage and 404 |
+| `_includes/` | Profile, publication browser, shared head and footer, and SEO metadata |
+| `assets/css/` | Shared and profile styles in `default_style.css`. Publication browser styles in `home_style.css`. |
 | `assets/js/` | Navigation, publication rendering, and pure formatting/search helpers |
 | `assets/json/pubs.json` | Committed publication records, clusters, and build provenance |
+| `_plugins/` | Jekyll generators for profile assets and frontend cache versions |
 | `assets/images/`, `assets/files/` | Profile images, icons, and the public CV PDF |
 | `assets/vendor/` | Browser dependencies and their licenses |
 | `_scripts/` | Graph builder, snapshot validator, map exports and vendored font, release publisher, Python requirements, and preview helper |
@@ -37,28 +37,39 @@ excluding a file from Git does not, by itself, exclude it from the built site.
 
 ## Page and browser responsibilities
 
-[`_layouts/home.html`](../_layouts/home.html) renders the profile, publication
-toolbar, map container, results list, detail panel, and accessible status regions.
-Shared publication helpers and profile navigation load with the page. The site
-loads D3 and graph rendering when someone opens the browser or follows a
-publication link.
+[`_layouts/home.html`](../_layouts/home.html) assembles the shared head and footer,
+the [profile](../_includes/profile.html), and the
+[publication browser](../_includes/publication-browser.html). The layout passes
+the rendered Markdown bio to the profile include. The browser include owns the
+toolbar, map container, results, details, and status markup.
+
+| Asset | Source | When it loads |
+| --- | --- | --- |
+| Static map preview | [Profile generator](../_plugins/publication_profile.rb) projects points from `pubs.json` into `publication-preview.svg` | With the profile |
+| Compact bibliography | The same generator projects citation fields into `recent-publications.json` | When the profile first opens |
+| D3 and the browser controller | Vendored D3 and `graph_layout.js` | On first Explore action or a publication deep link |
+| Full snapshot and map renderer | Committed `pubs.json` and `publication-map.js` | In parallel when the browser controller starts |
+
+Shared publication helpers and profile navigation load with the page. Jekyll
+[hashes authored CSS and JavaScript](../_plugins/frontend_revision.rb) to version
+their URLs. Preview and publication data URLs use the site release version.
 
 | Module | Owns |
 | --- | --- |
 | [`publication_helpers.js`](../assets/js/publication_helpers.js) | Search normalization/ranking, topic text formatting, citation formatting, source link validation; shared with Node tests and exports |
-| [`graph_layout.js`](../assets/js/graph_layout.js) | Snapshot loading, map/list rendering, search, selection, details, clipboard behavior, legends, keyboard movement, resizing |
-| [`interface.js`](../assets/js/interface.js) | Profile visibility, navigation history, focus restoration, Escape behavior, responsive default and remembered view |
+| [`graph_layout.js`](../assets/js/graph_layout.js) | Snapshot loading and normalization, lists, search, selection, details, clipboard actions, and map keyboard and tooltip behavior |
+| [`publication-map.js`](../assets/js/publication-map.js) | Map drawing, citation and year legends, collision layout, Fit map, and canvas resizing |
+| [`interface.js`](../assets/js/interface.js) | Recent papers, lazy loading, visibility, history, focus restoration, Escape, and preferred view |
 
-The graph module reads `assets/json/pubs.json` once per page load. It validates
-records for rendering and provides an unavailable-data state with a Scholar
-link if loading fails. Publication metadata is inserted as text. The homepage
-also offers a Scholar link when JavaScript is disabled.
+The browser reads the full snapshot at most once per page visit and uses only
+valid records. If loading fails, navigation offers a Scholar link. Publication
+metadata is inserted as text. The homepage also offers Scholar when JavaScript
+is disabled.
 
 The homepage samples up to three distinct papers from the current year when
 at least six are available. Otherwise, it samples from the current and previous
-years. Jekyll generates the blurred map backdrop and a compact bibliography
-from the same snapshot as the browser. The card resamples on a full page load. Its links open the corresponding publication detail in
-List view. The card matches the profile card's height on desktop and stacks
+years. The card resamples on a full page load. Its links open the corresponding
+publication detail in List view. The card matches the profile card's height on desktop and stacks
 below it on narrow screens. Explore publications appears under the citations
 when the card is available and under the profile links otherwise.
 
@@ -79,10 +90,16 @@ whole words and longer terms can match word prefixes. Title matches rank first.
 With no query, the list sorts newest first. Switching views preserves search
 and selection. Reloads and Back/Forward navigation restore state from the URL.
 
-`interface.js` dispatches `publicationgraph:visibilitychange` when opening or
-closing the browser. `graph_layout.js` dispatches `publicationgraph:viewchange`
-when the user chooses a view. The two modules share the current view through
-`data-publication-view` on `#graph-container`.
+The modules share the current view through `data-publication-view` on
+`#graph-container`. Navigation sets the value before loading the browser.
+The browser reads it when restoring URL state.
+
+| Event on `#graph-container` | Sender | Effect |
+| --- | --- | --- |
+| `publicationgraph:visibilitychange` | Navigation | The loaded browser restores URL state after opening or closing. |
+| `publicationgraph:viewchange` | Browser | Navigation remembers the List or Map choice. |
+| `publicationgraph:ready` | Browser | Navigation moves focus to Search when it was waiting on Back to profile. |
+| `publicationgraph:unavailable` | Browser | Navigation shows the Scholar fallback. |
 
 Before an explicit choice, widths up to 768 px default to List; larger viewports
 default to Map. An explicit choice is remembered during the current page visit,

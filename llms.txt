@@ -27,4 +27,4 @@ The publication collection is a committed snapshot. Its JSON contains `records` 
 
 ## Optional
 
-- [Website repository](https://github.com/{{ site.github }}/cmccomb.github.io): Source code and guides for site development, data processing, and maintenance.
+- [Website repository]({{ site.source_repository }}): Source code and guides for site development, data processing, and maintenance.

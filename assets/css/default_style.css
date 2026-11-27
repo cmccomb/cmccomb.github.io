@@ -15,6 +15,7 @@ body {
     }
 }
 
+/* Homepage profile and publication cards */
 .profile-shell {
     display: grid;
     grid-template-columns: 300px minmax(0, 392px);
@@ -40,6 +41,21 @@ body {
 
 .profile-shell > .card > .card-body {
     padding: 0.75rem;
+}
+
+.profile-backdrop {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(15px);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.profile-bio > :last-child {
+    margin-bottom: 0;
 }
 
 .recent-publications[hidden] {
@@ -118,7 +134,6 @@ body {
     max-width: 300px;
 }
 
-
 .card-title {
     font-weight: bold;
 }
@@ -194,10 +209,6 @@ body {
     white-space: nowrap;
 }
 
-.explore-button .icon {
-    display: none;
-}
-
 .explore-button::before {
     width: 1rem;
     height: 1rem;
@@ -207,6 +218,7 @@ body {
     -webkit-mask: url("../images/icons/explore.svg") center / contain no-repeat;
 }
 
+/* Shared footer */
 #footer {
     color: #8c969f;
     font-size: 0.75rem;
@@ -246,64 +258,7 @@ p {
     font-size: 0.9em;
 }
 
-#graph-container {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-    pointer-events: none;
-    touch-action: manipulation;
-    user-select: none;
-    z-index: 0;
-}
-
-#graph-container.graph-active {
-    pointer-events: auto;
-    z-index: 1000;
-}
-
-.profile-backdrop {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: blur(15px);
-    pointer-events: none;
-    z-index: -1;
-}
-
-@supports (height: 100dvh) {
-    #graph-container {
-        height: 100dvh;
-    }
-}
-
-.graph-close {
-    align-items: center;
-    display: inline-flex;
-    gap: 0.45rem;
-    left: max(1rem, calc(env(safe-area-inset-left) + 0.5rem));
-    min-height: 2.75rem;
-    position: absolute;
-    top: max(1rem, calc(env(safe-area-inset-top) + 0.5rem));
-    z-index: 4;
-}
-
 .profile-shell[hidden],
-#graph-container[hidden],
-#footer[hidden],
-.graph-close[hidden] {
+#footer[hidden] {
     display: none !important;
-}
-
-.vis-tooltip {
-    width: 300px;
-    white-space: normal !important;
-    visibility: hidden;
-}
-
-#graph-container[aria-hidden="true"] {
-    pointer-events: none;
 }

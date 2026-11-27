@@ -83,8 +83,10 @@ The date describes the site release, not the build time or dataset scrape time.
 Use stable `MAJOR.MINOR.PATCH` values without a `v` prefix in this file. Tags,
 GitHub Releases, and the footer add the prefix. While the site is below 1.0,
 use a minor bump for a substantial feature or redesign and a patch bump for
-fixes and content/data updates. Repository-only documentation changes may keep
-the current site version and date.
+fixes and content/data updates. Documentation and internal refactors that
+preserve the published appearance and behavior may keep the current site version
+and date. Authored CSS and JavaScript use a build-time content hash for their
+cache version, independent of the footer's release version.
 
 For each new site version:
 

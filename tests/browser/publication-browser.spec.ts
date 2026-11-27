@@ -157,7 +157,10 @@ test("homepage renders the lightweight preview and defers the browser", async ({
   await page.clock.setFixedTime(new Date("2026-11-26T12:00:00Z"));
   const requests: string[] = [];
   page.on("request", request => requests.push(new URL(request.url()).pathname));
-  const browserAssets = ["/assets/vendor/d3/d3.v7.9.0.min.js", "/assets/js/graph_layout.js", "/assets/json/pubs.json"];
+  const browserAssets = [
+    "/assets/vendor/d3/d3.v7.9.0.min.js", "/assets/js/graph_layout.js",
+    "/assets/js/publication-map.js", "/assets/json/pubs.json",
+  ];
   await page.goto("/");
   await expect(page.locator(".recent-publication-title")).toHaveCount(3);
   await expect(page.locator(".profile-backdrop")).toHaveJSProperty("complete", true);
@@ -172,7 +175,7 @@ test("homepage renders the lightweight preview and defers the browser", async ({
   await page.locator("#exit").click();
   await expect(page.locator("#publication-view-list")).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator(".publication-result")).toHaveCount(snapshot.records.length);
-  expect(requests.filter(path => browserAssets.includes(path))).toEqual(browserAssets);
+  expect(requests.filter(path => browserAssets.includes(path)).sort()).toEqual([...browserAssets].sort());
   await noAxeViolations(page);
 });
 
