@@ -699,10 +699,10 @@ test.describe("custom 404", () => {
     const stylesheetUrls = await page
       .locator('link[rel="stylesheet"]')
       .evaluateAll((links) => links.map((link) => (link as HTMLLinkElement).href));
-    expect(stylesheetUrls).toEqual(
+    expect(stylesheetUrls.map(url => new URL(url).pathname)).toEqual(
       expect.arrayContaining([
-        `${TEST_ORIGIN}/assets/vendor/bootstrap/bootstrap.min.css`,
-        `${TEST_ORIGIN}/assets/css/default_style.css`,
+        "/assets/vendor/bootstrap/bootstrap.min.css",
+        "/assets/css/default_style.css",
       ]),
     );
     expect(stylesheetUrls.every((url) => url.startsWith(`${TEST_ORIGIN}/`))).toBe(

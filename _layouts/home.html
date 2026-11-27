@@ -1,173 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Security-Policy"
-          content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'self'; upgrade-insecure-requests">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="no-referrer" name="referrer">
-    <meta content="{{ site.author }}" name="author">
-    {% include seo.html %}
-    <link href="{{ '/assets/images/favicon.svg' | relative_url }}?v={{ site.data.release.version }}" rel="icon" type="image/svg+xml">
-    <link href="{{ '/assets/vendor/bootstrap/bootstrap.min.css' | relative_url }}" rel="stylesheet">
-    <link href="{{ '/assets/css/default_style.css' | relative_url }}?v={{ site.data.release.version | escape }}" rel="stylesheet">
-    <link href="{{ '/assets/css/home_style.css' | relative_url }}?v={{ site.data.release.version | escape }}" rel="stylesheet">
-    <script defer src="{{ '/assets/js/publication_helpers.js' | relative_url }}?v={{ site.data.release.version | escape }}"></script>
+    {% include site-head.html %}
+    <link href="{{ '/assets/css/home_style.css' | relative_url }}?v={{ site.data.frontend_revision }}" rel="stylesheet">
+    <script defer src="{{ '/assets/js/publication_helpers.js' | relative_url }}?v={{ site.data.frontend_revision }}"></script>
 </head>
 <body class="bg-dark d-flex flex-column">
 
-<div aria-hidden="true" aria-label="Publication browser"
-     class="container-fluid unselectable p-0"
-     data-d3-src="{{ '/assets/vendor/d3/d3.v7.9.0.min.js' | relative_url }}"
-     data-browser-src="{{ '/assets/js/graph_layout.js' | relative_url }}?v={{ site.data.release.version | escape }}"
-     data-site-version="{{ site.data.release.version | escape }}"
-     hidden id="graph-container" inert role="region">
-    <div aria-hidden="true" class="graph-command-bar" hidden id="graph-command-bar">
-        <button aria-label="Back to profile" class="btn graph-close"
-                hidden id="graph-close" title="Back to profile" type="button">
-            <svg aria-hidden="true" class="graph-close-icon" viewBox="0 0 24 24">
-                <path d="M19 12H5M11 18l-6-6 6-6"></path>
-            </svg>
-        </button>
-        <div class="graph-toolbar" id="graph-toolbar">
-            <div class="graph-search-heading">
-                <label class="graph-search-label" for="publication-search">Find a publication</label>
-                <p aria-live="polite" id="publication-search-status" role="status">Loading publications…</p>
-            </div>
-            <div class="graph-search-row">
-                <input aria-describedby="publication-search-status"
-                       autocomplete="off" class="form-control graph-search-input"
-                       disabled id="publication-search" placeholder="Title, author, abstract, or year"
-                       type="search">
-                <button class="btn graph-search-clear" disabled
-                        id="publication-search-clear" type="button">Clear</button>
-            </div>
-        </div>
-        <div class="publication-view-controls" role="group" aria-label="Publication view">
-            <button class="btn" id="publication-view-list" type="button" aria-pressed="false" disabled>List</button>
-            <button class="btn" id="publication-view-map" type="button" aria-pressed="false" disabled>Map</button>
-            <button aria-controls="publication-graph" aria-pressed="false" class="btn" hidden
-                    id="publication-fit-map" type="button">Fit map</button>
-        </div>
-        <div aria-label="Publication map legends" class="graph-legends" role="group">
-            <div class="colorbar-legend" role="img" aria-label="Color legend for publication years"></div>
-            <div class="size-legend" role="img" aria-label="Circle-size legend for citation counts"></div>
-        </div>
-    </div>
-    <div class="publication-workspace">
-        <div class="graph-status" id="graph-status" hidden>
-            <p id="graph-status-message" role="status" aria-live="polite"></p>
-            <button class="btn btn-light" id="graph-status-dismiss" type="button">Dismiss</button>
-            <a class="btn btn-light" id="graph-status-scholar" hidden
-               href="https://scholar.google.com/citations?user={{ site.google_scholar }}&amp;hl=en">Browse Google Scholar</a>
-        </div>
-        <div class="publication-content" id="publication-content">
-            <div class="publication-map">
-                <div class="publication-map-viewport" id="publication-map-viewport">
-                    <svg aria-describedby="publication-graph-description" aria-label="Interactive publication map"
-                         id="publication-graph" role="group">
-                        <desc id="publication-graph-description">
-                            Publications are grouped into map neighborhoods. Labels summarize regions rather than classify every paper. Color indicates publication year and circle size indicates citation count. Search by title, author, abstract, or year. Use Tab to enter the map and arrow keys to move between publications.
-                        </desc>
-                    </svg>
-                </div>
-            </div>
-            <section aria-label="Publication results" class="publication-results" id="publication-results" hidden>
-                <p class="publication-results-help">Newest first. Search to find a title, author, abstract, or year.</p>
-                <ol id="publication-list"></ol>
-                <div class="publication-empty" id="publication-empty" hidden>
-                    <h2>No publications found</h2>
-                    <p>Try a shorter title, an author, an abstract term, or a year.</p>
-                    <button class="btn btn-light" id="publication-empty-clear" type="button">Clear search</button>
-                </div>
-            </section>
-            <aside aria-hidden="true" aria-label="Publication details"
-                   class="publication-detail" hidden id="publication-detail">
-                <div class="publication-detail-header">
-                    <p class="publication-detail-kicker">Selected publication</p>
-                    <button aria-label="Close publication details" class="btn btn-light"
-                            id="publication-detail-close" type="button">Close</button>
-                </div>
-                <div class="publication-detail-body" id="publication-detail-body">
-                    <h2 id="publication-detail-title" tabindex="-1"></h2>
-                    <p class="publication-detail-meta" id="publication-detail-meta"></p>
-                    <p class="publication-detail-citation" id="publication-detail-citation"></p>
-                    <details id="publication-abstract" hidden>
-                        <summary>Abstract</summary>
-                        <p id="publication-detail-abstract"></p>
-                    </details>
-                    <div class="publication-resources" id="publication-resources"></div>
-                    <a class="btn btn-light publication-detail-link" href="#"
-                       id="publication-detail-link" rel="noopener noreferrer" target="_blank">
-                        Open in Google Scholar
-                    </a>
-                    <div class="publication-copy-actions">
-                        <button class="btn btn-light" id="publication-copy-link" type="button">Copy link</button>
-                        <button class="btn btn-light" id="publication-copy-citation" type="button">Copy citation</button>
-                    </div>
-                    <p class="publication-copy-status" id="publication-copy-status" role="status" aria-live="polite"></p>
-                    <label id="publication-copy-fallback-label" for="publication-copy-fallback" hidden>Copy this text</label>
-                    <textarea id="publication-copy-fallback" readonly hidden></textarea>
-                </div>
-            </aside>
-        </div>
-    </div>
-    <div aria-hidden="true" class="tooltip" id="publication-tooltip" role="tooltip"></div>
-</div>
-
-<main aria-hidden="false" class="profile-shell flex-grow-1"
-      id="profile">
-    <img alt="" class="profile-backdrop" decoding="async" width="1000" height="640"
-         src="{{ '/assets/images/publication-preview.svg' | relative_url }}?v={{ site.data.release.version | escape }}">
-    <div class="card px-0">
-        <img alt="A headshot of {{ site.author }}" class="card-img-top"
-             decoding="async" height="600" src="{{ site.headshot | relative_url }}" width="600">
-        <div class="card-body">
-            <h1 class="card-title h5 text-center mb-1">{{ site.author }}</h1>
-            <p class="card-subtitle h6 mb-1 text-muted text-center"> {{ site.affiliation }} </p>
-            <p class="card-text text-center mb-2">{{ content | markdownify | remove: '<p>' | remove: '</p>' }}</p>
-
-            <div aria-label="Contact and profile links" class="btn-group d-flex" role="group">
-                <a aria-label="Email" class="btn btn-outline-dark" href="mailto:{{ site.email }}">
-                    <svg aria-hidden="true" class="icon" viewBox="0 0 512 512"><path d="M48 64c-26.5 0-48 21.5-48 48 0 15.1 7.1 29.3 19.2 38.4l208 156c17.1 12.8 40.5 12.8 57.6 0l208-156c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48L48 64zM0 196L0 384c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-188-198.4 148.8c-34.1 25.6-81.1 25.6-115.2 0L0 196z"/></svg>
-                </a>
-                <a aria-label="LinkedIn" class="btn btn-outline-dark rounded-0"
-                   href="https://www.linkedin.com/in/{{ site.linkedin }}">
-                    <svg aria-hidden="true" class="icon linkedin-icon" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3C448 46.5 433.6 32 416 32zM135.4 416H69V202.2h66.5V416zM102.2 173c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zM384.3 416h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
-                </a>
-                <a aria-label="GitHub" class="btn btn-outline-dark rounded-0"
-                   href="https://github.com/{{ site.github }}">
-                    <svg aria-hidden="true" class="icon" viewBox="0 0 512 512"><path d="M216.5 362.5c-66-8-112.5-55.5-112.5-117 0-25 9-52 24-70-6.5-16.5-5.5-51.5 2-66 20-2.5 47 8 63 22.5 19-6 39-9 63.5-9s44.5 3 62.5 8.5c15.5-14 43-24.5 63-22 7 13.5 8 48.5 1.5 65.5 16 19 24.5 44.5 24.5 70.5 0 61.5-46.5 108-113.5 116.5 17 11 28.5 35 28.5 62.5l0 52C323 491.5 335.5 500 350.5 494 441 459.5 512 369 512 257 512 115.5 397 0 255.5 0S0 115.5 0 257c0 111 70.5 203 165.5 237.5 13.5 5 26.5-4 26.5-17.5l0-40c-7 3-16 5-24 5-33 0-52.5-18-66.5-51.5-5.5-13.5-11.5-21.5-23-23-6-.5-8-3-8-6 0-6 10-10.5 20-10.5 14.5 0 27 9 40 27.5 10 14.5 20.5 21 33 21s20.5-4.5 32-16c8.5-8.5 15-16 21-21z"/></svg>
-                </a>
-                <a aria-label="Google Scholar" class="btn btn-outline-dark"
-                   href="https://scholar.google.com/citations?user={{ site.google_scholar }}&amp;hl=en">
-                    <svg aria-hidden="true" class="icon" viewBox="0 0 512 512"><path d="M390.9 298.5s0 .1 .1 .1c9.2 19.4 14.4 41.1 14.4 64-.1 82.5-66.9 149.4-149.4 149.4S106.7 445.1 106.7 362.7c0-22.9 5.2-44.6 14.4-64 1.7-3.6 3.6-7.2 5.6-10.7 4.4-7.6 9.4-14.7 15-21.3 27.4-32.6 68.5-53.3 114.4-53.3 33.6 0 64.6 11.1 89.6 29.9 9.1 6.9 17.4 14.7 24.8 23.5 5.6 6.6 10.6 13.8 15 21.3 2 3.4 3.8 7 5.5 10.5l-.1-.1zm26.4-18.8c-30.1-58.4-91-98.4-161.3-98.4s-131.2 40-161.3 98.4l-94.7-77 256-202.7 256 202.7-94.7 77.1 0-.1z"/></svg>
-                </a>
-                <a aria-label="CV — Curriculum vitae (PDF)" class="btn btn-outline-dark"
-                   href="{{ site.cv_pdf | relative_url }}" rel="noopener noreferrer" target="_blank">
-                    <span aria-hidden="true" class="cv-icon">CV</span>
-                </a>
-            </div>
-            <a aria-controls="graph-container" aria-expanded="false"
-               class="btn btn-outline-dark w-100 explore-button"
-               href="?view=list" id="exit">
-                <span>Explore publications</span>
-            </a>
-            <noscript><p class="mt-2 mb-0 text-center"><a href="https://scholar.google.com/citations?user={{ site.google_scholar }}&amp;hl=en">Browse publications on Google Scholar</a> (interactive views require JavaScript).</p></noscript>
-        </div>
-    </div>
-    <aside aria-labelledby="recent-publications-title" class="card recent-publications"
-           data-src="{{ '/assets/json/recent-publications.json' | relative_url }}?v={{ site.data.release.version | escape }}"
-           hidden id="recent-publications">
-        <div class="card-body">
-            <h2 class="card-title h5 text-center" id="recent-publications-title">Recent publications</h2>
-            <ul class="recent-publications-list list-unstyled mb-0" role="list"></ul>
-        </div>
-    </aside>
-</main>
+{% include publication-browser.html %}
+{% include profile.html bio=content %}
 
 {% include footer.html show_source=true %}
-<script defer src="{{ '/assets/js/interface.js' | relative_url }}?v={{ site.data.release.version | escape }}"></script>
+<script defer src="{{ '/assets/js/interface.js' | relative_url }}?v={{ site.data.frontend_revision }}"></script>
 
 </body>
 </html>

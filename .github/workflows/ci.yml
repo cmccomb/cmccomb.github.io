@@ -69,9 +69,9 @@ jobs:
         run: python _scripts/validate_publications_json.py
       - name: Check JavaScript syntax
         run: |
-          node --check assets/js/graph_layout.js
-          node --check assets/js/interface.js
-          node --check assets/js/publication_helpers.js
+          for asset in assets/js/*.js; do
+            node --check "$asset" || exit 1
+          done
 
   browser:
     name: Browser accessibility

@@ -40,10 +40,11 @@ See [Development](docs/development.md) for setup, checks, and troubleshooting.
 | Bio | [index.md](index.md) |
 | Site version and last-updated date | [_data/release.json](_data/release.json) and [CHANGELOG.md](CHANGELOG.md) |
 | Name, affiliation, profile links, CV path, metadata | [_config.yml](_config.yml) |
-| Profile and publication markup | [_layouts/home.html](_layouts/home.html) |
+| Profile and publication markup | [profile.html](_includes/profile.html) / [publication-browser.html](_includes/publication-browser.html) |
 | Profile styles / publication styles | [default_style.css](assets/css/default_style.css) / [home_style.css](assets/css/home_style.css) |
 | Search, citations, paper links | [publication_helpers.js](assets/js/publication_helpers.js) |
-| List, map, and publication details | [graph_layout.js](assets/js/graph_layout.js) |
+| List, search, and publication details | [graph_layout.js](assets/js/graph_layout.js) |
+| Interactive map, legends, and Fit map | [publication-map.js](assets/js/publication-map.js) |
 | Profile navigation and view preference | [interface.js](assets/js/interface.js) |
 | Publication snapshot | [Data workflow](docs/publication-data.md), then [pubs.json](assets/json/pubs.json) |
 | Downloadable map formats and themes | [map_exports.cjs](_scripts/map_exports.cjs); [live gallery](https://cmccomb.com/assets/maps/) |

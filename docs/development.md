@@ -35,6 +35,18 @@ JEKYLL_ENV=production bundle exec jekyll build --strict_front_matter
 
 Output is written to `_site/`. Edit the source, not that directory.
 
+## Editing the frontend
+
+Keep shared document metadata in `site-head.html`, profile markup in
+`profile.html`, and publication markup in `publication-browser.html`. Treat the
+IDs, state attributes, and events listed in the [architecture guide](architecture.md)
+as connections between the templates, CSS, JavaScript, and browser tests.
+
+The strict Jekyll build produces the generated preview and bibliography. Check the
+rendered homepage and 404 after template edits. For map changes, also verify List,
+Map, Fit map, and a direct paper link at desktop and phone widths. Control the
+recent-paper sample when comparing screenshots.
+
 ## Browser and JavaScript checks
 
 Install Node.js 24, then:

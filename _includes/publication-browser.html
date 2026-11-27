@@ -1,0 +1,98 @@
+<div aria-hidden="true" aria-label="Publication browser"
+     class="container-fluid p-0"
+     data-d3-src="{{ '/assets/vendor/d3/d3.v7.9.0.min.js' | relative_url }}"
+     data-browser-src="{{ '/assets/js/graph_layout.js' | relative_url }}?v={{ site.data.frontend_revision }}"
+     data-site-version="{{ site.data.release.version | escape }}"
+     hidden id="graph-container" inert role="region">
+    <div aria-hidden="true" class="graph-command-bar" hidden id="graph-command-bar">
+        <button aria-label="Back to profile" class="btn graph-close"
+                hidden id="graph-close" title="Back to profile" type="button">
+            <svg aria-hidden="true" class="graph-close-icon" viewBox="0 0 24 24">
+                <path d="M19 12H5M11 18l-6-6 6-6"></path>
+            </svg>
+        </button>
+        <div class="graph-toolbar" id="graph-toolbar">
+            <div class="graph-search-heading">
+                <label class="graph-search-label" for="publication-search">Find a publication</label>
+                <p aria-live="polite" id="publication-search-status" role="status">Loading publications…</p>
+            </div>
+            <div class="graph-search-row">
+                <input aria-describedby="publication-search-status"
+                       autocomplete="off" class="form-control graph-search-input"
+                       disabled id="publication-search" placeholder="Title, author, abstract, or year"
+                       type="search">
+                <button class="btn graph-search-clear" disabled
+                        id="publication-search-clear" type="button">Clear</button>
+            </div>
+        </div>
+        <div class="publication-view-controls" role="group" aria-label="Publication view">
+            <button class="btn" id="publication-view-list" type="button" aria-pressed="false" disabled>List</button>
+            <button class="btn" id="publication-view-map" type="button" aria-pressed="false" disabled>Map</button>
+            <button aria-controls="publication-graph" aria-pressed="false" class="btn" hidden
+                    id="publication-fit-map" type="button">Fit map</button>
+        </div>
+        <div aria-label="Publication map legends" class="graph-legends" role="group">
+            <div class="colorbar-legend" role="img" aria-label="Color legend for publication years"></div>
+            <div class="size-legend" role="img" aria-label="Circle-size legend for citation counts"></div>
+        </div>
+    </div>
+    <div class="publication-workspace">
+        <div class="graph-status" id="graph-status" hidden>
+            <p id="graph-status-message" role="status" aria-live="polite"></p>
+            <button class="btn btn-light" id="graph-status-dismiss" type="button">Dismiss</button>
+            <a class="btn btn-light" id="graph-status-scholar" hidden
+               href="https://scholar.google.com/citations?user={{ site.google_scholar }}&amp;hl=en">Browse Google Scholar</a>
+        </div>
+        <div class="publication-content" id="publication-content">
+            <div class="publication-map">
+                <div class="publication-map-viewport" id="publication-map-viewport">
+                    <svg aria-describedby="publication-graph-description" aria-label="Interactive publication map"
+                         id="publication-graph" role="group">
+                        <desc id="publication-graph-description">
+                            Publications are grouped into map neighborhoods. Labels summarize regions rather than classify every paper. Color indicates publication year and circle size indicates citation count. Search by title, author, abstract, or year. Use Tab to enter the map and arrow keys to move between publications.
+                        </desc>
+                    </svg>
+                </div>
+            </div>
+            <section aria-label="Publication results" class="publication-results" id="publication-results" hidden>
+                <p class="publication-results-help">Newest first. Search to find a title, author, abstract, or year.</p>
+                <ol id="publication-list"></ol>
+                <div class="publication-empty" id="publication-empty" hidden>
+                    <h2>No publications found</h2>
+                    <p>Try a shorter title, an author, an abstract term, or a year.</p>
+                    <button class="btn btn-light" id="publication-empty-clear" type="button">Clear search</button>
+                </div>
+            </section>
+            <aside aria-hidden="true" aria-label="Publication details"
+                   class="publication-detail" hidden id="publication-detail">
+                <div class="publication-detail-header">
+                    <p class="publication-detail-kicker">Selected publication</p>
+                    <button aria-label="Close publication details" class="btn btn-light"
+                            id="publication-detail-close" type="button">Close</button>
+                </div>
+                <div class="publication-detail-body" id="publication-detail-body">
+                    <h2 id="publication-detail-title" tabindex="-1"></h2>
+                    <p class="publication-detail-meta" id="publication-detail-meta"></p>
+                    <p class="publication-detail-citation" id="publication-detail-citation"></p>
+                    <details id="publication-abstract" hidden>
+                        <summary>Abstract</summary>
+                        <p id="publication-detail-abstract"></p>
+                    </details>
+                    <div class="publication-resources" id="publication-resources"></div>
+                    <a class="btn btn-light publication-detail-link" href="#"
+                       id="publication-detail-link" rel="noopener noreferrer" target="_blank">
+                        Open in Google Scholar
+                    </a>
+                    <div class="publication-copy-actions">
+                        <button class="btn btn-light" id="publication-copy-link" type="button">Copy link</button>
+                        <button class="btn btn-light" id="publication-copy-citation" type="button">Copy citation</button>
+                    </div>
+                    <p class="publication-copy-status" id="publication-copy-status" role="status" aria-live="polite"></p>
+                    <label id="publication-copy-fallback-label" for="publication-copy-fallback" hidden>Copy this text</label>
+                    <textarea id="publication-copy-fallback" readonly hidden></textarea>
+                </div>
+            </aside>
+        </div>
+    </div>
+    <div aria-hidden="true" class="tooltip" id="publication-tooltip" role="tooltip"></div>
+</div>
