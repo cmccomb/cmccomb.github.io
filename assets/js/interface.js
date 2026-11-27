@@ -28,12 +28,16 @@
     }
     new ResizeObserver(updateToolbarGeometry).observe(graphCommandBar);
 
-    function loadScript(src) {
+    function loadScript(src, priority) {
         return new Promise((resolve, reject) => {
             const script = document.createElement("script");
+            script.fetchPriority = priority;
             script.src = src;
             script.addEventListener("load", resolve, { once: true });
-            script.addEventListener("error", () => reject(new Error(`Unable to load ${src}`)), { once: true });
+            script.addEventListener("error", () => {
+                script.remove();
+                reject(new Error(`Unable to load ${src}`));
+            }, { once: true });
             document.head.append(script);
         });
     }
@@ -63,10 +67,41 @@
         }
     });
 
-    function loadBrowser() {
-        browserLoad ??= loadScript(graphContainer.dataset.d3Src)
-            .then(() => loadScript(graphContainer.dataset.browserSrc))
-            .catch(showBrowserError);
+    function loadBrowser(priority = "auto") {
+        if (browserLoad) return;
+        const d3Ready = window.d3 ? Promise.resolve() : loadScript(graphContainer.dataset.d3Src, priority);
+        browserLoad = d3Ready
+            .then(() => loadScript(graphContainer.dataset.browserSrc, priority))
+            .catch(error => {
+                if (priority === "low") {
+                    browserLoad = null;
+                    if (!graphContainer.hidden) loadBrowser();
+                } else {
+                    showBrowserError(error);
+                }
+            });
+    }
+
+    function scheduleBrowserPreload() {
+        function preload() {
+            const connection = navigator.connection;
+            if (browserLoad || !graphContainer.hidden || connection?.saveData
+                || ["slow-2g", "2g", "3g"].includes(connection?.effectiveType)) return;
+            if (document.hidden) {
+                document.addEventListener("visibilitychange", preload, { once: true });
+                return;
+            }
+            loadBrowser("low");
+        }
+
+        const afterLoad = () => recentLoad.then(() => {
+            window.setTimeout(() => {
+                if (window.requestIdleCallback) window.requestIdleCallback(preload);
+                else preload();
+            }, 2000);
+        });
+        if (document.readyState === "complete") afterLoad();
+        else window.addEventListener("load", afterLoad, { once: true });
     }
 
     function loadRecentPublications() {
@@ -183,4 +218,5 @@
         if (!preferredView && !graphContainer.classList.contains("graph-active")) restoreLocation();
     });
     restoreLocation();
+    if (graphContainer.hidden) scheduleBrowserPreload();
 })();
