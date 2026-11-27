@@ -152,15 +152,26 @@ test("unsafe resource metadata cannot become an executable link", async ({ page 
   await expect(page.locator("#publication-detail-link")).toHaveAttribute("href", /^https:\/\/scholar.google.com/);
 });
 
+const browserAssets = [
+  "/assets/vendor/d3/d3.v7.9.0.min.js", "/assets/js/graph_layout.js",
+  "/assets/js/publication-map.js", "/assets/json/pubs.json",
+];
+
+async function pausePreloadClock(page: Page) {
+  const time = new Date("2026-11-26T12:00:00Z");
+  await page.clock.install({ time });
+  await page.clock.pauseAt(new Date(time.getTime() + 1000));
+  await page.addInitScript(() => {
+    // Use the timer fallback so the preload can be advanced deterministically.
+    Object.defineProperty(window, "requestIdleCallback", { value: undefined });
+  });
+}
+
 test("homepage renders the lightweight preview and defers the browser", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.clock.setFixedTime(new Date("2026-11-26T12:00:00Z"));
+  await pausePreloadClock(page);
   const requests: string[] = [];
   page.on("request", request => requests.push(new URL(request.url()).pathname));
-  const browserAssets = [
-    "/assets/vendor/d3/d3.v7.9.0.min.js", "/assets/js/graph_layout.js",
-    "/assets/js/publication-map.js", "/assets/json/pubs.json",
-  ];
   await page.goto("/");
   await expect(page.locator(".recent-publication-title")).toHaveCount(3);
   await expect(page.locator(".profile-backdrop")).toHaveJSProperty("complete", true);
@@ -176,7 +187,77 @@ test("homepage renders the lightweight preview and defers the browser", async ({
   await expect(page.locator("#publication-view-list")).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator(".publication-result")).toHaveCount(snapshot.records.length);
   expect(requests.filter(path => browserAssets.includes(path)).sort()).toEqual([...browserAssets].sort());
+  await page.clock.resume();
   await noAxeViolations(page);
+});
+
+test("homepage preloads each browser asset once and renders only after Explore", async ({ page }) => {
+  await pausePreloadClock(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  const requests: string[] = [];
+  page.on("request", request => {
+    const path = new URL(request.url()).pathname;
+    if (browserAssets.includes(path)) requests.push(path);
+  });
+  await page.goto("/");
+  await expect(page.locator(".recent-publication-title")).toHaveCount(3);
+  await page.clock.runFor(1999);
+  expect(requests).toEqual([]);
+
+  const downloads = Promise.all(browserAssets.map(path =>
+    page.waitForResponse(response => new URL(response.url()).pathname === path && response.ok())
+  ));
+  await page.clock.runFor(2);
+  await downloads;
+  await expect(page.locator("#graph-container")).toBeHidden();
+  await expect(page.locator("#publication-search")).toBeDisabled();
+  await expect(page.locator(".publication-result, .publication-node")).toHaveCount(0);
+
+  await page.locator("#exit").click();
+  await expect(page.locator(".publication-result")).toHaveCount(snapshot.records.length);
+  expect(requests.sort()).toEqual([...browserAssets].sort());
+});
+
+test("data saver skips idle loading and still allows Explore", async ({ page }) => {
+  await pausePreloadClock(page);
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "connection", { value: { saveData: true } });
+  });
+  const requests: string[] = [];
+  page.on("request", request => {
+    const path = new URL(request.url()).pathname;
+    if (browserAssets.includes(path)) requests.push(path);
+  });
+  await page.goto("/");
+  await expect(page.locator(".recent-publication-title")).toHaveCount(3);
+  await page.clock.runFor(5000);
+  expect(requests).toEqual([]);
+  await expect(page.locator("#graph-container")).toBeHidden();
+
+  await page.goto("/?view=list");
+  await expect(page.locator(".publication-result")).toHaveCount(snapshot.records.length);
+  expect(requests.sort()).toEqual([...browserAssets].sort());
+});
+
+test("a failed idle snapshot waits for Explore before retrying", async ({ page }) => {
+  await pausePreloadClock(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  let attempts = 0;
+  await page.route("**/assets/json/pubs.json**", route => {
+    attempts += 1;
+    return attempts === 1 ? route.abort() : route.continue();
+  });
+  await page.goto("/");
+  await expect(page.locator(".recent-publication-title")).toHaveCount(3);
+  const failed = page.waitForEvent("requestfailed", request => request.url().includes("/assets/json/pubs.json"));
+  await page.clock.runFor(2500);
+  await failed;
+  await expect(page.locator("#graph-status")).toBeHidden();
+  expect(attempts).toBe(1);
+
+  await page.locator("#exit").click();
+  await expect(page.locator(".publication-result")).toHaveCount(snapshot.records.length);
+  expect(attempts).toBe(2);
 });
 
 test("chosen view persists while the browser is hidden and the viewport resizes", async ({ page }) => {

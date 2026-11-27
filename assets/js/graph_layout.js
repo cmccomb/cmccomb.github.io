@@ -47,7 +47,20 @@
     const browserScript = new URL(document.currentScript.src);
     const mapScript = new URL("publication-map.js", browserScript);
     mapScript.search = browserScript.search;
-    Promise.all([d3.json(publicationURL.toString()), import(mapScript.href)]).then(([rawPayload, { createPublicationMap }]) => {
+    const isPreloading = graphContainer.hidden;
+    // Fetch in the background and wait for Explore before constructing the map or results.
+    const browserOpen = isPreloading ? new Promise(resolve => {
+        graphContainer.addEventListener("publicationgraph:visibilitychange", function onOpen(event) {
+            if (!event.detail.isVisible) return;
+            graphContainer.removeEventListener("publicationgraph:visibilitychange", onOpen);
+            resolve();
+        });
+    }) : Promise.resolve();
+    const loadSnapshot = priority => d3.json(publicationURL.href, { priority });
+    const snapshot = isPreloading
+        ? loadSnapshot("low").catch(() => browserOpen.then(() => loadSnapshot("auto")))
+        : loadSnapshot("auto");
+    Promise.all([snapshot, import(mapScript.href), browserOpen]).then(([rawPayload, { createPublicationMap }]) => {
         const rawRecords = Array.isArray(rawPayload?.records)
             ? rawPayload.records
             : Array.isArray(rawPayload)
@@ -644,7 +657,8 @@
         map.render();
         Object.values(viewButtons).forEach(button => { button.disabled = false; });
         graphContainer.dispatchEvent(new Event("publicationgraph:ready"));
-    }).catch(error => {
+    }).catch(async error => {
+        await browserOpen;
         graphContainer.dispatchEvent(new CustomEvent("publicationgraph:unavailable", { detail: error }));
     });
 })();

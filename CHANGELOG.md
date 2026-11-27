@@ -3,6 +3,15 @@
 Site releases use `MAJOR.MINOR.PATCH` versions, beginning with `0.1.0`.
 Earlier tags and releases remain available in GitHub history.
 
+## [0.4.1] - 2026-11-27
+
+### Improved
+
+- Prepare the Explore publications scripts and data while the loaded homepage
+  sits idle. Keep the initial profile lightweight and render the list or map on
+  entry. Skip background loading when the browser reports Data Saver or 3G
+  speeds and below.
+
 ## [0.4.0] - 2026-11-26
 
 ### Added

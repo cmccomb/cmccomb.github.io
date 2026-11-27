@@ -47,7 +47,7 @@ toolbar, map container, results, details, and status markup.
 | --- | --- | --- |
 | Static map preview | [Profile generator](../_plugins/publication_profile.rb) projects points from `pubs.json` into `publication-preview.svg` | With the profile |
 | Compact bibliography | The same generator projects citation fields into `recent-publications.json` | When the profile first opens |
-| D3 and the browser controller | Vendored D3 and `graph_layout.js` | On first Explore action or a publication deep link |
+| D3 and the browser controller | Vendored D3 and `graph_layout.js` | After the profile sits idle, or immediately on Explore or a publication deep link |
 | Full snapshot and map renderer | Committed `pubs.json` and `publication-map.js` | In parallel when the browser controller starts |
 
 Shared publication helpers and profile navigation load with the page. Jekyll
@@ -59,10 +59,15 @@ their URLs. Preview and publication data URLs use the site release version.
 | [`publication_helpers.js`](../assets/js/publication_helpers.js) | Search normalization/ranking, topic text formatting, citation formatting, source link validation; shared with Node tests and exports |
 | [`graph_layout.js`](../assets/js/graph_layout.js) | Snapshot loading and normalization, lists, search, selection, details, clipboard actions, and map keyboard and tooltip behavior |
 | [`publication-map.js`](../assets/js/publication-map.js) | Map drawing, citation and year legends, collision layout, Fit map, and canvas resizing |
-| [`interface.js`](../assets/js/interface.js) | Recent papers, lazy loading, visibility, history, focus restoration, Escape, and preferred view |
+| [`interface.js`](../assets/js/interface.js) | Recent papers, background and on-demand loading, visibility, history, focus restoration, Escape, and preferred view |
 
-The browser reads the full snapshot at most once per page visit and uses only
-valid records. If loading fails, navigation offers a Scholar link. Publication
+The profile waits for the page and recent papers to finish loading, then delays
+background requests by two seconds and uses the browser’s next idle period when
+available. It skips these requests on connections that report Data Saver or 3G
+speeds and below. An Explore action reuses any requests already underway. The
+controller constructs the map and list when Explore opens. It retries a failed
+background snapshot request once on entry and uses only valid records. If loading
+fails on entry, navigation offers a Scholar link. Publication
 metadata is inserted as text. The homepage also offers Scholar when JavaScript
 is disabled.
 
@@ -96,7 +101,7 @@ The browser reads it when restoring URL state.
 
 | Event on `#graph-container` | Sender | Effect |
 | --- | --- | --- |
-| `publicationgraph:visibilitychange` | Navigation | The loaded browser restores URL state after opening or closing. |
+| `publicationgraph:visibilitychange` | Navigation | The browser initializes on its first opening and restores URL state on later changes. |
 | `publicationgraph:viewchange` | Browser | Navigation remembers the List or Map choice. |
 | `publicationgraph:ready` | Browser | Navigation moves focus to Search when it was waiting on Back to profile. |
 | `publicationgraph:unavailable` | Browser | Navigation shows the Scholar fallback. |
